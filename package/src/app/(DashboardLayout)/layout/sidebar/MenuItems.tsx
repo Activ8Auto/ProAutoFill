@@ -6,7 +6,9 @@ import {
   IconMoodHappy,
   IconTypography,
   IconUserPlus,
-} from "@tabler/icons-react";
+  IconSettingsAutomation,
+  IconBook2,
+} from "@tabler/icons-react"; // make sure you import an appropriate icon
 
 import { uniqueId } from "lodash";
 
@@ -15,7 +17,6 @@ const Menuitems = [
     navlabel: true,
     subheader: "Home",
   },
-
   {
     id: uniqueId(),
     title: "Dashboard",
@@ -24,20 +25,22 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "Utilities",
+    subheader: "Automation",
+  },
+
+  {
+    id: uniqueId(),
+    title: "Automation Profiles",
+    icon: IconSettingsAutomation,
+    href: "/automation-profiles",
   },
   {
     id: uniqueId(),
-    title: "Typography",
-    icon: IconTypography,
-    href: "/utilities/typography",
+    title: "Diagnosis Library",
+    icon: IconBook2, // or any other icon you prefer from @tabler/icons-react
+    href: "/automation-dictionary",
   },
-  {
-    id: uniqueId(),
-    title: "Shadow",
-    icon: IconCopy,
-    href: "/utilities/shadow",
-  },
+
   {
     navlabel: true,
     subheader: "Auth",
@@ -53,22 +56,6 @@ const Menuitems = [
     title: "Register",
     icon: IconUserPlus,
     href: "/authentication/register",
-  },
-  {
-    navlabel: true,
-    subheader: "Extra",
-  },
-  {
-    id: uniqueId(),
-    title: "Icons",
-    icon: IconMoodHappy,
-    href: "/icons",
-  },
-  {
-    id: uniqueId(),
-    title: "Sample Page",
-    icon: IconAperture,
-    href: "/sample-page",
   },
 ];
 
