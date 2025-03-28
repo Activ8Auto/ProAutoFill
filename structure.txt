@@ -1,0 +1,75 @@
+.
+├── LICENSE.md
+├── README.md
+├── landingpage
+│   ├── index.html
+│   └── style.css
+├── package
+│   ├── README.md
+│   ├── next-env.d.ts
+│   ├── next.config.js
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── public
+│   │   ├── images
+│   │   │   ├── backgrounds
+│   │   │   │   ├── 404-error-idea.gif
+│   │   │   │   ├── login-bg.svg
+│   │   │   │   └── rocket.png
+│   │   │   ├── logos
+│   │   │   │   └── dark-logo.svg
+│   │   │   ├── products
+│   │   │   │   ├── empty-shopping-bag.gif
+│   │   │   │   ├── s11.jpg
+│   │   │   │   ├── s4.jpg
+│   │   │   │   ├── s5.jpg
+│   │   │   │   └── s7.jpg
+│   │   │   └── profile
+│   │   │       └── user-1.jpg
+│   │   ├── next.svg
+│   │   └── vercel.svg
+│   ├── react-mui-sidebar.d.ts
+│   ├── src
+│   │   ├── app
+│   │   │   ├── (DashboardLayout)
+│   │   │   │   ├── components
+│   │   │   │   │   ├── container
+│   │   │   │   │   ├── dashboard
+│   │   │   │   │   ├── forms
+│   │   │   │   │   └── shared
+│   │   │   │   ├── icons
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── layout
+│   │   │   │   │   ├── header
+│   │   │   │   │   ├── shared
+│   │   │   │   │   └── sidebar
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── loading.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── sample-page
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── utilities
+│   │   │   │       ├── shadow
+│   │   │   │       └── typography
+│   │   │   ├── authentication
+│   │   │   │   ├── auth
+│   │   │   │   │   ├── AuthLogin.tsx
+│   │   │   │   │   └── AuthRegister.tsx
+│   │   │   │   ├── login
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── register
+│   │   │   │       └── page.tsx
+│   │   │   ├── favicon.ico
+│   │   │   ├── global.css
+│   │   │   ├── layout.tsx
+│   │   │   └── loading.tsx
+│   │   └── utils
+│   │       ├── createEmotionCache.ts
+│   │       ├── theme
+│   │       │   └── DefaultColors.tsx
+│   │       └── theme.ts
+│   ├── structure.txt
+│   └── tsconfig.json
+└── structure.txt
+
+32 directories, 41 files

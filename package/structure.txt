@@ -1,0 +1,90 @@
+.
+├── README.md
+├── next-env.d.ts
+├── next.config.js
+├── package-lock.json
+├── package.json
+├── public
+│   ├── images
+│   │   ├── backgrounds
+│   │   │   ├── 404-error-idea.gif
+│   │   │   ├── login-bg.svg
+│   │   │   └── rocket.png
+│   │   ├── logos
+│   │   │   └── dark-logo.svg
+│   │   ├── products
+│   │   │   ├── empty-shopping-bag.gif
+│   │   │   ├── s11.jpg
+│   │   │   ├── s4.jpg
+│   │   │   ├── s5.jpg
+│   │   │   └── s7.jpg
+│   │   └── profile
+│   │       └── user-1.jpg
+│   ├── next.svg
+│   └── vercel.svg
+├── react-mui-sidebar.d.ts
+├── src
+│   ├── app
+│   │   ├── (DashboardLayout)
+│   │   │   ├── components
+│   │   │   │   ├── container
+│   │   │   │   │   └── PageContainer.tsx
+│   │   │   │   ├── dashboard
+│   │   │   │   │   ├── Blog.tsx
+│   │   │   │   │   ├── MonthlyEarnings.tsx
+│   │   │   │   │   ├── ProductPerformance.tsx
+│   │   │   │   │   ├── RecentTransactions.tsx
+│   │   │   │   │   ├── SalesOverview.tsx
+│   │   │   │   │   └── YearlyBreakup.tsx
+│   │   │   │   ├── forms
+│   │   │   │   │   └── theme-elements
+│   │   │   │   └── shared
+│   │   │   │       ├── BlankCard.tsx
+│   │   │   │       └── DashboardCard.tsx
+│   │   │   ├── icons
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout
+│   │   │   │   ├── header
+│   │   │   │   │   ├── Header.tsx
+│   │   │   │   │   ├── Profile.tsx
+│   │   │   │   │   └── data.tsx
+│   │   │   │   ├── shared
+│   │   │   │   │   └── logo
+│   │   │   │   └── sidebar
+│   │   │   │       ├── MenuItems.tsx
+│   │   │   │       ├── NavGroup
+│   │   │   │       ├── NavItem
+│   │   │   │       ├── Sidebar.tsx
+│   │   │   │       ├── SidebarItems.tsx
+│   │   │   │       └── Updrade.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── loading.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── sample-page
+│   │   │   │   └── page.tsx
+│   │   │   └── utilities
+│   │   │       ├── shadow
+│   │   │       │   └── page.tsx
+│   │   │       └── typography
+│   │   │           └── page.tsx
+│   │   ├── authentication
+│   │   │   ├── auth
+│   │   │   │   ├── AuthLogin.tsx
+│   │   │   │   └── AuthRegister.tsx
+│   │   │   ├── login
+│   │   │   │   └── page.tsx
+│   │   │   └── register
+│   │   │       └── page.tsx
+│   │   ├── favicon.ico
+│   │   ├── global.css
+│   │   ├── layout.tsx
+│   │   └── loading.tsx
+│   └── utils
+│       ├── createEmotionCache.ts
+│       ├── theme
+│       │   └── DefaultColors.tsx
+│       └── theme.ts
+├── structure.txt
+└── tsconfig.json
+
+34 directories, 54 files
