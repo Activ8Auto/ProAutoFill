@@ -52,7 +52,7 @@ export async function createDiagnosis(
 
 export async function deleteDiagnosis(id: string) {
   const res = await fetch(
-    `$${process.env.NEXT_PUBLIC_API_URL}/diagnoses/${id}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/diagnoses/${id}`,
     {
       method: "DELETE",
     }
@@ -84,3 +84,35 @@ export const deleteProfile = async (id: string) => {
   }
   return await res.json();
 };
+export async function updateUserDefaults(defaultValues: any, userId: string) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/defaults`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ default_values: defaultValues }),
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to update user defaults");
+  }
+  return await response.json();
+}
+
+export async function fetchUserDefaults(userId: string) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/defaults`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch user defaults");
+  }
+  return await response.json();
+}

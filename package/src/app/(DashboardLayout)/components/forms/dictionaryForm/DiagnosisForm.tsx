@@ -17,12 +17,12 @@ import {
   Paper,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
 import {
   fetchDiagnosisOptions,
   createDiagnosis,
   deleteDiagnosis,
+  updateUserDefaults,
+  fetchUserDefaults,
 } from "@/lib/api";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
 import { DiagnosisEntry } from "@/types/diagnosis";
@@ -117,41 +117,53 @@ export default function DiagnosisForm({
 }: Props) {
   const [diagnoses, setDiagnoses] = useState<DiagnosisEntry[]>([]);
   const [form, setForm] = useState<DiagnosisEntry>(initialData ?? defaultForm);
-  const [newItem, setNewItem] = useState("");
-  const [currentField, setCurrentField] = useState<
-    "current_medications" | "teaching_provided" | "medications" | ""
-  >("");
-
-  const [defaultTeaching, setDefaultTeaching] = useState<string[]>([]);
-  const [defaultMeds, setDefaultMeds] = useState<string[]>([]);
-  const [defaultLabs, setDefaultLabs] = useState<string[]>([]);
   const [defaultPhysicalExams, setDefaultPhysicalExams] = useState<string[]>(
     []
   );
+  const [defaultLabs, setDefaultLabs] = useState<string[]>([]);
+  const [defaultTeaching, setDefaultTeaching] = useState<string[]>([]);
+  const [defaultMeds, setDefaultMeds] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log("useEffect triggered, fetching diagnoses...");
-    fetchDiagnosisOptions()
-      .then((data) => {
-        console.log("Setting diagnoses:", data);
-        setDiagnoses(data);
-      })
-      .catch((err) => console.error("Error in useEffect:", err));
-  }, []);
+    const fetchData = async () => {
+      try {
+        const [diagnosisData, defaults] = await Promise.all([
+          fetchDiagnosisOptions(),
+          fetchUserDefaults(TEMP_USER_ID),
+        ]);
+        setDiagnoses(diagnosisData);
+        const defaultValues = defaults.default_values || {};
+        setDefaultPhysicalExams(defaultValues.defaultPhysicalExams || []);
+        setDefaultLabs(defaultValues.defaultLabs || []);
+        setDefaultTeaching(defaultValues.defaultTeaching || []);
+        setDefaultMeds(defaultValues.defaultMeds || []);
 
-  console.log("Current diagnoses state:", diagnoses);
+        if (!editMode) {
+          setForm((prev) => ({
+            ...prev,
+            physical_exam: defaultValues.defaultPhysicalExams || [],
+            laboratory_tests: defaultValues.defaultLabs || [],
+            teaching_provided: defaultValues.defaultTeaching || [],
+            current_medications: defaultValues.defaultMeds || [],
+          }));
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+    fetchData();
+  }, [editMode]);
 
   const handleAddDiagnosis = async (diagnosis: DiagnosisEntry) => {
     try {
-      // Merge the diagnosis with the temporary user_id
       const submission = { ...diagnosis, user_id: TEMP_USER_ID };
-      console.log("Submitting diagnosis:", submission);
       const newDiagnosis = await createDiagnosis(submission);
       setDiagnoses((prev) => [...prev, newDiagnosis]);
     } catch (err) {
       console.error("Error creating diagnosis:", err);
     }
   };
+
   const handleDelete = async (id: string) => {
     try {
       await deleteDiagnosis(id);
@@ -171,42 +183,72 @@ export default function DiagnosisForm({
     }));
   };
 
-  const handleAddToList = () => {
-    if (!newItem.trim() || !currentField) return;
-    const value = form[currentField];
-    if (Array.isArray(value)) {
-      handleChange(currentField, [...value, newItem.trim()] as any);
-    }
-    setNewItem("");
-    setCurrentField("");
-  };
-
-  const handleRemove = <K extends keyof DiagnosisEntry>(
-    field: K,
-    index: number
-  ) => {
-    const value = form[field];
-    if (Array.isArray(value)) {
-      const updated = [...value];
-      updated.splice(index, 1);
-      handleChange(field, updated as DiagnosisEntry[K]);
-    }
-  };
-
   const handleSubmit = async () => {
     if (!form.name || !form.icd_code) return;
     await handleAddDiagnosis(form);
     setForm({
       name: "",
       icd_code: "",
-      current_medications: [],
-      physical_exam: [],
-      laboratory_tests: [],
-      teaching_provided: [],
+      current_medications: defaultMeds,
+      physical_exam: defaultPhysicalExams,
+      laboratory_tests: defaultLabs,
+      teaching_provided: defaultTeaching,
       medications: [],
       exclusion_group: "",
       user_id: TEMP_USER_ID,
     });
+  };
+
+  const handleSetDefaultPhysicalExams = async () => {
+    try {
+      await updateUserDefaults(
+        { defaultPhysicalExams: form.physical_exam },
+        TEMP_USER_ID
+      );
+      setDefaultPhysicalExams(form.physical_exam);
+      console.log("Default physical exams updated");
+    } catch (error) {
+      console.error("Error updating default physical exams:", error);
+    }
+  };
+
+  const handleSetDefaultLabs = async () => {
+    try {
+      await updateUserDefaults(
+        { defaultLabs: form.laboratory_tests },
+        TEMP_USER_ID
+      );
+      setDefaultLabs(form.laboratory_tests);
+      console.log("Default laboratory tests updated");
+    } catch (error) {
+      console.error("Error updating default labs:", error);
+    }
+  };
+
+  const handleSetDefaultTeaching = async () => {
+    try {
+      await updateUserDefaults(
+        { defaultTeaching: form.teaching_provided },
+        TEMP_USER_ID
+      );
+      setDefaultTeaching(form.teaching_provided);
+      console.log("Default teaching updated");
+    } catch (error) {
+      console.error("Error updating default teaching:", error);
+    }
+  };
+
+  const handleSetDefaultMeds = async () => {
+    try {
+      await updateUserDefaults(
+        { defaultMeds: form.current_medications },
+        TEMP_USER_ID
+      );
+      setDefaultMeds(form.current_medications);
+      console.log("Default current medications updated");
+    } catch (error) {
+      console.error("Error updating default medications:", error);
+    }
   };
 
   return (
@@ -252,17 +294,28 @@ export default function DiagnosisForm({
             }
           >
             {physicalExamOptions.map((opt) => (
-              <MenuItem key={opt} value={opt}>
+              <MenuItem
+                key={opt}
+                value={opt}
+                sx={{
+                  backgroundColor: defaultPhysicalExams.includes(opt)
+                    ? "lightgrey" // Highlights default options
+                    : "inherit",
+                }}
+              >
                 {opt}
               </MenuItem>
             ))}
           </CustomTextField>
-
           <Box mt={1}>
             <Button
               size="small"
               variant="outlined"
-              onClick={() => setDefaultPhysicalExams(form.physical_exam)}
+              onClick={handleSetDefaultPhysicalExams}
+              disabled={
+                JSON.stringify(form.physical_exam) ===
+                JSON.stringify(defaultPhysicalExams)
+              }
             >
               Set as Default for Future Entries
             </Button>
@@ -289,22 +342,34 @@ export default function DiagnosisForm({
             }
           >
             {labTestOptions.map((opt) => (
-              <MenuItem key={opt} value={opt}>
+              <MenuItem
+                key={opt}
+                value={opt}
+                sx={{
+                  backgroundColor: defaultLabs.includes(opt)
+                    ? "lightgrey" // Highlights default options
+                    : "inherit",
+                }}
+              >
                 {opt}
               </MenuItem>
             ))}
           </CustomTextField>
-
           <Box mt={1}>
             <Button
               size="small"
               variant="outlined"
-              onClick={() => setDefaultLabs(form.laboratory_tests)}
+              onClick={handleSetDefaultLabs}
+              disabled={
+                JSON.stringify(form.laboratory_tests) ===
+                JSON.stringify(defaultLabs)
+              }
             >
               Set as Default for Future Entries
             </Button>
           </Box>
         </Grid>
+
         <Grid item xs={12}>
           <Typography variant="subtitle2" mt={2}>
             Teaching Provided
@@ -325,22 +390,34 @@ export default function DiagnosisForm({
             }
           >
             {teachingOptions.map((opt) => (
-              <MenuItem key={opt} value={opt}>
+              <MenuItem
+                key={opt}
+                value={opt}
+                sx={{
+                  backgroundColor: defaultTeaching.includes(opt)
+                    ? "lightgrey" // Highlights default options
+                    : "inherit",
+                }}
+              >
                 {opt}
               </MenuItem>
             ))}
           </CustomTextField>
-
           <Box mt={1}>
             <Button
               size="small"
               variant="outlined"
-              onClick={() => setDefaultTeaching(form.teaching_provided)}
+              onClick={handleSetDefaultTeaching}
+              disabled={
+                JSON.stringify(form.teaching_provided) ===
+                JSON.stringify(defaultTeaching)
+              }
             >
               Set as Default for Future Entries
             </Button>
           </Box>
         </Grid>
+
         <Grid item xs={12}>
           <Typography variant="subtitle2" mt={2}>
             Current Medications
@@ -361,72 +438,48 @@ export default function DiagnosisForm({
             }
           >
             {medicationOptions.map((opt) => (
-              <MenuItem key={opt} value={opt}>
+              <MenuItem
+                key={opt}
+                value={opt}
+                sx={{
+                  backgroundColor: defaultMeds.includes(opt)
+                    ? "lightgrey" // Highlights default options
+                    : "inherit",
+                }}
+              >
                 {opt}
               </MenuItem>
             ))}
           </CustomTextField>
-
           <Box mt={1}>
             <Button
               size="small"
               variant="outlined"
-              onClick={() => setDefaultMeds(form.current_medications)}
+              onClick={handleSetDefaultMeds}
+              disabled={
+                JSON.stringify(form.current_medications) ===
+                JSON.stringify(defaultMeds)
+              }
             >
               Set as Default for Future Entries
             </Button>
           </Box>
         </Grid>
 
-        {(["medications"] as const).map((field) => (
-          <Grid item xs={12} key={field}>
-            <Typography variant="subtitle2" mt={2}>
-              {field
-                .replace(/_/g, " ")
-                .replace(/\b\w/g, (l) => l.toUpperCase())}
-            </Typography>
-            <Box display="flex" gap={1} mt={1}>
-              <CustomTextField
-                label={`Add ${field.replace(/_/g, " ")}`}
-                fullWidth
-                value={currentField === field ? newItem : ""}
-                onChange={(e) => {
-                  setCurrentField(field);
-                  setNewItem(e.target.value);
-                }}
-              />
-              <IconButton
-                onClick={handleAddToList}
-                disabled={currentField !== field}
-              >
-                <CheckIcon />
-              </IconButton>
-            </Box>
-            <Box mt={1}>
-              {form[field].map((item, idx) => (
-                <Box
-                  key={idx}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  bgcolor="#f5f5f5"
-                  borderRadius={1}
-                  px={2}
-                  py={1}
-                  mb={1}
-                >
-                  <Typography>{item}</Typography>
-                  <IconButton
-                    onClick={() => handleRemove(field, idx)}
-                    size="small"
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              ))}
-            </Box>
-          </Grid>
-        ))}
+        <Grid item xs={12}>
+          <CustomTextField
+            label="Medications"
+            fullWidth
+            value={form.medications.join(", ")}
+            onChange={(e) => {
+              const medsArray = e.target.value
+                .split(",")
+                .map((med: string) => med.trim())
+                .filter((med) => med !== "");
+              handleChange("medications", medsArray);
+            }}
+          />
+        </Grid>
 
         <Grid item xs={12}>
           <CustomTextField
@@ -441,101 +494,6 @@ export default function DiagnosisForm({
           <Button variant="contained" onClick={handleSubmit}>
             {editMode ? "Update Diagnosis" : "Add Diagnosis Item"}
           </Button>
-
-          <Grid item xs={12}>
-            <Button variant="contained" onClick={handleSubmit}>
-              {editMode ? "Update Diagnosis" : "Add Diagnosis Item"}
-            </Button>
-
-            {editMode && onCancelEdit && (
-              <Button onClick={onCancelEdit} sx={{ ml: 2 }}>
-                Cancel
-              </Button>
-            )}
-          </Grid>
-
-          <Grid item xs={12}>
-            <Typography variant="h6" mt={4} mb={2}>
-              Added Diagnoses
-            </Typography>
-
-            {diagnoses.length === 0 ? (
-              <Typography>No diagnoses added yet.</Typography>
-            ) : (
-              <TableContainer component={Paper}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>
-                        <strong>Name</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>ICD Code</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Physical Exams</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Current Meds</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Lab Tests</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Teaching</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Prescribed Meds</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Exclusion Group</strong>
-                      </TableCell>
-                      <TableCell align="center">
-                        <strong>Actions</strong>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {diagnoses.map((diagnosis) => (
-                      <TableRow key={diagnosis.id}>
-                        <TableCell>{diagnosis.name}</TableCell>
-                        <TableCell>{diagnosis.icd_code}</TableCell>
-                        <TableCell>
-                          {diagnosis.physical_exam.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.current_medications.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.laboratory_tests.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.teaching_provided.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.medications.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.exclusion_group || "None"}
-                        </TableCell>
-                        <TableCell align="center">
-                          <IconButton
-                            edge="end"
-                            aria-label="delete"
-                            onClick={() => handleDelete(diagnosis.id)}
-                            size="small"
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </Grid>
-
           {editMode && onCancelEdit && (
             <Button onClick={onCancelEdit} sx={{ ml: 2 }}>
               Cancel
@@ -543,6 +501,93 @@ export default function DiagnosisForm({
           )}
         </Grid>
       </Grid>
+
+      <Typography variant="h6" mt={4} mb={2}>
+        Added Diagnoses
+      </Typography>
+      {diagnoses.length === 0 ? (
+        <Typography>No diagnoses added yet.</Typography>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <strong>Name</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ICD Code</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Physical Exams</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Current Meds</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Lab Tests</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Teaching</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Prescribed Meds</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Exclusion Group</strong>
+                </TableCell>
+                <TableCell align="center">
+                  <strong>Actions</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {diagnoses.map((diagnosis) => (
+                <TableRow key={diagnosis.id}>
+                  <TableCell>{diagnosis.name}</TableCell>
+                  <TableCell>{diagnosis.icd_code}</TableCell>
+                  <TableCell>
+                    {diagnosis.physical_exam
+                      ? diagnosis.physical_exam.join(", ")
+                      : "None"}
+                  </TableCell>
+                  <TableCell>
+                    {diagnosis.current_medications
+                      ? diagnosis.current_medications.join(", ")
+                      : "None"}
+                  </TableCell>
+                  <TableCell>
+                    {diagnosis.laboratory_tests
+                      ? diagnosis.laboratory_tests.join(", ")
+                      : "None"}
+                  </TableCell>
+                  <TableCell>
+                    {diagnosis.teaching_provided
+                      ? diagnosis.teaching_provided.join(", ")
+                      : "None"}
+                  </TableCell>
+                  <TableCell>
+                    {diagnosis.medications
+                      ? diagnosis.medications.join(", ")
+                      : "None"}
+                  </TableCell>
+                  <TableCell>{diagnosis.exclusion_group || "None"}</TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleDelete(diagnosis.id)}
+                      size="small"
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 }
