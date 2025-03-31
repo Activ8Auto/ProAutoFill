@@ -62,6 +62,8 @@ export async function deleteDiagnosis(id: string) {
 }
 
 export const createProfile = async (profileData: any) => {
+  console.log("API CALL to /profiles with payload:", profileData);
+
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profiles`, {
     method: "POST",
     headers: {
@@ -69,10 +71,15 @@ export const createProfile = async (profileData: any) => {
     },
     body: JSON.stringify(profileData),
   });
+
+  const text = await res.text(); // read raw response for debugging
+  console.log("API response text:", text);
+
   if (!res.ok) {
-    throw new Error("Failed to create profile");
+    throw new Error(`Failed to create profile: ${text}`);
   }
-  return await res.json();
+
+  return JSON.parse(text);
 };
 
 export const deleteProfile = async (id: string) => {

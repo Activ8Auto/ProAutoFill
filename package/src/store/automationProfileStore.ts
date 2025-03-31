@@ -1,22 +1,11 @@
 // store/automationProfileStore.ts
 import { create } from "zustand";
 import { getProfiles, createProfile, deleteProfile } from "../lib/api";
+import { DiagnosisEntry } from "@/types/diagnosis";
 
 export interface FunctionLevel {
   level: string;
   weight: number;
-}
-
-export interface DiagnosisEntry {
-  id: string;
-  name: string;
-  icd_code: string;
-  current_medications: string[];
-  physical_exam: string[];
-  laboratory_tests: string[];
-  teaching_provided: string[];
-  medications: string[];
-  exclusion_group: string;
 }
 
 export interface AutomationProfile {
@@ -51,6 +40,7 @@ export interface AutomationProfile {
   durationWeights: number[];
   diagnoses: DiagnosisEntry[];
   preceptor: string;
+  userId: string;
   age_ranges: {
     range: string;
     weight: number;

@@ -30,16 +30,28 @@ export default function AutomationProfilesPage() {
         Automation Profiles
       </Typography>
       <ProfileForm />
-      <Box mt={4}>
-        <Typography variant="h6" gutterBottom>
-          Saved Profiles
+      <Box mt={6}>
+        <Typography variant="h5" gutterBottom>
+          📂 Your Saved Profiles
         </Typography>
         {profiles.length === 0 ? (
-          <Typography color="text.secondary">No profiles yet.</Typography>
+          <Typography color="text.secondary">
+            No profiles yet. Go make one!
+          </Typography>
         ) : (
-          profiles.map((profile: AutomationProfile) => (
-            <ProfileCard key={profile.id} profile={profile} />
-          ))
+          <Box
+            display="grid"
+            gridTemplateColumns={{
+              xs: "1fr",
+              md: "1fr 1fr",
+              lg: "1fr 1fr 1fr",
+            }}
+            gap={3}
+          >
+            {profiles.map((profile: AutomationProfile) => (
+              <ProfileCard key={profile.id} profile={profile} />
+            ))}
+          </Box>
         )}
       </Box>
     </Box>

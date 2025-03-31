@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -8,9 +8,17 @@ import {
   Typography,
   Switch,
   IconButton,
+  Paper,
   FormControlLabel,
+  TableContainer,
+  TableCell,
+  TableRow,
+  TableBody,
+  TableHead,
+  Table,
   MenuItem,
 } from "@mui/material";
+import { updateUserDefaults } from "@/lib/api";
 import InputAdornment from "@mui/material/InputAdornment";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
 import AddIcon from "@mui/icons-material/Add";
@@ -20,9 +28,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import { AutomationProfile } from "@/store/automationProfileStore";
 import { DatePicker } from "@mui/x-date-pickers";
 import { format } from "date-fns";
+import { createProfile } from "@/lib/api";
 import { DiagnosisEntry } from "@/types/diagnosis";
 import DiagnosisSelector from "@/app/(DashboardLayout)/components/forms/dictionaryForm/DiagnosisSelector";
-
+import { fetchDiagnosisOptions } from "@/lib/api";
+const TEMP_USER_ID = "a14ef32c-bc89-4df9-8435-9a7b5e07c7cd";
 export default function ProfileForm() {
   const addProfile = useAutomationProfileStore((state) => state.addProfile);
 
@@ -61,41 +71,10 @@ export default function ProfileForm() {
   const [siteType, setSiteType] = useState("");
   const [cptCode, setCptCode] = useState("");
 
-  const diagnosisOptions: DiagnosisEntry[] = [
-    {
-      name: "Major Depressive Disorder",
-      icd_code: "F32.0",
-      current_medications: ["Antidepressants"],
-      physical_exam: ["Constitutional/Vital Signs"],
-      laboratory_tests: ["Thyroid Panel", "Vitamin D Level"],
-      teaching_provided: ["Medication Education and Management"],
-      medications: ["Sertraline 100mg"],
-      exclusion_group: "Depression",
-    },
-    {
-      name: "Generalized Anxiety Disorder",
-      icd_code: "F41.1",
-      current_medications: ["Antianxiety Medications"],
-      physical_exam: ["Constitutional/Vital Signs", "Neurological"],
-      laboratory_tests: ["Electrolytes"],
-      teaching_provided: [
-        "Stress Management",
-        "Medication Education and Management",
-      ],
-      medications: ["Buspirone 10mg"],
-      exclusion_group: "Anxiety",
-    },
-    {
-      name: "Bipolar Disorder, Unspecified",
-      icd_code: "F31.9",
-      current_medications: ["Mood Stabilizers"],
-      physical_exam: ["Neurological"],
-      laboratory_tests: ["Liver Function", "Kidney Function"],
-      teaching_provided: ["Suicide Prevention Education and Management"],
-      medications: ["Lithium 300mg"],
-      exclusion_group: "Bipolar",
-    },
-  ];
+  const [diagnosisOptions, setDiagnosisOptions] = useState<DiagnosisEntry[]>(
+    []
+  );
+
   const [ageRanges, setAgeRanges] = useState([
     { range: "5-12 years", weight: 0 },
     { range: "13-17 years", weight: 0 },
@@ -118,6 +97,32 @@ export default function ProfileForm() {
     Array(ageRanges.length).fill(0)
   );
 
+  useEffect(() => {
+    const loadDiagnoses = async () => {
+      try {
+        const data = await fetchDiagnosisOptions();
+        setDiagnosisOptions(data);
+      } catch (err) {
+        console.error("Failed to fetch diagnosis options:", err);
+      }
+    };
+
+    loadDiagnoses();
+  }, []);
+  const handleSaveDefaults = async () => {
+    const defaults = {
+      faculty: defaultFaculty,
+      preceptor: defaultPreceptor,
+      rotation: defaultRotation,
+    };
+
+    try {
+      await updateUserDefaults(defaults, userId); // replace with actual user ID
+      alert("Defaults saved!");
+    } catch (err) {
+      console.error("Failed to save defaults:", err);
+    }
+  };
   const handleChange = (field: string, value: string | number | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -149,7 +154,7 @@ export default function ProfileForm() {
     durationOptions: ["30 Minutes", "1 Hour"],
     durationWeights: [80, 20],
   });
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newProfile: AutomationProfile = {
       id: crypto.randomUUID(),
       name: form.name,
@@ -200,9 +205,18 @@ export default function ProfileForm() {
       durationWeights: form.durationWeights,
       preceptor: form.preceptor,
       diagnoses: selectedDiagnoses,
+      userId: TEMP_USER_ID,
     };
+    console.log("Sending profile data:", newProfile);
 
-    addProfile(newProfile);
+    try {
+      const savedProfile = await createProfile(newProfile);
+      console.log("Server response:", savedProfile);
+      addProfile(savedProfile);
+      alert("Profile saved!");
+    } catch (err) {
+      console.error("Failed to save profile:", err);
+    }
   };
 
   return (
@@ -516,11 +530,121 @@ export default function ProfileForm() {
         </Grid>
 
         <Grid item xs={12}>
-          <DiagnosisSelector
-            diagnoses={diagnosisOptions}
-            selected={selectedDiagnoses}
-            onChange={setSelectedDiagnoses}
-          />
+          <Typography variant="h6" mt={4} mb={2}>
+            Select Diagnoses to Include
+          </Typography>
+          {diagnosisOptions.length === 0 ? (
+            <Typography>No diagnoses available.</Typography>
+          ) : (
+            <TableContainer
+              component={Paper}
+              sx={{
+                maxHeight: 400, // Adjust height as needed
+                overflowY: "auto",
+                border: "1px solid #e0e0e0",
+              }}
+            >
+              <Box display="flex" justifyContent="flex-end" p={1}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => setSelectedDiagnoses(diagnosisOptions)}
+                >
+                  Select All Diagnoses
+                </Button>
+              </Box>
+              <Table stickyHeader size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <strong>Select</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>Name</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>ICD Code</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>Physical Exams</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>Current Meds</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>Lab Tests</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>Teaching</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>Prescribed Meds</strong>
+                    </TableCell>
+                    <TableCell>
+                      <strong>Exclusion Group</strong>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {diagnosisOptions.map((diagnosis) => {
+                    const isSelected = selectedDiagnoses.some(
+                      (d) =>
+                        d.name === diagnosis.name &&
+                        d.icd_code === diagnosis.icd_code
+                    );
+
+                    const handleToggle = () => {
+                      if (isSelected) {
+                        setSelectedDiagnoses((prev) =>
+                          prev.filter(
+                            (d) =>
+                              !(
+                                d.name === diagnosis.name &&
+                                d.icd_code === diagnosis.icd_code
+                              )
+                          )
+                        );
+                      } else {
+                        setSelectedDiagnoses((prev) => [...prev, diagnosis]);
+                      }
+                    };
+
+                    return (
+                      <TableRow key={diagnosis.name + diagnosis.icd_code}>
+                        <TableCell>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={handleToggle}
+                          />
+                        </TableCell>
+                        <TableCell>{diagnosis.name}</TableCell>
+                        <TableCell>{diagnosis.icd_code}</TableCell>
+                        <TableCell>
+                          {diagnosis.physical_exam?.join(", ") || "None"}
+                        </TableCell>
+                        <TableCell>
+                          {diagnosis.current_medications?.join(", ") || "None"}
+                        </TableCell>
+                        <TableCell>
+                          {diagnosis.laboratory_tests?.join(", ") || "None"}
+                        </TableCell>
+                        <TableCell>
+                          {diagnosis.teaching_provided?.join(", ") || "None"}
+                        </TableCell>
+                        <TableCell>
+                          {diagnosis.medications?.join(", ") || "None"}
+                        </TableCell>
+                        <TableCell>
+                          {diagnosis.exclusion_group || "None"}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </Grid>
 
         <Grid item xs={12}>

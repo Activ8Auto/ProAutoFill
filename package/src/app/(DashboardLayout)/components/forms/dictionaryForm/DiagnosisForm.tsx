@@ -157,8 +157,9 @@ export default function DiagnosisForm({
   const handleAddDiagnosis = async (diagnosis: DiagnosisEntry) => {
     try {
       const submission = { ...diagnosis, user_id: TEMP_USER_ID };
-      const newDiagnosis = await createDiagnosis(submission);
-      setDiagnoses((prev) => [...prev, newDiagnosis]);
+      await createDiagnosis(submission);
+      const updatedDiagnoses = await fetchDiagnosisOptions();
+      setDiagnoses(updatedDiagnoses);
     } catch (err) {
       console.error("Error creating diagnosis:", err);
     }
