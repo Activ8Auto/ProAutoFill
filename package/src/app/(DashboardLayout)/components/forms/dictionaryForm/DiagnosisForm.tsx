@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import createEmotionCache from "./createEmotionCache";
-
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
@@ -28,7 +27,7 @@ import {
 } from "@/lib/api";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
 import { DiagnosisEntry } from "@/types/diagnosis";
-import { useAuthStore } from "@/store/authStore"; // Import Zustand auth store
+import { useAuthStore } from "@/store/authStore";
 
 // Default diagnosis form values
 const defaultForm: DiagnosisEntry = {
@@ -117,25 +116,30 @@ export default function DiagnosisForm({
   editMode = false,
   onCancelEdit,
 }: Props) {
-  const { token, userId } = useAuthStore(); // Get token from Zustand store
+  const { token, userId } = useAuthStore();
 
   const [diagnoses, setDiagnoses] = useState<DiagnosisEntry[]>([]);
   const [form, setForm] = useState<DiagnosisEntry>(initialData ?? defaultForm);
-  const [defaultPhysicalExams, setDefaultPhysicalExams] = useState<string[]>(
-    []
-  );
+  const [defaultPhysicalExams, setDefaultPhysicalExams] = useState<string[]>([]);
   const [defaultLabs, setDefaultLabs] = useState<string[]>([]);
   const [defaultTeaching, setDefaultTeaching] = useState<string[]>([]);
   const [defaultMeds, setDefaultMeds] = useState<string[]>([]);
-  console.log("Token in DiagnosisForm:", token);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true); // Set to true only after client-side mount
+  }, []);
+
+  // console.log("Token in DiagnosisForm:", token);
+
   useEffect(() => {
     if (!token || !userId) return; // Wait for token to be available
 
     const fetchData = async () => {
       try {
         const [diagnosisData, defaults] = await Promise.all([
-          fetchDiagnosisOptions(token), // Pass token to fetch diagnoses
-          fetchUserDefaults(userId), // Use userId for defaults
+          fetchDiagnosisOptions(token),
+          fetchUserDefaults(userId),
         ]);
         setDiagnoses(diagnosisData);
         const defaultValues = defaults.default_values || {};
@@ -159,17 +163,16 @@ export default function DiagnosisForm({
     };
     fetchData();
   }, [editMode, token, userId]);
-
+  const sorted = [...diagnoses].sort((a, b) => a.name.localeCompare(b.name));
   const handleAddDiagnosis = async (diagnosis: DiagnosisEntry) => {
     if (!token || !userId) {
       console.error("No authentication token available");
       return;
     }
     try {
-      // No need to set user_id manually; backend uses the authenticated user from token
       const newDiagnosis = await createDiagnosis(diagnosis, token);
       setDiagnoses((prev) => [...prev, newDiagnosis]);
-      onAdd(newDiagnosis); // Notify parent component
+      onAdd(newDiagnosis);
     } catch (err) {
       console.error("Error creating diagnosis:", err);
     }
@@ -181,7 +184,6 @@ export default function DiagnosisForm({
       return;
     }
     try {
-      // Pass token so that the Authorization header is included
       await deleteDiagnosis(id, token);
       setDiagnoses((prev) => prev.filter((d) => d.id !== id));
     } catch (err) {
@@ -210,7 +212,7 @@ export default function DiagnosisForm({
       laboratory_tests: defaultLabs,
       teaching_provided: defaultTeaching,
       medications: [],
-      exclusion_group: "", // Backend sets this
+      exclusion_group: "",
     });
   };
 
@@ -223,7 +225,7 @@ export default function DiagnosisForm({
       await updateUserDefaults(
         { defaultPhysicalExams: form.physical_exam },
         userId,
-        token // Pass the token here
+        token
       );
       setDefaultPhysicalExams(form.physical_exam);
       console.log("Default physical exams updated");
@@ -286,6 +288,7 @@ export default function DiagnosisForm({
     }
   };
 
+  // Ensure all logic is closed before the return
   return (
     <Box>
       <Typography variant="h6" mb={2}>
@@ -348,8 +351,10 @@ export default function DiagnosisForm({
               variant="outlined"
               onClick={handleSetDefaultPhysicalExams}
               disabled={
+                !isMounted ||
+                !token ||
                 JSON.stringify(form.physical_exam) ===
-                JSON.stringify(defaultPhysicalExams)
+                  JSON.stringify(defaultPhysicalExams)
               }
             >
               Set as Default for Future Entries
@@ -396,8 +401,10 @@ export default function DiagnosisForm({
               variant="outlined"
               onClick={handleSetDefaultLabs}
               disabled={
+                !isMounted ||
+                !token ||
                 JSON.stringify(form.laboratory_tests) ===
-                JSON.stringify(defaultLabs)
+                  JSON.stringify(defaultLabs)
               }
             >
               Set as Default for Future Entries
@@ -444,8 +451,10 @@ export default function DiagnosisForm({
               variant="outlined"
               onClick={handleSetDefaultTeaching}
               disabled={
+                !isMounted ||
+                !token ||
                 JSON.stringify(form.teaching_provided) ===
-                JSON.stringify(defaultTeaching)
+                  JSON.stringify(defaultTeaching)
               }
             >
               Set as Default for Future Entries
@@ -492,8 +501,10 @@ export default function DiagnosisForm({
               variant="outlined"
               onClick={handleSetDefaultMeds}
               disabled={
+                !isMounted ||
+                !token ||
                 JSON.stringify(form.current_medications) ===
-                JSON.stringify(defaultMeds)
+                  JSON.stringify(defaultMeds)
               }
             >
               Set as Default for Future Entries
@@ -526,7 +537,11 @@ export default function DiagnosisForm({
         </Grid>
 
         <Grid item xs={12}>
-          <Button variant="contained" onClick={handleSubmit} disabled={!token}>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={!isMounted || !token || !form.name || !form.icd_code}
+          >
             {editMode ? "Update Diagnosis" : "Add Diagnosis Item"}
           </Button>
           {editMode && onCancelEdit && (
@@ -543,76 +558,51 @@ export default function DiagnosisForm({
       {diagnoses.length === 0 ? (
         <Typography>No diagnoses added yet.</Typography>
       ) : (
-        <TableContainer component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <strong>Name</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>ICD Code</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Physical Exams</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Current Meds</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Lab Tests</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Teaching</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Prescribed Meds</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Exclusion Group</strong>
-                </TableCell>
+        <TableContainer component={Paper} elevation={1}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>ICD Code</strong></TableCell>
+              <TableCell><strong>Exclusion Group</strong></TableCell>
+              <TableCell><strong>Current Meds</strong></TableCell>
+              <TableCell><strong>Prescribed Meds</strong></TableCell>
+              <TableCell><strong>Physical Exams</strong></TableCell>
+              <TableCell><strong>Lab Tests</strong></TableCell>
+              <TableCell><strong>Teaching</strong></TableCell>
+              <TableCell align="center"><strong>Actions</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sorted.map((entry, idx) => (
+              <TableRow key={idx}>
+                <TableCell>{entry.name}</TableCell>
+                <TableCell>{entry.icd_code}</TableCell>
+                <TableCell>{entry.exclusion_group || "None"}</TableCell>
+                <TableCell>{entry.current_medications?.join(", ") || "None"}</TableCell>
+                <TableCell>{entry.medications?.join(", ") || "None"}</TableCell>
+                <TableCell>{entry.physical_exam?.join(", ") || "None"}</TableCell>
+                <TableCell>{entry.laboratory_tests?.join(", ") || "None"}</TableCell>
+                <TableCell>{entry.teaching_provided?.join(", ") || "None"}</TableCell>
                 <TableCell align="center">
-                  <strong>Actions</strong>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {diagnoses.map((diagnosis) => (
-                <TableRow key={diagnosis.id}>
-                  <TableCell>{diagnosis.name}</TableCell>
-                  <TableCell>{diagnosis.icd_code}</TableCell>
-                  <TableCell>
-                    {(diagnosis.physical_exam ?? []).join(", ") || "None"}
-                  </TableCell>
-                  <TableCell>
-                    {(diagnosis.current_medications ?? []).join(", ") || "None"}
-                  </TableCell>
-                  <TableCell>
-                    {(diagnosis.laboratory_tests ?? []).join(", ") || "None"}
-                  </TableCell>
-                  <TableCell>
-                    {(diagnosis.teaching_provided ?? []).join(", ") || "None"}
-                  </TableCell>
-                  <TableCell>
-                    {(diagnosis.medications ?? []).join(", ") || "None"}
-                  </TableCell>
-                  <TableCell>{diagnosis.exclusion_group || "None"}</TableCell>
-                  <TableCell align="center">
-                    <IconButton
+                  <IconButton onClick={() => onEdit(idx)} size="small">
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
                       edge="end"
                       aria-label="delete"
                       onClick={() => handleDelete(diagnosis.id)}
                       size="small"
-                      disabled={!token}
+                      disabled={!isMounted || !token}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
       )}
     </Box>
   );

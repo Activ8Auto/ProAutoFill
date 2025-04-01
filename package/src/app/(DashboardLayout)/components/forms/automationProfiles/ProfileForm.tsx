@@ -114,6 +114,8 @@ export default function ProfileForm() {
 
     loadDiagnoses();
   }, [token]);
+
+
   const handleSaveDefaults = async () => {
     const defaults = {
       faculty: defaultFaculty,
@@ -159,6 +161,7 @@ export default function ProfileForm() {
     durationOptions: ["30 Minutes", "1 Hour"],
     durationWeights: [80, 20],
   });
+  
   const handleSubmit = async () => {
     // Create a new profile data object without userId
     const newProfileData = {

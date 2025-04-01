@@ -3,6 +3,8 @@
 import { DiagnosisEntry } from "@/types/diagnosis";
 
 export const getProfiles = async (token: string) => {
+  // console.log("Token being sent:", token);
+  // console.log("Authorization header:", `Bearer ${token}`);
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profiles/`, {
     headers: {
       "Content-Type": "application/json",

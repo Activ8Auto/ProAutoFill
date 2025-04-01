@@ -19,11 +19,6 @@ export default function AutomationProfilesPage() {
     (state: AutomationProfileStore) => state.fetchProfiles
   );
 
-  // Fetch profiles from the backend on mount.
-  useEffect(() => {
-    fetchProfiles();
-  }, [fetchProfiles]);
-
   return (
     <Box p={4}>
       <Typography variant="h4" gutterBottom>

@@ -1,20 +1,21 @@
 // store/authStore.ts
 import { create } from "zustand";
 import { jwtDecode } from "jwt-decode";
-
+// store/authStore.ts
 interface AuthState {
   token: string | null;
   userId: string | null;
-  setAuth: (token: string, userId: string) => void;
+  setAuth: (token: string, userId: string) => void; // Update signature
   clearAuth: () => void;
 }
+
 interface TokenPayload {
-  sub: string; // assuming the user id is stored in "sub"
-  // any other claims...
+  sub: string;
+  exp?: number;
 }
+
 export const useAuthStore = create<AuthState>((set) => {
-  const storedToken =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const storedToken = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   let storedUserId: string | null = null;
   if (storedToken) {
     try {
@@ -28,17 +29,11 @@ export const useAuthStore = create<AuthState>((set) => {
   return {
     token: storedToken,
     userId: storedUserId,
-    setAuth: (token: string) => {
-      let userId: string | null = null;
-      try {
-        const decoded = jwtDecode<TokenPayload>(token);
-        userId = decoded.sub;
-      } catch (e) {
-        console.error("Failed to decode token", e);
-      }
+    setAuth: (token: string, userId: string) => {
+      console.log("Setting auth - Token:", token, "UserId:", userId); // Debug
       set({ token, userId });
       localStorage.setItem("token", token);
-      localStorage.setItem("userId", userId ? userId : "");
+      localStorage.setItem("userId", userId);
     },
     clearAuth: () => {
       set({ token: null, userId: null });

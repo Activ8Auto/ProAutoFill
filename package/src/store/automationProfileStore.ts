@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { getProfiles, createProfile, deleteProfile } from "../lib/api";
 import { DiagnosisEntry } from "@/types/diagnosis";
+import { useAuthStore } from "@/store/authStore";
 
 export interface FunctionLevel {
   level: string;
@@ -63,30 +64,48 @@ export const useAutomationProfileStore = create<AutomationProfileStore>(
 
     fetchProfiles: async () => {
       try {
-        const profiles = await getProfiles();
+        const { token } = useAuthStore.getState(); // Get token from auth store
+        if (!token) {
+          console.error("No token available, redirecting to login");
+          window.location.href = "/login";
+          return;
+        }
+        console.log("Fetching profiles with token:", token);
+        const profiles = await getProfiles(token); // Pass token to getProfiles
+        console.log("Fetched profiles:", profiles);
         set({ profiles });
       } catch (error) {
-        console.error("Error fetching profiles", error);
+        console.error("Error fetching profiles:", error);
       }
     },
 
     addProfile: async (profile: AutomationProfile) => {
       try {
-        const newProfile = await createProfile(profile);
+        const { token } = useAuthStore.getState(); // Get token for createProfile
+        if (!token) {
+          console.error("No token available for adding profile");
+          return;
+        }
+        const newProfile = await createProfile(profile, token); // Pass token
         set((state) => ({ profiles: [...state.profiles, newProfile] }));
       } catch (error) {
-        console.error("Error adding profile", error);
+        console.error("Error adding profile:", error);
       }
     },
 
     removeProfile: async (id: string) => {
       try {
-        await deleteProfile(id);
+        const { token } = useAuthStore.getState(); // Get token for deleteProfile
+        if (!token) {
+          console.error("No token available for deleting profile");
+          return;
+        }
+        await deleteProfile(id, token); // Pass token
         set((state) => ({
           profiles: state.profiles.filter((p) => p.id !== id),
         }));
       } catch (error) {
-        console.error("Error deleting profile", error);
+        console.error("Error deleting profile:", error);
       }
     },
 

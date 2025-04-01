@@ -1,3 +1,4 @@
+// src/app/(DashboardLayout)/components/dashboard/RecentRuns.tsx
 "use client";
 
 import React from "react";
@@ -46,20 +47,27 @@ const RecentRuns = () => {
             >
               <ListItemText
                 primary={
-                  <Typography variant="subtitle1" fontWeight={600}>
+                  <Typography variant="subtitle1" fontWeight={600} component="div">
                     Run {index + 1}
                   </Typography>
                 }
                 secondary={
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    component="div" // Ensure Stack renders as div
+                  >
                     <AccessTimeIcon fontSize="small" color="action" />
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" color="textSecondary" component="span">
                       {formatDate(run.date)}
                     </Typography>
                   </Stack>
                 }
+                primaryTypographyProps={{ component: "div" }} // Override default <p> for primary
+                secondaryTypographyProps={{ component: "div" }} // Override default <p> for secondary
               />
-              <Typography variant="body2" fontWeight={500}>
+              <Typography variant="body2" fontWeight={500} component="div">
                 {run.duration}
               </Typography>
             </ListItem>
