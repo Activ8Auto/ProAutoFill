@@ -1,98 +1,75 @@
-import React from "react";
-import {
-  Box,
-  Typography,
-  FormGroup,
-  FormControlLabel,
-  Button,
-  Stack,
-  Checkbox,
-} from "@mui/material";
-import Link from "next/link";
+"use client";
 
-import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
+import { useState } from "react";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { useAuthStore } from "@/store/authStore"; // Import Zustand store
+import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 
-interface loginType {
-  title?: string;
-  subtitle?: JSX.Element | JSX.Element[];
-  subtext?: JSX.Element | JSX.Element[];
+interface AuthLoginProps {
+  subtext?: React.ReactNode;
+  subtitle?: React.ReactNode;
 }
 
-const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
-  <>
-    {title ? (
-      <Typography fontWeight="700" variant="h2" mb={1}>
-        {title}
-      </Typography>
-    ) : null}
+const AuthLogin = ({ subtext, subtitle }: AuthLoginProps) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { setAuth } = useAuthStore(); // Use setAuth from Zustand store
+  const router = useRouter();
 
-    {subtext}
+  const handleLogin = async () => {
+    console.log("Login clicked");
+    try {
+      const res = await fetch("http://127.0.0.1:8000/auth/jwt/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ username: email, password }),
+      });
 
-    <Stack>
-      <Box>
-        <Typography
-          variant="subtitle1"
-          fontWeight={600}
-          component="label"
-          htmlFor="username"
-          mb="5px"
-        >
-          Username
-        </Typography>
-        <CustomTextField variant="outlined" fullWidth />
-      </Box>
-      <Box mt="25px">
-        <Typography
-          variant="subtitle1"
-          fontWeight={600}
-          component="label"
-          htmlFor="password"
-          mb="5px"
-        >
-          Password
-        </Typography>
-        <CustomTextField type="password" variant="outlined" fullWidth />
-      </Box>
-      <Stack
-        justifyContent="space-between"
-        direction="row"
-        alignItems="center"
-        my={2}
-      >
-        <FormGroup>
-          <FormControlLabel
-            control={<Checkbox defaultChecked />}
-            label="Remeber this Device"
-          />
-        </FormGroup>
-        <Typography
-          component={Link}
-          href="/"
-          fontWeight="500"
-          sx={{
-            textDecoration: "none",
-            color: "primary.main",
-          }}
-        >
-          Forgot Password ?
-        </Typography>
-      </Stack>
-    </Stack>
+      if (!res.ok) throw new Error("Login failed");
+
+      const data = await res.json();
+
+      const decoded = jwtDecode<{ sub: string }>(data.access_token);
+      setAuth(data.access_token, decoded.sub); // ✅ Fix is here
+
+      router.push("/");
+    } catch (err) {
+      setError("Invalid email or password");
+      console.error(err);
+    }
+  };
+
+  return (
     <Box>
-      <Button
-        color="primary"
-        variant="contained"
-        size="large"
+      {subtext}
+      <TextField
+        label="Email"
         fullWidth
-        component={Link}
-        href="/"
-        type="submit"
-      >
-        Sign In
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        label="Password"
+        type="password"
+        fullWidth
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      {error && (
+        <Typography color="error" mb={2}>
+          {error}
+        </Typography>
+      )}
+      <Button variant="contained" fullWidth onClick={handleLogin}>
+        Login
       </Button>
+      {subtitle}
     </Box>
-    {subtitle}
-  </>
-);
+  );
+};
 
 export default AuthLogin;

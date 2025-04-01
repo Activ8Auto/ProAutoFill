@@ -14,7 +14,7 @@ class DiagnosisRef(BaseModel):
     id: UUID
 
 class AutomationProfileSchema(BaseModel):
-    user_id: UUID = Field(..., alias="userId")
+    user_id: Optional[UUID] = Field(None, alias="userId")
     target_hours: int = Field(..., alias="targetHours")
     selected_date: str = Field(..., alias="selectedDate")
     min_wait: int = Field(..., alias="minWait")

@@ -1,12 +1,15 @@
 "use client";
+
 import Link from "next/link";
 import { Grid, Box, Card, Stack, Typography } from "@mui/material";
-// components
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import AuthLogin from "../auth/AuthLogin";
+import { useAuthStore } from "@/store/authStore"; // Import Zustand store
 
 const Login2 = () => {
+  const { token, clearToken } = useAuthStore(); // Use Zustand store
+
   return (
     <PageContainer title="Login" description="this is Login page">
       <Box
@@ -70,19 +73,36 @@ const Login2 = () => {
                       variant="h6"
                       fontWeight="500"
                     >
-                      New to Modernize?
+                      {token ? "Ready to go?" : "New to Modernize?"}
                     </Typography>
-                    <Typography
-                      component={Link}
-                      href="/authentication/register"
-                      fontWeight="500"
-                      sx={{
-                        textDecoration: "none",
-                        color: "primary.main",
-                      }}
-                    >
-                      Create an account
-                    </Typography>
+                    {token ? (
+                      <Typography
+                        component="button"
+                        onClick={clearToken}
+                        fontWeight="500"
+                        sx={{
+                          textDecoration: "none",
+                          color: "primary.main",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Logout
+                      </Typography>
+                    ) : (
+                      <Typography
+                        component={Link}
+                        href="/authentication/register"
+                        fontWeight="500"
+                        sx={{
+                          textDecoration: "none",
+                          color: "primary.main",
+                        }}
+                      >
+                        Create an account
+                      </Typography>
+                    )}
                   </Stack>
                 }
               />
@@ -93,4 +113,5 @@ const Login2 = () => {
     </PageContainer>
   );
 };
+
 export default Login2;

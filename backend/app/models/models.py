@@ -1,21 +1,21 @@
 # backend/app/models/models.py
 from tortoise import fields, models
 
+
 class User(models.Model):
     id = fields.UUIDField(pk=True)
-    email = fields.CharField(max_length=255, unique=True)
-    password_hash = fields.CharField(max_length=255)
+    email = fields.CharField(max_length=255, unique=True, index=True, null=False)
+    hashed_password = fields.CharField(max_length=255, null=False)
     is_paid_user = fields.BooleanField(default=False)
-    
-    # New JSON field for storing default settings
-    default_values = fields.JSONField(null=True)
+    default_values = fields.JSONField(null=True)  # Added to match table
+    is_active = fields.BooleanField(default=True)
+    is_superuser = fields.BooleanField(default=False)
+    is_verified = fields.BooleanField(default=False)
 
-    profiles: fields.ReverseRelation["AutomationProfile"]
+    diagnoses = fields.ReverseRelation["DiagnosisEntry"]
 
     class Meta:
         table = "users"
-
-
 class AutomationProfile(models.Model):
     id = fields.UUIDField(pk=True)
     user = fields.ForeignKeyField("models.User", related_name="profiles")

@@ -1,46 +1,72 @@
-import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import Link  from 'next/link';
+"use client";
 
-import CustomTextField from '@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField';
-import { Stack } from '@mui/system';
+import { useState } from "react";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 
-interface registerType {
-    title?: string;
-    subtitle?: JSX.Element | JSX.Element[];
-    subtext?: JSX.Element | JSX.Element[];
+interface AuthRegisterProps {
+  subtext?: React.ReactNode;
+  subtitle?: React.ReactNode;
+}
+
+const AuthRegister = ({ subtext, subtitle }: AuthRegisterProps) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  async function handleRegister(event: React.FormEvent) {
+    event.preventDefault(); // Prevent default form submission
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }), // Only send email and password
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Registration successful:", data);
+    } catch (error) {
+      console.error("TypeError: Failed to fetch", error);
+    }
   }
 
-const AuthRegister = ({ title, subtitle, subtext }: registerType) => (
-    <>
-        {title ? (
-            <Typography fontWeight="700" variant="h2" mb={1}>
-                {title}
-            </Typography>
-        ) : null}
-
-        {subtext}
-
-        <Box>
-            <Stack mb={3}>
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='name' mb="5px">Name</Typography>
-                <CustomTextField id="name" variant="outlined" fullWidth />
-
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='email' mb="5px" mt="25px">Email Address</Typography>
-                <CustomTextField id="email" variant="outlined" fullWidth />
-
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='password' mb="5px" mt="25px">Password</Typography>
-                <CustomTextField id="password" variant="outlined" fullWidth />
-            </Stack>
-            <Button color="primary" variant="contained" size="large" fullWidth component={Link} href="/authentication/login">
-                Sign Up
-            </Button>
-        </Box>
-        {subtitle}
-    </>
-);
+  return (
+    <Box>
+      {subtext}
+      <TextField
+        label="Email"
+        fullWidth
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      <TextField
+        label="Password"
+        type="password"
+        fullWidth
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      {error && (
+        <Typography color="error" mb={2}>
+          {error}
+        </Typography>
+      )}
+      <Button variant="contained" fullWidth onClick={handleRegister}>
+        Register
+      </Button>
+      {subtitle}
+    </Box>
+  );
+};
 
 export default AuthRegister;

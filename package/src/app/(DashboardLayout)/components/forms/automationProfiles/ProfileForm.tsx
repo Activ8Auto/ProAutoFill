@@ -32,8 +32,10 @@ import { createProfile } from "@/lib/api";
 import { DiagnosisEntry } from "@/types/diagnosis";
 import DiagnosisSelector from "@/app/(DashboardLayout)/components/forms/dictionaryForm/DiagnosisSelector";
 import { fetchDiagnosisOptions } from "@/lib/api";
-const TEMP_USER_ID = "a14ef32c-bc89-4df9-8435-9a7b5e07c7cd";
+import { useAuthStore } from "@/store/authStore";
+
 export default function ProfileForm() {
+  const { token, userId } = useAuthStore();
   const addProfile = useAutomationProfileStore((state) => state.addProfile);
 
   const [rotationOptions, setRotationOptions] = useState([
@@ -100,7 +102,10 @@ export default function ProfileForm() {
   useEffect(() => {
     const loadDiagnoses = async () => {
       try {
-        const data = await fetchDiagnosisOptions();
+        if (!token) {
+          throw new Error("No token available");
+        }
+        const data = await fetchDiagnosisOptions(token);
         setDiagnosisOptions(data);
       } catch (err) {
         console.error("Failed to fetch diagnosis options:", err);
@@ -108,7 +113,7 @@ export default function ProfileForm() {
     };
 
     loadDiagnoses();
-  }, []);
+  }, [token]);
   const handleSaveDefaults = async () => {
     const defaults = {
       faculty: defaultFaculty,
@@ -117,7 +122,7 @@ export default function ProfileForm() {
     };
 
     try {
-      await updateUserDefaults(defaults, userId); // replace with actual user ID
+      await updateUserDefaults(defaults, userId, token); // replace with actual user ID
       alert("Defaults saved!");
     } catch (err) {
       console.error("Failed to save defaults:", err);
@@ -155,8 +160,8 @@ export default function ProfileForm() {
     durationWeights: [80, 20],
   });
   const handleSubmit = async () => {
-    const newProfile: AutomationProfile = {
-      id: crypto.randomUUID(),
+    // Create a new profile data object without userId
+    const newProfileData = {
       name: form.name,
       targetHours: Number(form.targetHours),
       selectedDate: form.selectedDate,
@@ -205,12 +210,12 @@ export default function ProfileForm() {
       durationWeights: form.durationWeights,
       preceptor: form.preceptor,
       diagnoses: selectedDiagnoses,
-      userId: TEMP_USER_ID,
     };
-    console.log("Sending profile data:", newProfile);
+
+    console.log("Sending profile data:", newProfileData);
 
     try {
-      const savedProfile = await createProfile(newProfile);
+      const savedProfile = await createProfile(newProfileData, token!);
       console.log("Server response:", savedProfile);
       addProfile(savedProfile);
       alert("Profile saved!");

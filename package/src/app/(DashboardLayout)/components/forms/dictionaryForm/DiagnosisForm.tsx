@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import createEmotionCache from "./createEmotionCache";
+
 import {
   Box,
   Button,
@@ -26,9 +28,9 @@ import {
 } from "@/lib/api";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
 import { DiagnosisEntry } from "@/types/diagnosis";
+import { useAuthStore } from "@/store/authStore"; // Import Zustand auth store
 
-const TEMP_USER_ID = "a14ef32c-bc89-4df9-8435-9a7b5e07c7cd";
-
+// Default diagnosis form values
 const defaultForm: DiagnosisEntry = {
   name: "",
   icd_code: "",
@@ -38,7 +40,7 @@ const defaultForm: DiagnosisEntry = {
   teaching_provided: [],
   medications: [],
   exclusion_group: "",
-  user_id: TEMP_USER_ID,
+  user_id: "", // Backend will set this based on token
 };
 
 const physicalExamOptions = [
@@ -115,6 +117,8 @@ export default function DiagnosisForm({
   editMode = false,
   onCancelEdit,
 }: Props) {
+  const { token, userId } = useAuthStore(); // Get token from Zustand store
+
   const [diagnoses, setDiagnoses] = useState<DiagnosisEntry[]>([]);
   const [form, setForm] = useState<DiagnosisEntry>(initialData ?? defaultForm);
   const [defaultPhysicalExams, setDefaultPhysicalExams] = useState<string[]>(
@@ -123,13 +127,15 @@ export default function DiagnosisForm({
   const [defaultLabs, setDefaultLabs] = useState<string[]>([]);
   const [defaultTeaching, setDefaultTeaching] = useState<string[]>([]);
   const [defaultMeds, setDefaultMeds] = useState<string[]>([]);
-
+  console.log("Token in DiagnosisForm:", token);
   useEffect(() => {
+    if (!token || !userId) return; // Wait for token to be available
+
     const fetchData = async () => {
       try {
         const [diagnosisData, defaults] = await Promise.all([
-          fetchDiagnosisOptions(),
-          fetchUserDefaults(TEMP_USER_ID),
+          fetchDiagnosisOptions(token), // Pass token to fetch diagnoses
+          fetchUserDefaults(userId), // Use userId for defaults
         ]);
         setDiagnoses(diagnosisData);
         const defaultValues = defaults.default_values || {};
@@ -152,22 +158,31 @@ export default function DiagnosisForm({
       }
     };
     fetchData();
-  }, [editMode]);
+  }, [editMode, token, userId]);
 
   const handleAddDiagnosis = async (diagnosis: DiagnosisEntry) => {
+    if (!token || !userId) {
+      console.error("No authentication token available");
+      return;
+    }
     try {
-      const submission = { ...diagnosis, user_id: TEMP_USER_ID };
-      await createDiagnosis(submission);
-      const updatedDiagnoses = await fetchDiagnosisOptions();
-      setDiagnoses(updatedDiagnoses);
+      // No need to set user_id manually; backend uses the authenticated user from token
+      const newDiagnosis = await createDiagnosis(diagnosis, token);
+      setDiagnoses((prev) => [...prev, newDiagnosis]);
+      onAdd(newDiagnosis); // Notify parent component
     } catch (err) {
       console.error("Error creating diagnosis:", err);
     }
   };
 
   const handleDelete = async (id: string) => {
+    if (!token) {
+      console.error("No authentication token available");
+      return;
+    }
     try {
-      await deleteDiagnosis(id);
+      // Pass token so that the Authorization header is included
+      await deleteDiagnosis(id, token);
       setDiagnoses((prev) => prev.filter((d) => d.id !== id));
     } catch (err) {
       console.error("Error deleting diagnosis:", err);
@@ -195,16 +210,20 @@ export default function DiagnosisForm({
       laboratory_tests: defaultLabs,
       teaching_provided: defaultTeaching,
       medications: [],
-      exclusion_group: "",
-      user_id: TEMP_USER_ID,
+      exclusion_group: "", // Backend sets this
     });
   };
 
   const handleSetDefaultPhysicalExams = async () => {
+    if (!token) {
+      console.error("No authentication token available");
+      return;
+    }
     try {
       await updateUserDefaults(
         { defaultPhysicalExams: form.physical_exam },
-        TEMP_USER_ID
+        userId,
+        token // Pass the token here
       );
       setDefaultPhysicalExams(form.physical_exam);
       console.log("Default physical exams updated");
@@ -214,10 +233,15 @@ export default function DiagnosisForm({
   };
 
   const handleSetDefaultLabs = async () => {
+    if (!token) {
+      console.error("No authentication token available");
+      return;
+    }
     try {
       await updateUserDefaults(
         { defaultLabs: form.laboratory_tests },
-        TEMP_USER_ID
+        userId,
+        token
       );
       setDefaultLabs(form.laboratory_tests);
       console.log("Default laboratory tests updated");
@@ -227,10 +251,15 @@ export default function DiagnosisForm({
   };
 
   const handleSetDefaultTeaching = async () => {
+    if (!token) {
+      console.error("No authentication token available");
+      return;
+    }
     try {
       await updateUserDefaults(
         { defaultTeaching: form.teaching_provided },
-        TEMP_USER_ID
+        userId,
+        token
       );
       setDefaultTeaching(form.teaching_provided);
       console.log("Default teaching updated");
@@ -240,10 +269,15 @@ export default function DiagnosisForm({
   };
 
   const handleSetDefaultMeds = async () => {
+    if (!token) {
+      console.error("No authentication token available");
+      return;
+    }
     try {
       await updateUserDefaults(
         { defaultMeds: form.current_medications },
-        TEMP_USER_ID
+        userId,
+        token
       );
       setDefaultMeds(form.current_medications);
       console.log("Default current medications updated");
@@ -300,7 +334,7 @@ export default function DiagnosisForm({
                 value={opt}
                 sx={{
                   backgroundColor: defaultPhysicalExams.includes(opt)
-                    ? "lightgrey" // Highlights default options
+                    ? "lightgrey"
                     : "inherit",
                 }}
               >
@@ -348,7 +382,7 @@ export default function DiagnosisForm({
                 value={opt}
                 sx={{
                   backgroundColor: defaultLabs.includes(opt)
-                    ? "lightgrey" // Highlights default options
+                    ? "lightgrey"
                     : "inherit",
                 }}
               >
@@ -396,7 +430,7 @@ export default function DiagnosisForm({
                 value={opt}
                 sx={{
                   backgroundColor: defaultTeaching.includes(opt)
-                    ? "lightgrey" // Highlights default options
+                    ? "lightgrey"
                     : "inherit",
                 }}
               >
@@ -444,7 +478,7 @@ export default function DiagnosisForm({
                 value={opt}
                 sx={{
                   backgroundColor: defaultMeds.includes(opt)
-                    ? "lightgrey" // Highlights default options
+                    ? "lightgrey"
                     : "inherit",
                 }}
               >
@@ -492,7 +526,7 @@ export default function DiagnosisForm({
         </Grid>
 
         <Grid item xs={12}>
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained" onClick={handleSubmit} disabled={!token}>
             {editMode ? "Update Diagnosis" : "Add Diagnosis Item"}
           </Button>
           {editMode && onCancelEdit && (
@@ -548,29 +582,19 @@ export default function DiagnosisForm({
                   <TableCell>{diagnosis.name}</TableCell>
                   <TableCell>{diagnosis.icd_code}</TableCell>
                   <TableCell>
-                    {diagnosis.physical_exam
-                      ? diagnosis.physical_exam.join(", ")
-                      : "None"}
+                    {(diagnosis.physical_exam ?? []).join(", ") || "None"}
                   </TableCell>
                   <TableCell>
-                    {diagnosis.current_medications
-                      ? diagnosis.current_medications.join(", ")
-                      : "None"}
+                    {(diagnosis.current_medications ?? []).join(", ") || "None"}
                   </TableCell>
                   <TableCell>
-                    {diagnosis.laboratory_tests
-                      ? diagnosis.laboratory_tests.join(", ")
-                      : "None"}
+                    {(diagnosis.laboratory_tests ?? []).join(", ") || "None"}
                   </TableCell>
                   <TableCell>
-                    {diagnosis.teaching_provided
-                      ? diagnosis.teaching_provided.join(", ")
-                      : "None"}
+                    {(diagnosis.teaching_provided ?? []).join(", ") || "None"}
                   </TableCell>
                   <TableCell>
-                    {diagnosis.medications
-                      ? diagnosis.medications.join(", ")
-                      : "None"}
+                    {(diagnosis.medications ?? []).join(", ") || "None"}
                   </TableCell>
                   <TableCell>{diagnosis.exclusion_group || "None"}</TableCell>
                   <TableCell align="center">
@@ -579,6 +603,7 @@ export default function DiagnosisForm({
                       aria-label="delete"
                       onClick={() => handleDelete(diagnosis.id)}
                       size="small"
+                      disabled={!token}
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
