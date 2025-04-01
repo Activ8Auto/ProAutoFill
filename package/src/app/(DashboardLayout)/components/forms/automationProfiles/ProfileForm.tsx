@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import ProfileCard from "@/app/(DashboardLayout)/components/forms/automationProfiles/ProfileCard";
 import {
   Box,
   Button,
@@ -36,25 +38,46 @@ import { useAuthStore } from "@/store/authStore";
 
 export default function ProfileForm() {
   const { token, userId } = useAuthStore();
+  const profiles = useAutomationProfileStore(
+    (state: AutomationProfileStore) => state.profiles
+  );
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-info`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        const { profile_info } = await res.json();
+        if (profile_info) {
+          setForm((prev) => ({
+            ...prev,
+            preceptor: profile_info.preceptor || "",
+            faculty: profile_info.faculty || "",
+            rotation: profile_info.scheduledRotation || "",
+            dNumber: profile_info.dNumber || "",
+            chamberlainPassword: profile_info.chamberlainPassword || "",
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to load user profile_info", err);
+      }
+    };
+  
+    if (token && userId) {
+      fetchUserProfile();
+    }
+  }, [token, userId]);
   const addProfile = useAutomationProfileStore((state) => state.addProfile);
 
-  const [rotationOptions, setRotationOptions] = useState([
-    "NR605 - Outpatient Psychiatry",
-    "NR606 - Inpatient Psychiatry",
-    "NR607 - Telehealth Mental Health",
-  ]);
+  const fetchProfiles = useAutomationProfileStore((state) => state.fetchProfiles);
 
-  const [facultyOptions, setFacultyOptions] = useState([
-    "Kimberly Sena (Faculty)",
-    "Dr. Robert Lee (Faculty)",
-    "Angel Julmy (Preceptor)",
-  ]);
-
-  const [preceptorList, setPreceptorList] = useState([
-    "Angel Julmy (Preceptor)",
-    "Laura Geller (Preceptor)",
-    "Joseph Santiago (Preceptor)",
-  ]);
+  useEffect(() => {
+    if (token) {
+      fetchProfiles(token);
+    }
+  }, [token, fetchProfiles]);
 
   const [selectedDiagnoses, setSelectedDiagnoses] = useState<DiagnosisEntry[]>(
     []
@@ -151,6 +174,8 @@ export default function ProfileForm() {
     gender: "",
     race: "",
     complexity: "",
+    dNumber: "",                 
+    chamberlainPassword: "", 
     ageRanges: [], // NEW
     studentFunctionWeights: [
       { level: "100% student", weight: 25 },
@@ -161,7 +186,7 @@ export default function ProfileForm() {
     durationOptions: ["30 Minutes", "1 Hour"],
     durationWeights: [80, 20],
   });
-  
+
   const handleSubmit = async () => {
     // Create a new profile data object without userId
     const newProfileData = {
@@ -213,6 +238,8 @@ export default function ProfileForm() {
       durationWeights: form.durationWeights,
       preceptor: form.preceptor,
       diagnoses: selectedDiagnoses,
+      dNumber: form.dNumber,
+     chamberlainPassword: form.chamberlainPassword,
     };
 
     console.log("Sending profile data:", newProfileData);
@@ -222,6 +249,8 @@ export default function ProfileForm() {
       console.log("Server response:", savedProfile);
       addProfile(savedProfile);
       alert("Profile saved!");
+      await createProfile(newProfileData, token!);
+await fetchProfiles(token);
     } catch (err) {
       console.error("Failed to save profile:", err);
     }
@@ -337,74 +366,73 @@ export default function ProfileForm() {
           </Box>
         </Grid>
 
-        {["rotation", "faculty"].map((field) => (
-          <Grid item xs={12} key={field}>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              mb={1}
-            >
-              <Typography>
-                {field === "rotation" ? "Scheduled Rotation" : "Faculty"}
-              </Typography>
-              <Box>
-                <Button
-                  size="small"
-                  onClick={() => {
-                    if (field === "rotation") setDefaultRotation(form.rotation);
-                    if (field === "faculty") setDefaultFaculty(form.faculty);
-                  }}
-                >
-                  Set as Default
-                </Button>
-              </Box>
-            </Box>
-            <CustomTextField
-              select
-              fullWidth
-              value={form[field] as string}
-              onChange={(e) => handleChange(field, e.target.value)}
-            >
-              {(field === "rotation" ? rotationOptions : facultyOptions).map(
-                (opt) => (
-                  <MenuItem key={opt} value={opt}>
-                    {opt}
-                  </MenuItem>
-                )
-              )}
-            </CustomTextField>
-          </Grid>
-        ))}
+        {["rotation", "faculty", "preceptor"].map((field) => (
+  <Grid item xs={12} key={field}>
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      mb={1}
+    >
+      <Typography>
+        {field === "rotation"
+          ? "Scheduled Rotation"
+          : field === "faculty"
+          ? "Faculty"
+          : "Preceptor"}
+      </Typography>
+      {form[field] && (
+        <Button
+          size="small"
+          onClick={() => {
+            if (field === "rotation") setDefaultRotation(form.rotation);
+            if (field === "faculty") setDefaultFaculty(form.faculty);
+            if (field === "preceptor") setDefaultPreceptor(form.preceptor);
+          }}
+        >
+          Set as Default
+        </Button>
+      )}
+    </Box>
 
-        <Grid item xs={12}>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            mb={1}
+    {form[field] ? (
+      <Typography fontWeight={500} fontSize="1.1rem">
+        {form[field]}
+      </Typography>
+    ) : (
+      <Box textAlign="center" mt={2}>
+        <Typography
+          color="error"
+          fontSize="1.2rem"
+          fontWeight="bold"
+          textAlign="center"
+        >
+          No{" "}
+          {field === "rotation"
+            ? "Scheduled Rotation"
+            : field === "faculty"
+            ? "Faculty"
+            : "Preceptor"}{" "}
+          set.
+          <br />
+          Please update this in your{" "}
+          <Link
+            href="/my-profile"
+            style={{
+              color: "#d32f2f",
+              fontWeight: "bold",
+              textDecoration: "underline",
+            }}
           >
-            <Typography>Preceptor</Typography>
-            <Button
-              size="small"
-              onClick={() => setDefaultPreceptor(form.preceptor)}
-            >
-              Set as Default
-            </Button>
-          </Box>
-          <CustomTextField
-            select
-            fullWidth
-            value={form.preceptor}
-            onChange={(e) => handleChange("preceptor", e.target.value)}
-          >
-            {preceptorList.map((opt) => (
-              <MenuItem key={opt} value={opt}>
-                {opt}
-              </MenuItem>
-            ))}
-          </CustomTextField>
-        </Grid>
+            My Profile
+          </Link>{" "}
+          page.
+        </Typography>
+      </Box>
+    )}
+  </Grid>
+))}
+       
 
         <Grid item xs={12}>
           <Typography variant="subtitle1" gutterBottom>
@@ -673,6 +701,32 @@ export default function ProfileForm() {
             </Button>
           </Box>
         </Grid>
+        <Box mt={6}>
+        <Typography variant="h5" gutterBottom>
+          📂 Your Saved Profiles
+        </Typography>
+
+        {profiles.length === 0 ? (
+          <Typography color="text.secondary">
+            No profiles yet. Go make one!
+          </Typography>
+        ) : (
+          <Box
+            display="grid"
+            gridTemplateColumns={{
+              xs: "1fr",
+              md: "1fr 1fr",
+              lg: "1fr 1fr 1fr",
+            }}
+            gap={3}
+          >
+            {profiles.map((profile: AutomationProfile) => (
+              <ProfileCard key={profile.id} profile={profile} />
+            ))}
+          </Box>
+        )}
+      </Box>
+    
       </Grid>
     </Box>
   );

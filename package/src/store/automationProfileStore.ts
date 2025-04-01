@@ -46,6 +46,8 @@ export interface AutomationProfile {
     range: string;
     weight: number;
   }[];
+  dNumber?: string; // Optional, from profile_info
+  chamberlainPassword?: string;
 }
 
 export interface AutomationProfileStore {

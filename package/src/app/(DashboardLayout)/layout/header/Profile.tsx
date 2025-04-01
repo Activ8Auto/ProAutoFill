@@ -63,12 +63,14 @@ const Profile = () => {
           },
         }}
       >
-        <MenuItem>
-          <ListItemIcon>
-            <IconUser width={20} />
-          </ListItemIcon>
-          <ListItemText>My Profile</ListItemText>
-        </MenuItem>
+        <Link href="/account" passHref legacyBehavior>
+  <MenuItem component="a" onClick={handleClose2}>
+    <ListItemIcon>
+      <IconUser width={20} />
+    </ListItemIcon>
+    <ListItemText>My Profile</ListItemText>
+  </MenuItem>
+</Link>
         <MenuItem>
           <ListItemIcon>
             <IconMail width={20} />
