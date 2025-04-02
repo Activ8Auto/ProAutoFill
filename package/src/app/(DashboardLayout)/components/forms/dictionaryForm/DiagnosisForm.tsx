@@ -39,7 +39,7 @@ const defaultForm: DiagnosisEntry = {
   teaching_provided: [],
   medications: [],
   exclusion_group: "",
-  user_id: "", // Backend will set this based on token
+  user_id: "", 
 };
 
 const physicalExamOptions = [
@@ -124,11 +124,9 @@ export default function DiagnosisForm({
   const [defaultLabs, setDefaultLabs] = useState<string[]>([]);
   const [defaultTeaching, setDefaultTeaching] = useState<string[]>([]);
   const [defaultMeds, setDefaultMeds] = useState<string[]>([]);
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true); // Set to true only after client-side mount
-  }, []);
+
+
 
   // console.log("Token in DiagnosisForm:", token);
 
@@ -350,12 +348,7 @@ export default function DiagnosisForm({
               size="small"
               variant="outlined"
               onClick={handleSetDefaultPhysicalExams}
-              disabled={
-                !isMounted ||
-                !token ||
-                JSON.stringify(form.physical_exam) ===
-                  JSON.stringify(defaultPhysicalExams)
-              }
+              
             >
               Set as Default for Future Entries
             </Button>
@@ -400,12 +393,7 @@ export default function DiagnosisForm({
               size="small"
               variant="outlined"
               onClick={handleSetDefaultLabs}
-              disabled={
-                !isMounted ||
-                !token ||
-                JSON.stringify(form.laboratory_tests) ===
-                  JSON.stringify(defaultLabs)
-              }
+              
             >
               Set as Default for Future Entries
             </Button>
@@ -450,12 +438,7 @@ export default function DiagnosisForm({
               size="small"
               variant="outlined"
               onClick={handleSetDefaultTeaching}
-              disabled={
-                !isMounted ||
-                !token ||
-                JSON.stringify(form.teaching_provided) ===
-                  JSON.stringify(defaultTeaching)
-              }
+              
             >
               Set as Default for Future Entries
             </Button>
@@ -500,12 +483,7 @@ export default function DiagnosisForm({
               size="small"
               variant="outlined"
               onClick={handleSetDefaultMeds}
-              disabled={
-                !isMounted ||
-                !token ||
-                JSON.stringify(form.current_medications) ===
-                  JSON.stringify(defaultMeds)
-              }
+              
             >
               Set as Default for Future Entries
             </Button>
@@ -540,7 +518,7 @@ export default function DiagnosisForm({
           <Button
             variant="contained"
             onClick={handleSubmit}
-            disabled={!isMounted || !token || !form.name || !form.icd_code}
+            
           >
             {editMode ? "Update Diagnosis" : "Add Diagnosis Item"}
           </Button>
@@ -588,15 +566,9 @@ export default function DiagnosisForm({
                   <IconButton onClick={() => onEdit(idx)} size="small">
                     <EditIcon fontSize="small" />
                   </IconButton>
-                  <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => handleDelete(diagnosis.id)}
-                      size="small"
-                      disabled={!isMounted || !token}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                  <IconButton onClick={() => handleDelete(entry.id)} size="small">
+  <DeleteIcon fontSize="small" />
+</IconButton>
                 </TableCell>
               </TableRow>
             ))}

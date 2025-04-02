@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { parse } from "date-fns";
 import Link from "next/link";
 import ProfileCard from "@/app/(DashboardLayout)/components/forms/automationProfiles/ProfileCard";
 import {
@@ -201,7 +202,7 @@ export default function ProfileForm() {
       rotation: form.rotation,
       faculty: form.faculty,
       visitType: form.visitType,
-      age_ranges: form.ageRanges,
+      age_ranges: ageRanges,
       gender: [
         { gender: "Male", weight: 49 },
         { gender: "Female", weight: 49 },
@@ -247,10 +248,10 @@ export default function ProfileForm() {
     try {
       const savedProfile = await createProfile(newProfileData, token!);
       console.log("Server response:", savedProfile);
-      addProfile(savedProfile);
+      // addProfile(savedProfile);
       alert("Profile saved!");
-      await createProfile(newProfileData, token!);
-await fetchProfiles(token);
+      await fetchProfiles(token)
+
     } catch (err) {
       console.error("Failed to save profile:", err);
     }
@@ -321,7 +322,11 @@ await fetchProfiles(token);
         <Grid item xs={12}>
           <DatePicker
             label="Select Form Date"
-            value={form.selectedDate ? new Date(form.selectedDate) : null}
+            value={
+              form.selectedDate
+                ? parse(form.selectedDate, "yyyy-MM-dd", new Date())
+                : null
+            }
             onChange={(date: Date | null) => {
               handleChange(
                 "selectedDate",
@@ -471,7 +476,9 @@ await fetchProfiles(token);
                     setAgeRanges(updated);
                   }}
                   InputProps={{
+                    style: { fontSize: '0.7rem' },
                     endAdornment: (
+                      
                       <InputAdornment position="end">%</InputAdornment>
                     ),
                   }}
