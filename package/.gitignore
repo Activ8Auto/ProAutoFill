@@ -33,3 +33,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prevent accidental tracking of local system files (Windows)
+**/AppData/
+**/Microsoft/Edge/
