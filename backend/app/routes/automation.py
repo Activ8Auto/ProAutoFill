@@ -31,14 +31,36 @@ async def trigger_run(
     if str(profile.user_id) != str(current_user.id):
         raise HTTPException(status_code=403, detail="Not authorized")
 
-    # 2) Schedule the Celery task
-    # We just pass the user ID and the profile ID
+    # 💡 2) Enforce free-tier run limit
+    if not current_user.is_paid_user:
+        run_count = await AutomationRun.filter(user=current_user, status="success").count()
+        if run_count >= 10:
+            raise HTTPException(
+                status_code=403,
+                detail="Free-tier users are limited to 10 automation runs. Please upgrade your plan to continue."
+            )
+
+    # 💡 3) Schedule the Celery task
     result = run_automation_task.delay(str(profile.id), str(current_user.id))
 
-    # 3) Return a quick response (with optional Celery task_id)
+    # 4) Return response
     return {
         "message": "Automation scheduled in background",
         "task_id": result.id
+    }
+
+
+@router.get("/runs/remaining")
+async def get_remaining_runs(current_user: User = Depends(current_active_user)):
+    if current_user.is_paid_user:
+        return {"is_paid_user": True, "remaining_runs": None}
+
+    successful_runs = await AutomationRun.filter(user=current_user, status="success").count()
+    remaining = max(0, 10 - successful_runs)
+
+    return {
+        "is_paid_user": False,
+        "remaining_runs": remaining
     }
 
 # @router.post("/run")

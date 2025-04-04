@@ -317,3 +317,17 @@ export const createCheckoutSession = async (token: string) => {
   }
   return await res.json(); // Returns { checkout_url: "https://checkout.stripe.com/..." }
 };
+
+export async function fetchRemainingRuns(token: string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/remaining`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch remaining runs");
+  }
+
+  return res.json();
+}

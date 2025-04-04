@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import CheckoutButton from "../../components/CheckoutButton";
 import {
-  Avatar,
   Box,
   Menu,
   Button,
@@ -10,11 +11,15 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
+import { useAuthStore } from "@/store/authStore";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
+  const [isPaidUser, setIsPaidUser] = useState<boolean | null>(null);
+  const { token } = useAuthStore();
+
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
   };
@@ -22,33 +27,40 @@ const Profile = () => {
     setAnchorEl2(null);
   };
 
+  useEffect(() => {
+    if (token) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/remaining`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (typeof data.is_paid_user === "boolean") {
+            setIsPaidUser(data.is_paid_user);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch paid user status:", err);
+        });
+    }
+  }, [token]);
+
   return (
     <Box>
       <IconButton
         size="large"
-        aria-label="show 11 new notifications"
         color="inherit"
         aria-controls="msgs-menu"
         aria-haspopup="true"
+        onClick={handleClick2}
         sx={{
           ...(typeof anchorEl2 === "object" && {
             color: "primary.main",
           }),
         }}
-        onClick={handleClick2}
       >
-        <Avatar
-          src="/images/profile/user-1.jpg"
-          alt="image"
-          sx={{
-            width: 35,
-            height: 35,
-          }}
-        />
+        <AccountCircleIcon sx={{ width: 35, height: 35 }} />
       </IconButton>
-      {/* ------------------------------------------- */}
-      {/* Message Dropdown */}
-      {/* ------------------------------------------- */}
+
       <Menu
         id="msgs-menu"
         anchorEl={anchorEl2}
@@ -71,18 +83,23 @@ const Profile = () => {
             <ListItemText>My Profile</ListItemText>
           </MenuItem>
         </Link>
+
         <MenuItem>
           <ListItemIcon>
             <IconMail width={20} />
           </ListItemIcon>
           <ListItemText>My Account</ListItemText>
         </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <IconListCheck width={20} />
-          </ListItemIcon>
-          <ListItemText>My Tasks</ListItemText>
-        </MenuItem>
+
+        {isPaidUser === false && (
+          <MenuItem>
+            <ListItemIcon>
+              <IconListCheck width={20} />
+            </ListItemIcon>
+            <CheckoutButton />
+          </MenuItem>
+        )}
+
         <Box mt={1} py={1} px={2}>
           <Button
             href="/authentication/login"

@@ -98,7 +98,23 @@ const UserProfileForm = () => {
           appears in the element.
           <br />
           <strong>Do not add extra spaces or change wording.</strong> Medtrics
-          requires exact matches.
+          requires exact matches. <br />
+          <br />
+          <strong>
+            <u> Examples:</u>
+          </strong>
+          <br />
+          <strong> Preceptor:</strong>
+          <i> Johnny Sausage (Preceptor) EN:0000000003Jw7FafaQ (Preceptor)</i>
+          <br />
+          <strong>Scheduled Rotation:</strong>{" "}
+          <i>
+            NR605-66257- Psychiatric Clinic-YourClinic (Jan 03, 2025 - Mar 15,
+            2025) - Student Name
+          </i>
+          <br />
+          <strong>Faculty:</strong>{" "}
+          <i>Teacher Name (Faculty) EN:D00000000 (Faculty)</i>
         </Typography>
       </Box>
 

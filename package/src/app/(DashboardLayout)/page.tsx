@@ -13,11 +13,13 @@ import GenderBreakdown from "./components/dashboard/GenderBreakdown";
 import OverviewWidgets from "./components/dashboard/TotalRuns";
 import DiagnosisBreakdownChart from "@/app/(DashboardLayout)/components/dashboard/DiagnosisBreakdownChart";
 import TimeFrameSelector from "@/app/(DashboardLayout)/components/shared/TimeFrameSelector";
+import RemainingRunsBanner from "@/app/(DashboardLayout)/components/dashboard/RemainingRunsBanner";
 import { useAuthStore } from "@/store/authStore";
 import { getAutomationRuns } from "@/lib/api";
 
 const Dashboard = () => {
   const [timeframe, setTimeframe] = useState<"day" | "week" | "month">("week");
+  const [remainingRuns, setRemainingRuns] = useState<number | null>(null);
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,6 +31,20 @@ const Dashboard = () => {
       router.push("/authentication/login");
     }
   }, [token, router]);
+  useEffect(() => {
+    if (token) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/remaining`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.is_paid_user && data.remaining_runs !== null) {
+            setRemainingRuns(data.remaining_runs);
+          }
+        })
+        .catch((err) => console.error("Error fetching remaining runs", err));
+    }
+  }, [token]);
 
   useEffect(() => {
     if (token) {
@@ -63,6 +79,9 @@ const Dashboard = () => {
     >
       <Box>
         <TimeFrameSelector value={timeframe} onChange={setTimeframe} />
+        {remainingRuns !== null && (
+          <RemainingRunsBanner remainingRuns={remainingRuns} />
+        )}
         <Grid container spacing={3}>
           <Grid item xs={12} lg={8}>
             <OverviewWidgets timeframe={timeframe} runs={runs} />

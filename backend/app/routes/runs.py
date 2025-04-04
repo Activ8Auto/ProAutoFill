@@ -53,3 +53,17 @@ async def clear_error_logs(current_user: User = Depends(current_active_user)):
     except Exception as e:
         logger.exception(f"Error clearing error logs for user id: {current_user.id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to clear error logs")
+    
+@router.get("/runs/remaining")
+async def get_remaining_runs(current_user: User = Depends(current_active_user)):
+    MAX_FREE_RUNS = 10
+    if current_user.is_paid_user:
+        return {"is_paid_user": True, "remaining_runs": None}
+    
+    successful_runs = await AutomationRun.filter(
+        user=current_user,
+        status="success"
+    ).count()
+
+    remaining = max(0, MAX_FREE_RUNS - successful_runs)
+    return {"is_paid_user": False, "remaining_runs": remaining}

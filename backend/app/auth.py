@@ -11,7 +11,7 @@ from fastapi_users import schemas
 from passlib.context import CryptContext
 from fastapi_users.password import PasswordHelper
 
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET = "YOUR_SECRET_KEY_HERE"
 

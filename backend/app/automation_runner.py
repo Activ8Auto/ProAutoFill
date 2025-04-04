@@ -481,6 +481,9 @@ async def run_automation(profile_data, run_id=None):
             await page.click("body")
             logger.info(f"Complexity selected: {complexity}")
 
+
+            page.click("//button[contains(@class, 'btn-primary') and contains(text(), 'Save')]")
+           
             logger.info("✅ Automation run completed successfully!")
             return final_picks
 
