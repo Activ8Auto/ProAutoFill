@@ -131,9 +131,7 @@ export async function fetchUserDefaults(userId: string, token: string) {
   return await response.json();
 }
 
-export async function fetchDiagnosisOptions(
-  token: string
-): Promise<DiagnosisEntry[]> {
+export async function fetchDiagnosisOptions(token: string): Promise<DiagnosisEntry[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnoses/`, {
     headers: {
       "Content-Type": "application/json",
@@ -141,7 +139,25 @@ export async function fetchDiagnosisOptions(
     },
   });
   if (!res.ok) throw new Error("Failed to fetch diagnoses");
-  return res.json();
+  
+  const data = await res.json();
+  // Transform the response to match the frontend keys:
+  const transformedData: DiagnosisEntry[] = data.map((item: any) => ({
+    id: item.id,
+    name: item.name,
+    icd_code: item.icd_code,
+    exclusion_group: item.exclusion_group,
+    // Use the pre-serialized arrays from the backend:
+    current_medications: item.current_medications || [],
+    // Here we map the backend's "prescribed_medications" to "medications"
+    medications: item.prescribed_medications || [],
+    // Map teachings to "teaching_provided"
+    teaching_provided: item.teachings || [],
+    // Map laboratory_tests and physical_exams (or physical_exam) accordingly
+    laboratory_tests: item.laboratory_tests || [],
+    physical_exam: item.physical_exams || [],
+  }));
+  return transformedData;
 }
 
 
@@ -177,4 +193,77 @@ export async function fetchUserProfileInfo(userId: string, token: string) {
   );
   if (!response.ok) throw new Error("Failed to fetch profile info");
   return await response.json();
+}
+
+
+export const getAutomationRuns = async (token: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    const error = new Error(`HTTP error! status: ${res.status}`);
+    (error as any).status = res.status; // Attach status to error
+    throw error;
+  }
+  return res.json();
+};
+
+export const updateProfile = async (
+  profileId: string,
+  updates: any,
+  token: string
+) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profiles/${profileId}/`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(updates),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Update profile failed:", errorText);
+    throw new Error("Failed to update profile");
+  }
+
+  return await res.json();
+};
+
+
+export async function updateDiagnosis(
+  diagnosisId: string,
+  diagnosis: Partial<DiagnosisEntry>,
+  token: string
+): Promise<DiagnosisEntry> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnoses/${diagnosisId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(diagnosis),
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Failed to update diagnosis: ${res.status} - ${errorText}`);
+  }
+  const data = await res.json();
+  // Transform the response to match DiagnosisEntry
+  return {
+    id: data.id,
+    name: data.name,
+    icd_code: data.icd_code,
+    exclusion_group: data.exclusion_group,
+    current_medications: data.current_medications || [],
+    medications: data.prescribed_medications || [],
+    teaching_provided: data.teachings || [],
+    laboratory_tests: data.laboratory_tests || [],
+    physical_exam: data.physical_exam || [],
+    user_id: data.user_id,
+  };
 }

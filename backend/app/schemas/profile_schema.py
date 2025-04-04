@@ -37,6 +37,8 @@ class AutomationProfileSchema(BaseModel):
     duration_options: List[str] = Field(..., alias="durationOptions")
     duration_weights: List[int] = Field(..., alias="durationWeights")
     diagnoses: Optional[List[DiagnosisRef]] = Field(default_factory=list)
+    dNumber: Optional[str]
+    chamberlainPassword: Optional[str]
 
     model_config = ConfigDict(
         populate_by_name=True,

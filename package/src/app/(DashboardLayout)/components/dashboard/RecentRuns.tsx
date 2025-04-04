@@ -1,4 +1,3 @@
-// src/app/(DashboardLayout)/components/dashboard/RecentRuns.tsx
 "use client";
 
 import React from "react";
@@ -14,13 +13,15 @@ import {
 } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
-const recentRuns = [
-  { id: 1, date: "2025-03-28T10:45:00", duration: "1 hour" },
-  { id: 2, date: "2025-03-27T16:30:00", duration: "30 minutes" },
-  { id: 3, date: "2025-03-26T14:15:00", duration: "1 hour" },
-  { id: 4, date: "2025-03-25T09:00:00", duration: "30 minutes" },
-  { id: 5, date: "2025-03-24T18:10:00", duration: "1 hour" },
-];
+type Run = {
+  id: string | number;
+  start_time: string;      // ISO string representing when the run started
+  chosen_minutes: number;  // e.g., 30 or 60
+};
+
+type Props = {
+  runs: Run[];
+};
 
 const formatDate = (isoString: string) => {
   const date = new Date(isoString);
@@ -30,7 +31,20 @@ const formatDate = (isoString: string) => {
   return `${month}/${day}/${year}`;
 };
 
-const RecentRuns = () => {
+const getDurationString = (minutes: number) => {
+  if (minutes === 60) return "1 hour";
+  if (minutes === 30) return "30 minutes";
+  return `${minutes} minutes`;
+};
+
+const RecentRuns = ({ runs }: Props) => {
+  // Assume runs are already sorted by start_time descending; if not, sort them:
+  const sortedRuns = [...runs].sort(
+    (a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+  );
+  // Take the 5 most recent runs
+  const recentRuns = sortedRuns.slice(0, 5);
+
   return (
     <DashboardCard title="Recent Runs" subtitle="Your last 5 automation runs">
       <List disablePadding>
@@ -56,22 +70,22 @@ const RecentRuns = () => {
                     direction="row"
                     spacing={1}
                     alignItems="center"
-                    component="div" // Ensure Stack renders as div
+                    component="div"
                   >
                     <AccessTimeIcon fontSize="small" color="action" />
                     <Typography variant="body2" color="textSecondary" component="span">
-                      {formatDate(run.date)}
+                      {formatDate(run.start_time)}
                     </Typography>
                   </Stack>
                 }
-                primaryTypographyProps={{ component: "div" }} // Override default <p> for primary
-                secondaryTypographyProps={{ component: "div" }} // Override default <p> for secondary
+                primaryTypographyProps={{ component: "div" }}
+                secondaryTypographyProps={{ component: "div" }}
               />
               <Typography variant="body2" fontWeight={500} component="div">
-                {run.duration}
+                {getDurationString(run.chosen_minutes)}
               </Typography>
             </ListItem>
-            {index < recentRuns.length - 1 && <Divider />}
+            <Divider />
           </Box>
         ))}
       </List>

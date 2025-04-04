@@ -22,6 +22,7 @@ import {
   fetchDiagnosisOptions,
   createDiagnosis,
   deleteDiagnosis,
+  updateDiagnosis,
   updateUserDefaults,
   fetchUserDefaults,
 } from "@/lib/api";
@@ -39,7 +40,8 @@ const defaultForm: DiagnosisEntry = {
   teaching_provided: [],
   medications: [],
   exclusion_group: "",
-  user_id: "", 
+  user_id: "",
+  id: "", // Ensure id is included in the default form
 };
 
 const physicalExamOptions = [
@@ -105,13 +107,17 @@ const medicationOptions = [
 
 interface Props {
   onAdd: (entry: DiagnosisEntry) => void;
+  onUpdate?: (entry: DiagnosisEntry) => void;
   initialData?: DiagnosisEntry;
   editMode?: boolean;
+  onEdit?: (index: number) => void;
   onCancelEdit?: () => void;
 }
 
 export default function DiagnosisForm({
   onAdd,
+  onUpdate,
+  onEdit,
   initialData,
   editMode = false,
   onCancelEdit,
@@ -124,20 +130,15 @@ export default function DiagnosisForm({
   const [defaultLabs, setDefaultLabs] = useState<string[]>([]);
   const [defaultTeaching, setDefaultTeaching] = useState<string[]>([]);
   const [defaultMeds, setDefaultMeds] = useState<string[]>([]);
-
-
-
-
-  // console.log("Token in DiagnosisForm:", token);
-
+  
   useEffect(() => {
-    if (!token || !userId) return; // Wait for token to be available
+    if (!token || !userId) return;
 
     const fetchData = async () => {
       try {
         const [diagnosisData, defaults] = await Promise.all([
           fetchDiagnosisOptions(token),
-          fetchUserDefaults(userId),
+          fetchUserDefaults(userId, token),
         ]);
         setDiagnoses(diagnosisData);
         const defaultValues = defaults.default_values || {};
@@ -153,6 +154,7 @@ export default function DiagnosisForm({
             laboratory_tests: defaultValues.defaultLabs || [],
             teaching_provided: defaultValues.defaultTeaching || [],
             current_medications: defaultValues.defaultMeds || [],
+            user_id: userId,
           }));
         }
       } catch (err) {
@@ -161,18 +163,39 @@ export default function DiagnosisForm({
     };
     fetchData();
   }, [editMode, token, userId]);
+
   const sorted = [...diagnoses].sort((a, b) => a.name.localeCompare(b.name));
+
   const handleAddDiagnosis = async (diagnosis: DiagnosisEntry) => {
     if (!token || !userId) {
       console.error("No authentication token available");
       return;
     }
     try {
-      const newDiagnosis = await createDiagnosis(diagnosis, token);
+      const newDiagnosis = await createDiagnosis(
+        { ...diagnosis, user_id: userId },
+        token
+      );
       setDiagnoses((prev) => [...prev, newDiagnosis]);
       onAdd(newDiagnosis);
     } catch (err) {
       console.error("Error creating diagnosis:", err);
+    }
+  };
+
+  const handleUpdateDiagnosis = async (diagnosisId: string, diagnosis: DiagnosisEntry) => {
+    if (!token || !userId) {
+      console.error("No authentication token available");
+      return;
+    }
+    try {
+      const updatedDiagnosis = await updateDiagnosis(diagnosisId, diagnosis, token);
+      setDiagnoses((prev) =>
+        prev.map((d) => (d.id === updatedDiagnosis.id ? updatedDiagnosis : d))
+      );
+      if (onUpdate) onUpdate(updatedDiagnosis);
+    } catch (err) {
+      console.error("Error updating diagnosis:", err);
     }
   };
 
@@ -200,9 +223,29 @@ export default function DiagnosisForm({
   };
 
   const handleSubmit = async () => {
-    if (!form.name || !form.icd_code) return;
-    await handleAddDiagnosis(form);
+    if (!form.name || !form.icd_code) {
+      console.error("Name and ICD code are required");
+      return;
+    }
+
+    if (editMode && form.id) {
+      console.log("Updating diagnosis:", form);
+      await handleUpdateDiagnosis(form.id, {
+        ...form,
+        user_id: userId, // Ensure user_id is included
+      });
+    } else {
+      console.log("Creating new diagnosis:", form);
+      await handleAddDiagnosis({
+        ...form,
+        user_id: userId, // Ensure user_id is included
+      });
+    }
+    
+
+    // Reset form after submission
     setForm({
+      id: "",
       name: "",
       icd_code: "",
       current_medications: defaultMeds,
@@ -211,11 +254,23 @@ export default function DiagnosisForm({
       teaching_provided: defaultTeaching,
       medications: [],
       exclusion_group: "",
+      user_id: userId,
     });
+    if (editMode && onCancelEdit) onCancelEdit(); // Exit edit mode
+  };
+
+  const handleEdit = (index: number) => {
+    const diagnosisToEdit = sorted[index];
+    console.log("Editing diagnosis:", diagnosisToEdit);
+    setForm({
+      ...defaultForm, // Spread defaultForm to ensure all fields are present
+      ...diagnosisToEdit, // Override with actual data
+    }); // Populate form with existing diagnosis data
+    if (onEdit) onEdit(index);
   };
 
   const handleSetDefaultPhysicalExams = async () => {
-    if (!token) {
+    if (!token || !userId) {
       console.error("No authentication token available");
       return;
     }
@@ -233,7 +288,7 @@ export default function DiagnosisForm({
   };
 
   const handleSetDefaultLabs = async () => {
-    if (!token) {
+    if (!token || !userId) {
       console.error("No authentication token available");
       return;
     }
@@ -251,7 +306,7 @@ export default function DiagnosisForm({
   };
 
   const handleSetDefaultTeaching = async () => {
-    if (!token) {
+    if (!token || !userId) {
       console.error("No authentication token available");
       return;
     }
@@ -269,7 +324,7 @@ export default function DiagnosisForm({
   };
 
   const handleSetDefaultMeds = async () => {
-    if (!token) {
+    if (!token || !userId) {
       console.error("No authentication token available");
       return;
     }
@@ -286,11 +341,10 @@ export default function DiagnosisForm({
     }
   };
 
-  // Ensure all logic is closed before the return
   return (
     <Box>
       <Typography variant="h6" mb={2}>
-        Add New Diagnosis
+        {editMode ? "Edit Diagnosis" : "Add New Diagnosis"}
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={6}>
@@ -348,7 +402,6 @@ export default function DiagnosisForm({
               size="small"
               variant="outlined"
               onClick={handleSetDefaultPhysicalExams}
-              
             >
               Set as Default for Future Entries
             </Button>
@@ -393,7 +446,6 @@ export default function DiagnosisForm({
               size="small"
               variant="outlined"
               onClick={handleSetDefaultLabs}
-              
             >
               Set as Default for Future Entries
             </Button>
@@ -438,7 +490,6 @@ export default function DiagnosisForm({
               size="small"
               variant="outlined"
               onClick={handleSetDefaultTeaching}
-              
             >
               Set as Default for Future Entries
             </Button>
@@ -483,7 +534,6 @@ export default function DiagnosisForm({
               size="small"
               variant="outlined"
               onClick={handleSetDefaultMeds}
-              
             >
               Set as Default for Future Entries
             </Button>
@@ -515,11 +565,7 @@ export default function DiagnosisForm({
         </Grid>
 
         <Grid item xs={12}>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            
-          >
+          <Button variant="contained" onClick={handleSubmit}>
             {editMode ? "Update Diagnosis" : "Add Diagnosis Item"}
           </Button>
           {editMode && onCancelEdit && (
@@ -536,45 +582,69 @@ export default function DiagnosisForm({
       {diagnoses.length === 0 ? (
         <Typography>No diagnoses added yet.</Typography>
       ) : (
-        <TableContainer component={Paper} elevation={1}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell><strong>Name</strong></TableCell>
-              <TableCell><strong>ICD Code</strong></TableCell>
-              <TableCell><strong>Exclusion Group</strong></TableCell>
-              <TableCell><strong>Current Meds</strong></TableCell>
-              <TableCell><strong>Prescribed Meds</strong></TableCell>
-              <TableCell><strong>Physical Exams</strong></TableCell>
-              <TableCell><strong>Lab Tests</strong></TableCell>
-              <TableCell><strong>Teaching</strong></TableCell>
-              <TableCell align="center"><strong>Actions</strong></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sorted.map((entry, idx) => (
-              <TableRow key={idx}>
-                <TableCell>{entry.name}</TableCell>
-                <TableCell>{entry.icd_code}</TableCell>
-                <TableCell>{entry.exclusion_group || "None"}</TableCell>
-                <TableCell>{entry.current_medications?.join(", ") || "None"}</TableCell>
-                <TableCell>{entry.medications?.join(", ") || "None"}</TableCell>
-                <TableCell>{entry.physical_exam?.join(", ") || "None"}</TableCell>
-                <TableCell>{entry.laboratory_tests?.join(", ") || "None"}</TableCell>
-                <TableCell>{entry.teaching_provided?.join(", ") || "None"}</TableCell>
+        <TableContainer component={Paper} elevation={1} sx={{ maxHeight: 400 }}>
+          <Table size="small" stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <strong>Name</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>ICD Code</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Exclusion Group</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Current Meds</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Prescribed Meds</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Physical Exams</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Lab Tests</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Teaching</strong>
+                </TableCell>
                 <TableCell align="center">
-                  <IconButton onClick={() => onEdit(idx)} size="small">
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton onClick={() => handleDelete(entry.id)} size="small">
-  <DeleteIcon fontSize="small" />
-</IconButton>
+                  <strong>Actions</strong>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {sorted.map((entry, idx) => (
+                <TableRow key={entry.id || idx}>
+                  <TableCell>{entry.name}</TableCell>
+                  <TableCell>{entry.icd_code}</TableCell>
+                  <TableCell>{entry.exclusion_group || "None"}</TableCell>
+                  <TableCell>
+                    {entry.current_medications?.join(", ") || "None"}
+                  </TableCell>
+                  <TableCell>{entry.medications?.join(", ") || "None"}</TableCell>
+                  <TableCell>{entry.physical_exam?.join(", ") || "None"}</TableCell>
+                  <TableCell>
+                    {entry.laboratory_tests?.join(", ") || "None"}
+                  </TableCell>
+                  <TableCell>
+                    {entry.teaching_provided?.join(", ") || "None"}
+                  </TableCell>
+                  <TableCell align="center">
+                    <IconButton onClick={() => handleEdit(idx)} size="small">
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(entry.id)} size="small">
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
     </Box>
   );

@@ -3,15 +3,36 @@ import React from "react";
 import { Box, Typography, LinearProgress, Stack } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
-// Dummy data
-const genderStats = [
-  { label: "Girls", percent: 55, total: 110 },
-  { label: "Boys", percent: 30, total: 60 },
-  { label: "Trans Women", percent: 10, total: 20 },
-  { label: "Trans Men", percent: 5, total: 10 },
-];
+type Props = {
+  runs: any[];
+};
 
-const GenderBreakdown = () => {
+// Helper function to aggregate gender statistics from the run data.
+const aggregateGenderStats = (runs: any[]) => {
+  const total = runs.length;
+  const counts: Record<string, number> = {};
+
+  // Count each occurrence of selected_gender
+  runs.forEach((run) => {
+    const gender = run.selected_gender;
+    if (gender) {
+      counts[gender] = (counts[gender] || 0) + 1;
+    }
+  });
+
+  // Convert the counts into an array of objects with label, total, and percent.
+  return Object.keys(counts).map((genderKey) => {
+    return {
+      label: genderKey, // Optionally, map to a display name here if needed.
+      total: counts[genderKey],
+      percent: total ? Math.round((counts[genderKey] / total) * 100) : 0,
+    };
+  });
+};
+
+const GenderBreakdown = ({ runs }: Props) => {
+  const genderStats = aggregateGenderStats(runs);
+
   return (
     <DashboardCard title="Gender Breakdown" subtitle="Across All Form Runs">
       <Stack spacing={2}>

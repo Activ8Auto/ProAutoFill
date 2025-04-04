@@ -1,40 +1,68 @@
-// src/app/(DashboardLayout)/components/dashboard/VisitTypeBreakdown.tsx
-
+"use client";
 import React from "react";
 import { Box, Typography, LinearProgress, Stack } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
-const VisitTypeBreakdown = () => {
-  // Dummy data
-  const totalVisits = 120;
-  const telehealth = 75;
-  const faceToFace = 45;
+type Props = {
+  runs: any[];
+};
 
-  const telehealthPercent = (telehealth / totalVisits) * 100;
-  const faceToFacePercent = (faceToFace / totalVisits) * 100;
+const aggregateVisitTypeStats = (runs: any[]) => {
+  // Initialize counts for both visit types
+  const counts: Record<string, number> = {
+    "Telepsychiatry": 0,
+    "Face to Face": 0,
+  };
+
+  // Count occurrences for each visit type
+  runs.forEach((run) => {
+    const vt = run.selected_visit_type;
+    if (vt === "Telepsychiatry" || vt === "Face to Face") {
+      counts[vt] = (counts[vt] || 0) + 1;
+    }
+  });
+
+  const total = counts["Telepsychiatry"] + counts["Face to Face"];
+  console.log("Aggregate Visit Type Stats:", { counts, total });
+
+  return {
+    telehealth: {
+      label: "Telehealth", // mapping Telepsychiatry to Telehealth display
+      total: counts["Telepsychiatry"],
+      percent: total > 0 ? (counts["Telepsychiatry"] / total) * 100 : 0,
+    },
+    faceToFace: {
+      label: "Face-to-Face",
+      total: counts["Face to Face"],
+      percent: total > 0 ? (counts["Face to Face"] / total) * 100 : 0,
+    },
+  };
+};
+
+const VisitTypeBreakdown = ({ runs }: Props) => {
+  const { telehealth, faceToFace } = aggregateVisitTypeStats(runs);
 
   return (
     <DashboardCard title="Visit Type Breakdown" subtitle="Distribution of visit methods">
       <Stack spacing={3}>
         <Box>
           <Typography variant="subtitle2" fontWeight={600}>
-            Telehealth: {telehealth} ({telehealthPercent.toFixed(1)}%)
+            {telehealth.label}: {telehealth.total} ({telehealth.percent.toFixed(1)}%)
           </Typography>
           <LinearProgress
             variant="determinate"
-            value={telehealthPercent}
+            value={telehealth.percent}
             sx={{ height: 10, borderRadius: 5 }}
             color="primary"
           />
         </Box>
-
         <Box>
           <Typography variant="subtitle2" fontWeight={600}>
-            Face-to-Face: {faceToFace} ({faceToFacePercent.toFixed(1)}%)
+            {faceToFace.label}: {faceToFace.total} ({faceToFace.percent.toFixed(1)}%)
           </Typography>
           <LinearProgress
             variant="determinate"
-            value={faceToFacePercent}
+            value={faceToFace.percent}
             sx={{ height: 10, borderRadius: 5 }}
             color="secondary"
           />

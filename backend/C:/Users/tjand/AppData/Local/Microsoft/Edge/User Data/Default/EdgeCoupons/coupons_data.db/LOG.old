@@ -1,0 +1,15 @@
+2025/04/02-17:15:44.024 8703 Reusing MANIFEST /Users/taylorandrews/Repos/AutoFill_WebApp/Modernize-Nextjs-Free/backend/C:/Users/tjand/AppData/Local/Microsoft/Edge/User Data/Default/EdgeCoupons/coupons_data.db/MANIFEST-000001
+2025/04/02-17:15:44.030 8703 Recovering log #198
+2025/04/02-17:15:44.030 8703 Reusing old log /Users/taylorandrews/Repos/AutoFill_WebApp/Modernize-Nextjs-Free/backend/C:/Users/tjand/AppData/Local/Microsoft/Edge/User Data/Default/EdgeCoupons/coupons_data.db/000198.log 
+2025/04/02-17:15:44.259 8507 Level-0 table #202: started
+2025/04/02-17:15:44.262 8507 Level-0 table #202: 670820 bytes OK
+2025/04/02-17:15:44.268 8507 Delete type=0 #198
+2025/04/02-17:15:44.268 8507 Compacting 4@0 + 1@1 files
+2025/04/02-17:15:44.277 8507 Generated table #203@0: 3 keys, 670820 bytes
+2025/04/02-17:15:44.278 8507 Compacted 4@0 + 1@1 files => 670820 bytes
+2025/04/02-17:15:44.279 8507 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/04/02-17:15:44.279 8507 Delete type=2 #202
+2025/04/02-17:15:44.279 8507 Delete type=2 #199
+2025/04/02-17:15:44.280 8507 Delete type=2 #196
+2025/04/02-17:15:44.280 8507 Delete type=2 #190
+2025/04/02-17:15:44.280 8507 Delete type=2 #193

@@ -5,6 +5,13 @@ import { styled, Container, Box } from "@mui/material";
 import React, { useState } from "react";
 import Header from "@/app/(DashboardLayout)/layout/header/Header";
 import Sidebar from "@/app/(DashboardLayout)/layout/sidebar/Sidebar";
+import { baselightTheme } from "@/utils/theme/DefaultColors";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AuthProvider } from "@/lib/auth-context";
+import useAutoLogout from "@/app/hooks/useAutoLogout";
 
 const MainWrapper = styled("div")(() => ({
   display: "flex",
@@ -22,6 +29,7 @@ const PageWrapper = styled("div")(() => ({
 }));
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  useAutoLogout();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 

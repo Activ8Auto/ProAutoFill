@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { parse } from "date-fns";
 import Link from "next/link";
 import ProfileCard from "@/app/(DashboardLayout)/components/forms/automationProfiles/ProfileCard";
@@ -104,19 +105,19 @@ export default function ProfileForm() {
   const [ageRanges, setAgeRanges] = useState([
     { range: "5-12 years", weight: 0 },
     { range: "13-17 years", weight: 0 },
-    { range: "18-21 years", weight: 0 },
-    { range: "22-35 years", weight: 0 },
-    { range: "36-55 years", weight: 0 },
-    { range: "56-64 years", weight: 0 },
-    { range: "65-75 years", weight: 0 },
+    { range: "18-21 years", weight: 10 },
+    { range: "22-35 years", weight: 30 },
+    { range: "36-55 years", weight: 20 },
+    { range: "56-64 years", weight: 20 },
+    { range: "65-75 years", weight: 10 },
     { range: "76-85 years", weight: 0 },
     { range: "85+ years", weight: 0 },
   ]);
   const [functionLevels, setFunctionLevels] = useState([
-    { level: "100% student", weight: 25 },
-    { level: "75% student", weight: 25 },
-    { level: "50% student", weight: 25 },
-    { level: "25% student", weight: 25 },
+    { level: "100% Student", weight: 0 },
+    { level: "75% Student", weight: 25 },
+    { level: "50% Student", weight: 50 },
+    { level: "25% Student", weight: 25 },
   ]);
 
   const [ageWeights, setAgeWeights] = useState<number[]>(
@@ -179,10 +180,10 @@ export default function ProfileForm() {
     chamberlainPassword: "", 
     ageRanges: [], // NEW
     studentFunctionWeights: [
-      { level: "100% student", weight: 25 },
-      { level: "75% student", weight: 25 },
-      { level: "50% student", weight: 25 },
-      { level: "25% student", weight: 25 },
+      { level: "100% Student", weight: 25 },
+      { level: "75% Student", weight: 25 },
+      { level: "50% Student", weight: 25 },
+      { level: "25% Student", weight: 25 },
     ], // NEW
     durationOptions: ["30 Minutes", "1 Hour"],
     durationWeights: [80, 20],
@@ -272,7 +273,7 @@ export default function ProfileForm() {
           />
         </Grid>
         {/* Min Wait Input */}
-        <Grid item xs={6}>
+        {/* <Grid item xs={6}>
           <CustomTextField
             label="Min Wait (sec)"
             type="number"
@@ -280,9 +281,9 @@ export default function ProfileForm() {
             value={form.minWait}
             onChange={(e) => handleChange("minWait", parseInt(e.target.value))}
           />
-        </Grid>
+        </Grid> */}
         {/* Max Wait Input */}
-        <Grid item xs={6}>
+        {/* <Grid item xs={6}>
           <CustomTextField
             label="Max Wait (sec)"
             type="number"
@@ -313,9 +314,9 @@ export default function ProfileForm() {
             }
             label="Run Headless"
           />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6" gutterBottom sx={{ textDecoration: 'underline' }}>
             Visit Info
           </Typography>
         </Grid>
@@ -338,7 +339,7 @@ export default function ProfileForm() {
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="subtitle1" gutterBottom>
+          <Typography variant="subtitle1" gutterBottom sx={{ textDecoration: 'underline' }}>
             Visit Duration + Weight (%)
           </Typography>
           <Typography variant="body2" gutterBottom>
@@ -371,76 +372,91 @@ export default function ProfileForm() {
           </Box>
         </Grid>
 
-        {["rotation", "faculty", "preceptor"].map((field) => (
-  <Grid item xs={12} key={field}>
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      mb={1}
-    >
-      <Typography>
-        {field === "rotation"
-          ? "Scheduled Rotation"
-          : field === "faculty"
-          ? "Faculty"
-          : "Preceptor"}
-      </Typography>
-      {form[field] && (
-        <Button
-          size="small"
-          onClick={() => {
-            if (field === "rotation") setDefaultRotation(form.rotation);
-            if (field === "faculty") setDefaultFaculty(form.faculty);
-            if (field === "preceptor") setDefaultPreceptor(form.preceptor);
-          }}
-        >
-          Set as Default
-        </Button>
-      )}
-    </Box>
+        {["rotation", "faculty", "preceptor"].map((field) => {
+  const router = useRouter();
+  // Define the static label text based on the field
+  const label =
+    field === "rotation"
+      ? "Scheduled Rotation "
+      : field === "faculty"
+      ? "Faculty "
+      : "Preceptor ";
 
-    {form[field] ? (
-      <Typography fontWeight={500} fontSize="1.1rem">
-        {form[field]}
-      </Typography>
-    ) : (
-      <Box textAlign="center" mt={2}>
-        <Typography
-          color="error"
-          fontSize="1.2rem"
-          fontWeight="bold"
-          textAlign="center"
-        >
-          No{" "}
-          {field === "rotation"
-            ? "Scheduled Rotation"
-            : field === "faculty"
-            ? "Faculty"
-            : "Preceptor"}{" "}
-          set.
-          <br />
-          Please update this in your{" "}
-          <Link
-            href="/my-profile"
-            style={{
-              color: "#d32f2f",
-              fontWeight: "bold",
+  return (
+    <Grid item xs={12} key={field}>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        mb={1}
+      >
+        <Typography sx={{ textDecoration: "underline" }}>
+          {label}
+          <Button
+            variant="text"
+            onClick={() => router.push("/account")}
+            sx={{
               textDecoration: "underline",
+              color: "primary.main",
+              padding: 0,
+              minWidth: 0,
+              textTransform: "none",
+              display: "inline", // keep it inline with the text
             }}
           >
-            My Profile
-          </Link>{" "}
-          page.
+            (Change in Profile)
+          </Button>
         </Typography>
       </Box>
-    )}
-  </Grid>
-))}
+      {form[field] ? (
+        <Typography
+          fontWeight={500}
+          fontSize="0.9rem"
+          sx={{ opacity: 0.6 }}
+        >
+          {form[field]}
+        </Typography>
+      ) : (
+        <Box textAlign="center" mt={2}>
+          <Typography
+            color="error"
+            fontSize="1.2rem"
+            fontWeight="bold"
+            textAlign="center"
+          >
+            No {field === "rotation"
+              ? "Scheduled Rotation"
+              : field === "faculty"
+              ? "Faculty"
+              : "Preceptor"}{" "}
+            set.
+            <br />
+            Please update this in your{" "}
+            <Button
+              variant="text"
+              onClick={() => router.push("/account")}
+              sx={{
+                textDecoration: "underline",
+                color: "#d32f2f",
+                fontWeight: "bold",
+                textTransform: "none",
+                padding: 0,
+                minWidth: 0,
+              }}
+            >
+              My Profile
+            </Button>{" "}
+            page.
+          </Typography>
+        </Box>
+      )}
+    </Grid>
+  );
+})}
        
 
         <Grid item xs={12}>
-          <Typography variant="subtitle1" gutterBottom>
+          <Typography variant="subtitle1" gutterBottom sx={{ textDecoration: 'underline' }}>
             Age Range Weighting
           </Typography>
           <Typography variant="body2" color="text.secondary" mb={1}>
@@ -491,7 +507,7 @@ export default function ProfileForm() {
           <Grid container spacing={2}>
             {/* Visit Mode */}
             <Grid item xs={4}>
-              <Typography variant="subtitle2" gutterBottom>
+              <Typography variant="subtitle2" gutterBottom sx={{ textDecoration: 'underline' }}>
                 Visit Mode
               </Typography>
               <CustomTextField
@@ -507,7 +523,7 @@ export default function ProfileForm() {
 
             {/* Site Type */}
             <Grid item xs={4}>
-              <Typography variant="subtitle2" gutterBottom>
+              <Typography variant="subtitle2" gutterBottom sx={{ textDecoration: 'underline' }}>
                 Site Type
               </Typography>
               <CustomTextField
@@ -523,7 +539,7 @@ export default function ProfileForm() {
 
             {/* CPT Visit Code */}
             <Grid item xs={4}>
-              <Typography variant="subtitle2" gutterBottom>
+              <Typography variant="subtitle2"sx={{ textDecoration: 'underline' }}  gutterBottom>
                 CPT Visit Code
               </Typography>
               <CustomTextField
@@ -537,7 +553,7 @@ export default function ProfileForm() {
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="subtitle1" gutterBottom>
+          <Typography variant="subtitle1" gutterBottom sx={{ textDecoration: 'underline' }}>
             Student Level of Function (%)
           </Typography>
           <Typography variant="body2" color="text.secondary" mb={1}>
@@ -573,7 +589,7 @@ export default function ProfileForm() {
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="h6" mt={4} mb={2}>
+          <Typography variant="h6" mt={4} mb={2} sx={{ textDecoration: 'underline' }}>
             Select Diagnoses to Include
           </Typography>
           {diagnosisOptions.length === 0 ? (

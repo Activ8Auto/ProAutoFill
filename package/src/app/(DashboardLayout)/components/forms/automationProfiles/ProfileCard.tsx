@@ -1,6 +1,8 @@
 "use client";
 
 import { Card, CardContent, Typography, IconButton, Box } from "@mui/material";
+
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   AutomationProfile,
@@ -19,6 +21,8 @@ export default function ProfileCard({ profile }: Props) {
     (state) => state.selectProfile
   );
 
+  
+
   return (
     <Card
       sx={{ mb: 2, cursor: "pointer", "&:hover": { boxShadow: 4 } }}
@@ -36,16 +40,6 @@ export default function ProfileCard({ profile }: Props) {
             <DeleteIcon color="error" />
           </IconButton>
         </Box>
-        <Typography variant="body2">
-          Target Hours: {profile.targetHours}
-        </Typography>
-        <Typography variant="body2">Date: {profile.selectedDate}</Typography>
-        <Typography variant="body2">
-          Wait: {profile.minWait}–{profile.maxWait} sec
-        </Typography>
-        <Typography variant="body2">
-          Headless: {profile.runHeadless ? "Yes" : "No"}
-        </Typography>
       </CardContent>
     </Card>
   );
