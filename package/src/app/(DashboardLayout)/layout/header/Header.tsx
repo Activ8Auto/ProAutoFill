@@ -1,3 +1,6 @@
+// src/app/(DashboardLayout)/components/Header.tsx
+"use client";
+
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -11,20 +14,19 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 import Link from "next/link";
-import Profile from "./Profile";
+import Profile from "./Profile"; // Ensure this component is hydration-safe
 import { IconBellRinging, IconMenu } from "@tabler/icons-react";
-import { useAuthStore } from "@/store/authStore"; // Adjust the import path as needed
+import { useAuthStore } from "@/store/authStore"; // Adjust path as needed
 
 interface ItemType {
   toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 const Header = ({ toggleMobileSidebar }: ItemType) => {
-  // Use the auth store to get authentication state and actions
   const { token, clearAuth } = useAuthStore();
   const isLoggedIn = Boolean(token);
 
-  // Only render auth-dependent parts on the client side
+  // Ensure auth-dependent UI renders only on client
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -47,6 +49,8 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
 
   const handleLogout = () => {
     clearAuth();
+    // Optional: Redirect to login page after logout
+    window.location.href = "/authentication/login";
   };
 
   return (
@@ -56,9 +60,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
           color="inherit"
           aria-label="menu"
           onClick={toggleMobileSidebar}
-          sx={{
-            display: { lg: "none", xs: "inline" },
-          }}
+          sx={{ display: { lg: "none", xs: "inline" } }}
         >
           <IconMenu width="20" height="20" />
         </IconButton>
@@ -80,7 +82,16 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         <Stack spacing={1} direction="row" alignItems="center">
           {mounted && (
             <>
-              {!isLoggedIn ? (
+              {isLoggedIn ? (
+                <Button
+                  variant="contained"
+                  onClick={handleLogout}
+                  disableElevation
+                  color="primary"
+                >
+                  Logout
+                </Button>
+              ) : (
                 <Button
                   variant="contained"
                   component={Link}
@@ -89,15 +100,6 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
                   color="primary"
                 >
                   Login
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  onClick={handleLogout}
-                  disableElevation
-                  color="primary"
-                >
-                  Logout
                 </Button>
               )}
             </>

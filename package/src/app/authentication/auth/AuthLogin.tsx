@@ -26,21 +26,27 @@ const AuthLogin = ({ subtext, subtitle }: AuthLoginProps) => {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username: email, password }),
       });
-
-      if (!res.ok) throw new Error("Login failed");
-
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(`Login failed: ${JSON.stringify(errorData)}`);
+      }
+  
       const data = await res.json();
-
+      console.log("Login response:", data); // Debug response
+  
       const decoded = jwtDecode<{ sub: string }>(data.access_token);
-      setAuth(data.access_token, decoded.sub); // ✅ Fix is here
-
-      router.push("/");
+      console.log("Decoded token:", decoded); // Debug decoded token
+  
+      setAuth(data.access_token, decoded.sub);
+      console.log("Token set in store, checking localStorage:", localStorage.getItem("token")); // Debug localStorage
+  
+      router.push("/"); // Redirect to profiles page
     } catch (err) {
       setError("Invalid email or password");
       console.error(err);
     }
   };
-
   return (
     <Box>
       {subtext}

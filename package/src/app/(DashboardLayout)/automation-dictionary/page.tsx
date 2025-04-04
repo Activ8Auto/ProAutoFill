@@ -3,29 +3,36 @@
 import { Box, Typography, Paper } from "@mui/material";
 import { useState } from "react";
 import DiagnosisForm from "../components/forms/dictionaryForm/DiagnosisForm";
-import DiagnosisList from "../components/forms/dictionaryForm/DiagnosisList";
 import { DiagnosisEntry } from "@/types/diagnosis";
 
 export default function AutomationDictionaryPage() {
   const [diagnoses, setDiagnoses] = useState<DiagnosisEntry[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
-  const addDiagnosis = (entry: DiagnosisEntry) => {
-    if (editIndex !== null) {
-      // Editing existing diagnosis
-      const updated = [...diagnoses];
-      updated[editIndex] = entry;
-      setDiagnoses(updated);
-      setEditIndex(null); // Exit edit mode
-    } else {
-      // Adding new diagnosis
-      setDiagnoses((prev) => [...prev, entry]);
-    }
+  const addDiagnosis = (newDiagnosis: DiagnosisEntry) => {
+    setDiagnoses((prev) => [...prev, newDiagnosis]);
   };
 
-  const handleEdit = (index: number) => {
-    setEditIndex(index);
+  const updateDiagnosis = (updatedDiagnosis: DiagnosisEntry) => {
+    
+    setDiagnoses((prev) =>
+      prev.map((d, i) => (i === editIndex ? updatedDiagnosis : d))
+    );
+    setEditIndex(null); // Exit edit mode
   };
+
+  const onEdit = (index: number) => {
+    
+    setEditIndex(index); // Set the editIndex to the clicked index
+    
+  };
+
+  const onCancelEdit = () => {
+    
+    setEditIndex(null);
+  };
+
+
 
   return (
     <Box p={4}>
@@ -60,12 +67,12 @@ export default function AutomationDictionaryPage() {
 
       <DiagnosisForm
         onAdd={addDiagnosis}
+        onUpdate={updateDiagnosis}
         initialData={editIndex !== null ? diagnoses[editIndex] : undefined}
-        editMode={editIndex !== null}
-        onCancelEdit={() => setEditIndex(null)}
+        editMode={editIndex !== null} // This should be true when editIndex is set
+        onCancelEdit={onCancelEdit}
+        onEdit={onEdit} // Pass onEdit to DiagnosisForm
       />
-
-      <DiagnosisList diagnoses={diagnoses} onEdit={handleEdit} />
     </Box>
   );
 }

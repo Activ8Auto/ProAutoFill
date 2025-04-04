@@ -1,42 +1,65 @@
 "use client";
 import React from "react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
+  PieChart,
+  Pie,
+  Cell,
   Tooltip,
   Legend,
   ResponsiveContainer,
 } from "recharts";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
-// Dummy data
-const diagnosisData = [
-  { diagnosis: "MDD", Female: 12, Male: 8, Trans: 2 },
-  { diagnosis: "Anxiety", Female: 15, Male: 10, Trans: 1 },
-  { diagnosis: "Schizophrenia", Female: 4, Male: 6, Trans: 1 },
-  { diagnosis: "ADHD", Female: 9, Male: 14, Trans: 0 },
-  { diagnosis: "PTSD", Female: 13, Male: 7, Trans: 3 },
-];
+type Props = {
+  runs: any[];
+};
 
-const DiagnosisBreakdown = () => {
+const DiagnosisBreakdown = ({ runs }: Props) => {
+  // Aggregate diagnosis usage across all runs.
+  const aggregateDiagnosisData = (runs: any[]) => {
+    const diagnosisMap: Record<string, number> = {};
+    runs.forEach((run) => {
+      if (Array.isArray(run.selected_diagnoses)) {
+        run.selected_diagnoses.forEach((diag: { name: string }) => {
+          const key = diag.name;
+          diagnosisMap[key] = (diagnosisMap[key] || 0) + 1;
+        });
+      }
+    });
+    // Convert to array for Recharts.
+    return Object.entries(diagnosisMap).map(([name, count]) => ({
+      name,
+      value: count,
+    }));
+  };
+
+  const data = aggregateDiagnosisData(runs);
+
+  // Colors for the pie slices.
+  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#a4de6c", "#d0ed57", "#8dd1e1"];
+
   return (
-    <DashboardCard title="Diagnosis Breakdown" subtitle="Stacked by Gender">
+    <DashboardCard title="Diagnosis Breakdown" subtitle="Overall Diagnosis Usage">
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          layout="vertical"
-          data={diagnosisData}
-          margin={{ top: 20, right: 30, left: 40, bottom: 5 }}
-        >
-          <XAxis type="number" />
-          <YAxis dataKey="diagnosis" type="category" />
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            outerRadius={90}
+            fill="#8884d8"
+            dataKey="value"
+            label={({ name, percent }) =>
+              `${name}: ${(percent * 100).toFixed(0)}%`
+            }
+          >
+            {data.map((_, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
           <Tooltip />
-          <Legend />
-          <Bar dataKey="Female" stackId="a" fill="#8884d8" />
-          <Bar dataKey="Male" stackId="a" fill="#82ca9d" />
-          <Bar dataKey="Trans" stackId="a" fill="#ffc658" />
-        </BarChart>
+          <Legend verticalAlign="bottom" />
+        </PieChart>
       </ResponsiveContainer>
     </DashboardCard>
   );

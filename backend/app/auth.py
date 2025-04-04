@@ -31,22 +31,20 @@ class UserCreate(schemas.BaseUserCreate):
 
 # Custom Tortoise User Database Adapter
 class TortoiseUserDB:
-   
-
     async def create(self, user_dict: Dict[str, Any]) -> User:
         user = User(**user_dict)
         await user.save()
         return user
 
     async def get(self, id: str) -> Optional[User]:
-      return await User.get_or_none(id=id)
+        return await User.get_or_none(id=id)
 
     async def get_by_email(self, email: str) -> Optional[User]:
         return await User.get_or_none(email=email)
 
-    async def update(self, user_dict: Dict[str, Any]) -> User:
-        user = await User.get(id=user_dict["id"])
-        for key, value in user_dict.items():
+    # Modified update method to accept user object and update_dict separately
+    async def update(self, user: User, update_dict: Dict[str, Any]) -> User:
+        for key, value in update_dict.items():
             setattr(user, key, value)
         await user.save()
         return user
@@ -54,7 +52,6 @@ class TortoiseUserDB:
     async def delete(self, user_dict: Dict[str, Any]) -> None:
         user = await User.get(id=user_dict["id"])
         await user.delete()
-
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, str]):
     reset_password_token_secret = SECRET

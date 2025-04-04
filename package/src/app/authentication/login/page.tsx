@@ -5,11 +5,21 @@ import { Grid, Box, Card, Stack, Typography } from "@mui/material";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import AuthLogin from "../auth/AuthLogin";
+import { useEffect } from "react";
 import { useAuthStore } from "@/store/authStore"; // Import Zustand store
+import { useRouter } from "next/navigation";
 
 const Login2 = () => {
   const { token, clearToken } = useAuthStore(); // Use Zustand store
+  const router = useRouter();
 
+  useEffect(() => {
+    if (token) {
+      router.push("/"); // Redirect to dashboard if logged in
+    }
+  }, [token, router]);
+
+  if (token) return null;
   return (
     <PageContainer title="Login" description="this is Login page">
       <Box

@@ -40,6 +40,12 @@ const Menuitems = [
     icon: IconBook2, // or any other icon you prefer from @tabler/icons-react
     href: "/automation-dictionary",
   },
+  {
+    id: uniqueId(),
+    title: "Run Automation",
+    icon: IconBook2, // or any other icon you prefer from @tabler/icons-react
+    href: "/runAutomation",
+  },
 
   {
     navlabel: true,

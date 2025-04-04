@@ -2,7 +2,7 @@
 import os
 import ssl
 from fastapi import FastAPI, Request
-from app.routes import profiles, diagnosis_routes, user
+from app.routes import profiles, diagnosis_routes, user, automation, runs
 from tortoise.contrib.fastapi import register_tortoise
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,8 +37,13 @@ register_tortoise(
 app.include_router(profiles.router, prefix="/profiles", tags=["Automation Profiles"])
 app.include_router(diagnosis_routes.router)
 app.include_router(user.router)
+app.include_router(runs.router)
 
-# Include authentication routes
+app.include_router(
+    automation.router,
+    prefix="/automation",
+    tags=["automation"],
+)
 app.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"])
 app.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),

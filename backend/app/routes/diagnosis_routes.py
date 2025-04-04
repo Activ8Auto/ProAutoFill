@@ -9,7 +9,7 @@ from app.models.models import (
     DiagnosisPrescribedMedication,
     User,
 )
-from app.schemas.diagnosis_schema import DiagnosisSchema, DiagnosisCreate
+from app.schemas.diagnosis_schema import DiagnosisSchema, DiagnosisCreate, DiagnosisUpdate
 from uuid import uuid4
 import logging
 from app.auth import current_active_user
@@ -153,3 +153,105 @@ async def create_diagnosis(
     }
 
     return DiagnosisSchema(**response_data)
+
+# New PATCH endpoint for updating a diagnosis
+@router.patch("/diagnoses/{diagnosis_id}", response_model=DiagnosisSchema)
+async def update_diagnosis(
+    diagnosis_id: str,
+    diagnosis_update: DiagnosisUpdate,
+    current_user: User = Depends(current_active_user),
+):
+    logger.debug(f"Updating diagnosis {diagnosis_id} for user {current_user.id} with data: {diagnosis_update.dict(exclude_unset=True)}")
+    try:
+        # Fetch the existing diagnosis, ensuring it belongs to the current user
+        diagnosis = await DiagnosisEntry.get(id=diagnosis_id, user_id=current_user.id).prefetch_related(
+            "physical_exams",
+            "laboratory_tests",
+            "teachings",
+            "current_medications",
+            "prescribed_medications"
+        )
+
+        # Update scalar fields if provided
+        update_data = diagnosis_update.dict(exclude_unset=True, exclude={"physical_exam", "laboratory_tests", "teaching_provided", "current_medications", "medications"})
+        if update_data:
+            await diagnosis.update_from_dict(update_data)
+            await diagnosis.save()
+
+        # Update related fields (delete existing and recreate)
+        if diagnosis_update.physical_exam is not None:
+            await DiagnosisPhysicalExam.filter(diagnosis=diagnosis).delete()
+            await DiagnosisPhysicalExam.bulk_create([
+                DiagnosisPhysicalExam(diagnosis=diagnosis, exam=exam)
+                for exam in diagnosis_update.physical_exam
+            ])
+            logger.debug("Physical exams updated")
+
+        if diagnosis_update.laboratory_tests is not None:
+            await DiagnosisLaboratoryTest.filter(diagnosis=diagnosis).delete()
+            await DiagnosisLaboratoryTest.bulk_create([
+                DiagnosisLaboratoryTest(diagnosis=diagnosis, test=test)
+                for test in diagnosis_update.laboratory_tests
+            ])
+            logger.debug("Laboratory tests updated")
+
+        if diagnosis_update.teaching_provided is not None:
+            await DiagnosisTeaching.filter(diagnosis=diagnosis).delete()
+            await DiagnosisTeaching.bulk_create([
+                DiagnosisTeaching(diagnosis=diagnosis, topic=topic)
+                for topic in diagnosis_update.teaching_provided
+            ])
+            logger.debug("Teachings updated")
+
+        if diagnosis_update.current_medications is not None:
+            await DiagnosisCurrentMedication.filter(diagnosis=diagnosis).delete()
+            await DiagnosisCurrentMedication.bulk_create([
+                DiagnosisCurrentMedication(diagnosis=diagnosis, med=med)
+                for med in diagnosis_update.current_medications
+            ])
+            logger.debug("Current medications updated")
+
+        if diagnosis_update.medications is not None:
+            await DiagnosisPrescribedMedication.filter(diagnosis=diagnosis).delete()
+            await DiagnosisPrescribedMedication.bulk_create([
+                DiagnosisPrescribedMedication(diagnosis=diagnosis, med=med)
+                for med in diagnosis_update.medications
+            ])
+            logger.debug("Prescribed medications updated")
+
+        # Fetch updated object
+        updated_diagnosis = await DiagnosisEntry.get(id=diagnosis_id).prefetch_related(
+            "physical_exams",
+            "laboratory_tests",
+            "teachings",
+            "current_medications",
+            "prescribed_medications"
+        )
+
+        response_data = {
+            "id": str(updated_diagnosis.id),
+            "user_id": str(updated_diagnosis.user_id),
+            "name": updated_diagnosis.name,
+            "icd_code": updated_diagnosis.icd_code,
+            "current_medications": [med.med for med in updated_diagnosis.current_medications],
+            "physical_exam": [exam.exam for exam in updated_diagnosis.physical_exams],
+            "laboratory_tests": [test.test for test in updated_diagnosis.laboratory_tests],
+            "teachings": [teaching.topic for teaching in updated_diagnosis.teachings],
+            "prescribed_medications": [med.med for med in updated_diagnosis.prescribed_medications],
+            "exclusion_group": updated_diagnosis.exclusion_group,
+        }
+
+        return DiagnosisSchema(**response_data)
+
+    except DoesNotExist:
+        logger.error(f"Diagnosis with ID {diagnosis_id} not found or not owned by user {current_user.id}")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Diagnosis with ID {diagnosis_id} not found"
+        )
+    except Exception as e:
+        logger.error(f"Error updating diagnosis {diagnosis_id}: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error while updating diagnosis"
+        )

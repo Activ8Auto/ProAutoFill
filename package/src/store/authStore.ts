@@ -2,19 +2,21 @@
 import { create } from "zustand";
 import { jwtDecode } from "jwt-decode";
 
+interface TokenPayload {
+  sub: string;
+  exp: number;
+}
+
 interface AuthState {
   token: string | null;
   userId: string | null;
+  isTokenExpired: () => boolean;
   setAuth: (token: string, userId: string) => void;
   clearAuth: () => void;
 }
-interface TokenPayload {
-  sub: string; // assuming the user id is stored in "sub"
-  // any other claims...
-}
-export const useAuthStore = create<AuthState>((set) => {
-  const storedToken =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+export const useAuthStore = create<AuthState>((set, get) => {
+  const storedToken = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   let storedUserId: string | null = null;
   if (storedToken) {
     try {
@@ -28,17 +30,22 @@ export const useAuthStore = create<AuthState>((set) => {
   return {
     token: storedToken,
     userId: storedUserId,
-    setAuth: (token: string) => {
-      let userId: string | null = null;
+    isTokenExpired: () => {
+      const token = get().token;
+      if (!token) return true;
       try {
         const decoded = jwtDecode<TokenPayload>(token);
-        userId = decoded.sub;
+        const currentTime = Date.now() / 1000; // Current time in seconds
+        return decoded.exp < currentTime;
       } catch (e) {
         console.error("Failed to decode token", e);
+        return true; // Treat as expired if decoding fails
       }
+    },
+    setAuth: (token: string, userId: string) => {
       set({ token, userId });
       localStorage.setItem("token", token);
-      localStorage.setItem("userId", userId ? userId : "");
+      localStorage.setItem("userId", userId);
     },
     clearAuth: () => {
       set({ token: null, userId: null });

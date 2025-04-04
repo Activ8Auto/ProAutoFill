@@ -6,6 +6,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AuthProvider } from "@/lib/auth-context";
 
+import useAutoLogout  from "@/app/hooks/useAutoLogout";
+
 export default function RootLayout({
   children,
 }: {
