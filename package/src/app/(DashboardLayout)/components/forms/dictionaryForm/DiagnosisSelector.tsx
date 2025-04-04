@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/authStore";
 import {
   Box,
   Checkbox,
@@ -21,11 +22,13 @@ export default function DiagnosisSelector({ selected, onChange }: Props) {
     []
   );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const { token } = useAuthStore();
 
   useEffect(() => {
     const loadDiagnoses = async () => {
       try {
-        const fetched = await fetchDiagnosisOptions();
+        if (!token) return;
+        const fetched = await fetchDiagnosisOptions(token);
         setDiagnosisOptions(fetched);
         const selectedNames = selected.map((d) => d.name);
         setSelectedIds(selectedNames);
@@ -34,7 +37,7 @@ export default function DiagnosisSelector({ selected, onChange }: Props) {
       }
     };
     loadDiagnoses();
-  }, [selected]);
+  }, [selected, token]);
 
   const handleToggle = (name: string) => {
     const updated = selectedIds.includes(name)

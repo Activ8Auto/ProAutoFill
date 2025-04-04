@@ -126,11 +126,13 @@ export default function DiagnosisForm({
 
   const [diagnoses, setDiagnoses] = useState<DiagnosisEntry[]>([]);
   const [form, setForm] = useState<DiagnosisEntry>(initialData ?? defaultForm);
-  const [defaultPhysicalExams, setDefaultPhysicalExams] = useState<string[]>([]);
+  const [defaultPhysicalExams, setDefaultPhysicalExams] = useState<string[]>(
+    []
+  );
   const [defaultLabs, setDefaultLabs] = useState<string[]>([]);
   const [defaultTeaching, setDefaultTeaching] = useState<string[]>([]);
   const [defaultMeds, setDefaultMeds] = useState<string[]>([]);
-  
+
   useEffect(() => {
     if (!token || !userId) return;
 
@@ -183,13 +185,20 @@ export default function DiagnosisForm({
     }
   };
 
-  const handleUpdateDiagnosis = async (diagnosisId: string, diagnosis: DiagnosisEntry) => {
+  const handleUpdateDiagnosis = async (
+    diagnosisId: string,
+    diagnosis: DiagnosisEntry
+  ) => {
     if (!token || !userId) {
       console.error("No authentication token available");
       return;
     }
     try {
-      const updatedDiagnosis = await updateDiagnosis(diagnosisId, diagnosis, token);
+      const updatedDiagnosis = await updateDiagnosis(
+        diagnosisId,
+        diagnosis,
+        token
+      );
       setDiagnoses((prev) =>
         prev.map((d) => (d.id === updatedDiagnosis.id ? updatedDiagnosis : d))
       );
@@ -232,16 +241,15 @@ export default function DiagnosisForm({
       console.log("Updating diagnosis:", form);
       await handleUpdateDiagnosis(form.id, {
         ...form,
-        user_id: userId, // Ensure user_id is included
+        user_id: userId!, // Ensure user_id is included
       });
     } else {
       console.log("Creating new diagnosis:", form);
       await handleAddDiagnosis({
         ...form,
-        user_id: userId, // Ensure user_id is included
+        user_id: userId!, // Ensure user_id is included
       });
     }
-    
 
     // Reset form after submission
     setForm({
@@ -254,7 +262,7 @@ export default function DiagnosisForm({
       teaching_provided: defaultTeaching,
       medications: [],
       exclusion_group: "",
-      user_id: userId,
+      user_id: userId!,
     });
     if (editMode && onCancelEdit) onCancelEdit(); // Exit edit mode
   };
@@ -352,7 +360,9 @@ export default function DiagnosisForm({
             label="Diagnosis Name"
             fullWidth
             value={form.name}
-            onChange={(e) => handleChange("name", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleChange("name", e.target.value)
+            }
           />
         </Grid>
         <Grid item xs={6}>
@@ -360,7 +370,9 @@ export default function DiagnosisForm({
             label="ICD Code"
             fullWidth
             value={form.icd_code}
-            onChange={(e) => handleChange("icd_code", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleChange("icd_code", e.target.value)
+            }
           />
         </Grid>
 
@@ -374,7 +386,7 @@ export default function DiagnosisForm({
             label="Select Physical Exams"
             SelectProps={{ multiple: true }}
             value={form.physical_exam}
-            onChange={(e) =>
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleChange(
                 "physical_exam",
                 typeof e.target.value === "string"
@@ -418,7 +430,7 @@ export default function DiagnosisForm({
             label="Select Laboratory Tests"
             SelectProps={{ multiple: true }}
             value={form.laboratory_tests}
-            onChange={(e) =>
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleChange(
                 "laboratory_tests",
                 typeof e.target.value === "string"
@@ -462,7 +474,7 @@ export default function DiagnosisForm({
             label="Select Teaching Provided"
             SelectProps={{ multiple: true }}
             value={form.teaching_provided}
-            onChange={(e) =>
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleChange(
                 "teaching_provided",
                 typeof e.target.value === "string"
@@ -506,7 +518,7 @@ export default function DiagnosisForm({
             label="Select Current Medications"
             SelectProps={{ multiple: true }}
             value={form.current_medications}
-            onChange={(e) =>
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleChange(
                 "current_medications",
                 typeof e.target.value === "string"
@@ -545,7 +557,7 @@ export default function DiagnosisForm({
             label="Medications"
             fullWidth
             value={form.medications.join(", ")}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const medsArray = e.target.value
                 .split(",")
                 .map((med: string) => med.trim())
@@ -560,7 +572,9 @@ export default function DiagnosisForm({
             label="Exclusion Group"
             fullWidth
             value={form.exclusion_group}
-            onChange={(e) => handleChange("exclusion_group", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleChange("exclusion_group", e.target.value)
+            }
           />
         </Grid>
 
@@ -624,8 +638,12 @@ export default function DiagnosisForm({
                   <TableCell>
                     {entry.current_medications?.join(", ") || "None"}
                   </TableCell>
-                  <TableCell>{entry.medications?.join(", ") || "None"}</TableCell>
-                  <TableCell>{entry.physical_exam?.join(", ") || "None"}</TableCell>
+                  <TableCell>
+                    {entry.medications?.join(", ") || "None"}
+                  </TableCell>
+                  <TableCell>
+                    {entry.physical_exam?.join(", ") || "None"}
+                  </TableCell>
                   <TableCell>
                     {entry.laboratory_tests?.join(", ") || "None"}
                   </TableCell>
@@ -636,7 +654,10 @@ export default function DiagnosisForm({
                     <IconButton onClick={() => handleEdit(idx)} size="small">
                       <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton onClick={() => handleDelete(entry.id)} size="small">
+                    <IconButton
+                      onClick={() => handleDelete(entry.id)}
+                      size="small"
+                    >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </TableCell>

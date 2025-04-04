@@ -23,6 +23,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { updateUserDefaults } from "@/lib/api";
+import type { AutomationProfileStore } from "@/store/automationProfileStore";
 import InputAdornment from "@mui/material/InputAdornment";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
 import AddIcon from "@mui/icons-material/Add";
@@ -46,11 +47,14 @@ export default function ProfileForm() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-info`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-info`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const { profile_info } = await res.json();
         if (profile_info) {
           setForm((prev) => ({
@@ -66,18 +70,20 @@ export default function ProfileForm() {
         console.error("Failed to load user profile_info", err);
       }
     };
-  
+
     if (token && userId) {
       fetchUserProfile();
     }
   }, [token, userId]);
   const addProfile = useAutomationProfileStore((state) => state.addProfile);
 
-  const fetchProfiles = useAutomationProfileStore((state) => state.fetchProfiles);
+  const fetchProfiles = useAutomationProfileStore(
+    (state) => state.fetchProfiles
+  );
 
   useEffect(() => {
     if (token) {
-      fetchProfiles(token);
+      fetchProfiles();
     }
   }, [token, fetchProfiles]);
 
@@ -140,8 +146,12 @@ export default function ProfileForm() {
     loadDiagnoses();
   }, [token]);
 
-
   const handleSaveDefaults = async () => {
+    if (!userId || !token) {
+      console.error("Missing userId or token");
+      return;
+    }
+
     const defaults = {
       faculty: defaultFaculty,
       preceptor: defaultPreceptor,
@@ -149,7 +159,7 @@ export default function ProfileForm() {
     };
 
     try {
-      await updateUserDefaults(defaults, userId, token); // replace with actual user ID
+      await updateUserDefaults(defaults, userId, token);
       alert("Defaults saved!");
     } catch (err) {
       console.error("Failed to save defaults:", err);
@@ -176,8 +186,8 @@ export default function ProfileForm() {
     gender: "",
     race: "",
     complexity: "",
-    dNumber: "",                 
-    chamberlainPassword: "", 
+    dNumber: "",
+    chamberlainPassword: "",
     ageRanges: [], // NEW
     studentFunctionWeights: [
       { level: "100% Student", weight: 25 },
@@ -241,7 +251,7 @@ export default function ProfileForm() {
       preceptor: form.preceptor,
       diagnoses: selectedDiagnoses,
       dNumber: form.dNumber,
-     chamberlainPassword: form.chamberlainPassword,
+      chamberlainPassword: form.chamberlainPassword,
     };
 
     console.log("Sending profile data:", newProfileData);
@@ -251,8 +261,7 @@ export default function ProfileForm() {
       console.log("Server response:", savedProfile);
       // addProfile(savedProfile);
       alert("Profile saved!");
-      await fetchProfiles(token)
-
+      await fetchProfiles();
     } catch (err) {
       console.error("Failed to save profile:", err);
     }
@@ -269,54 +278,18 @@ export default function ProfileForm() {
             label="Profile Name"
             fullWidth
             value={form.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-          />
-        </Grid>
-        {/* Min Wait Input */}
-        {/* <Grid item xs={6}>
-          <CustomTextField
-            label="Min Wait (sec)"
-            type="number"
-            fullWidth
-            value={form.minWait}
-            onChange={(e) => handleChange("minWait", parseInt(e.target.value))}
-          />
-        </Grid> */}
-        {/* Max Wait Input */}
-        {/* <Grid item xs={6}>
-          <CustomTextField
-            label="Max Wait (sec)"
-            type="number"
-            fullWidth
-            value={form.maxWait}
-            onChange={(e) => handleChange("maxWait", parseInt(e.target.value))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleChange("name", e.target.value)
+            }
           />
         </Grid>
 
-        <Grid item xs={6}>
-          <CustomTextField
-            label="Target Hours"
-            type="number"
-            fullWidth
-            value={form.targetHours}
-            onChange={(e) =>
-              handleChange("targetHours", parseFloat(e.target.value))
-            }
-          />
-        </Grid>
-        <Grid item xs={6} display="flex" alignItems="center">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={form.runHeadless}
-                onChange={(e) => handleChange("runHeadless", e.target.checked)}
-              />
-            }
-            label="Run Headless"
-          />
-        </Grid> */}
         <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom sx={{ textDecoration: 'underline' }}>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{ textDecoration: "underline" }}
+          >
             Visit Info
           </Typography>
         </Grid>
@@ -339,7 +312,11 @@ export default function ProfileForm() {
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="subtitle1" gutterBottom sx={{ textDecoration: 'underline' }}>
+          <Typography
+            variant="subtitle1"
+            gutterBottom
+            sx={{ textDecoration: "underline" }}
+          >
             Visit Duration + Weight (%)
           </Typography>
           <Typography variant="body2" gutterBottom>
@@ -356,10 +333,13 @@ export default function ProfileForm() {
                   type="number"
                   size="small"
                   value={form.durationWeights[index]}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const updated = [...form.durationWeights];
                     updated[index] = parseInt(e.target.value);
-                    setDurationWeights(updated);
+                    setForm((prev) => ({
+                      ...prev,
+                      durationWeights: updated,
+                    }));
                   }}
                   InputProps={{
                     endAdornment: (
@@ -372,91 +352,95 @@ export default function ProfileForm() {
           </Box>
         </Grid>
 
-        {["rotation", "faculty", "preceptor"].map((field) => {
-  const router = useRouter();
-  // Define the static label text based on the field
-  const label =
-    field === "rotation"
-      ? "Scheduled Rotation "
-      : field === "faculty"
-      ? "Faculty "
-      : "Preceptor ";
-
-  return (
-    <Grid item xs={12} key={field}>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        mb={1}
-      >
-        <Typography sx={{ textDecoration: "underline" }}>
-          {label}
-          <Button
-            variant="text"
-            onClick={() => router.push("/account")}
-            sx={{
-              textDecoration: "underline",
-              color: "primary.main",
-              padding: 0,
-              minWidth: 0,
-              textTransform: "none",
-              display: "inline", // keep it inline with the text
-            }}
-          >
-            (Change in Profile)
-          </Button>
-        </Typography>
-      </Box>
-      {form[field] ? (
-        <Typography
-          fontWeight={500}
-          fontSize="0.9rem"
-          sx={{ opacity: 0.6 }}
-        >
-          {form[field]}
-        </Typography>
-      ) : (
-        <Box textAlign="center" mt={2}>
-          <Typography
-            color="error"
-            fontSize="1.2rem"
-            fontWeight="bold"
-            textAlign="center"
-          >
-            No {field === "rotation"
-              ? "Scheduled Rotation"
+        {(["rotation", "faculty", "preceptor"] as const).map((field) => {
+          const router = useRouter();
+          // Define the static label text based on the field
+          const label =
+            field === "rotation"
+              ? "Scheduled Rotation "
               : field === "faculty"
-              ? "Faculty"
-              : "Preceptor"}{" "}
-            set.
-            <br />
-            Please update this in your{" "}
-            <Button
-              variant="text"
-              onClick={() => router.push("/account")}
-              sx={{
-                textDecoration: "underline",
-                color: "#d32f2f",
-                fontWeight: "bold",
-                textTransform: "none",
-                padding: 0,
-                minWidth: 0,
-              }}
-            >
-              My Profile
-            </Button>{" "}
-            page.
-          </Typography>
-        </Box>
-      )}
-    </Grid>
-  );
-})}
-       
+              ? "Faculty "
+              : "Preceptor ";
+
+          return (
+            <Grid item xs={12} key={field}>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                mb={1}
+              >
+                <Typography sx={{ textDecoration: "underline" }}>
+                  {label}
+                  <Button
+                    variant="text"
+                    onClick={() => router.push("/account")}
+                    sx={{
+                      textDecoration: "underline",
+                      color: "primary.main",
+                      padding: 0,
+                      minWidth: 0,
+                      textTransform: "none",
+                      display: "inline", // keep it inline with the text
+                    }}
+                  >
+                    (Change in Profile)
+                  </Button>
+                </Typography>
+              </Box>
+              {form[field] ? (
+                <Typography
+                  fontWeight={500}
+                  fontSize="0.9rem"
+                  sx={{ opacity: 0.6 }}
+                >
+                  {form[field]}
+                </Typography>
+              ) : (
+                <Box textAlign="center" mt={2}>
+                  <Typography
+                    color="error"
+                    fontSize="1.2rem"
+                    fontWeight="bold"
+                    textAlign="center"
+                  >
+                    No{" "}
+                    {field === "rotation"
+                      ? "Scheduled Rotation"
+                      : field === "faculty"
+                      ? "Faculty"
+                      : "Preceptor"}{" "}
+                    set.
+                    <br />
+                    Please update this in your{" "}
+                    <Button
+                      variant="text"
+                      onClick={() => router.push("/account")}
+                      sx={{
+                        textDecoration: "underline",
+                        color: "#d32f2f",
+                        fontWeight: "bold",
+                        textTransform: "none",
+                        padding: 0,
+                        minWidth: 0,
+                      }}
+                    >
+                      My Profile
+                    </Button>{" "}
+                    page.
+                  </Typography>
+                </Box>
+              )}
+            </Grid>
+          );
+        })}
 
         <Grid item xs={12}>
-          <Typography variant="subtitle1" gutterBottom sx={{ textDecoration: 'underline' }}>
+          <Typography
+            variant="subtitle1"
+            gutterBottom
+            sx={{ textDecoration: "underline" }}
+          >
             Age Range Weighting
           </Typography>
           <Typography variant="body2" color="text.secondary" mb={1}>
@@ -486,15 +470,14 @@ export default function ProfileForm() {
                   size="small"
                   sx={{ maxWidth: 80 }}
                   value={item.weight}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const updated = [...ageRanges];
                     updated[index].weight = parseInt(e.target.value);
                     setAgeRanges(updated);
                   }}
                   InputProps={{
-                    style: { fontSize: '0.7rem' },
+                    style: { fontSize: "0.7rem" },
                     endAdornment: (
-                      
                       <InputAdornment position="end">%</InputAdornment>
                     ),
                   }}
@@ -507,14 +490,20 @@ export default function ProfileForm() {
           <Grid container spacing={2}>
             {/* Visit Mode */}
             <Grid item xs={4}>
-              <Typography variant="subtitle2" gutterBottom sx={{ textDecoration: 'underline' }}>
+              <Typography
+                variant="subtitle2"
+                gutterBottom
+                sx={{ textDecoration: "underline" }}
+              >
                 Visit Mode
               </Typography>
               <CustomTextField
                 select
                 fullWidth
                 value={form.visitType}
-                onChange={(e) => handleChange("visitType", e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleChange("visitType", e.target.value)
+                }
               >
                 <MenuItem value="Face to Face">Face to Face</MenuItem>
                 <MenuItem value="Telepsychiatry">Telepsychiatry</MenuItem>
@@ -523,14 +512,20 @@ export default function ProfileForm() {
 
             {/* Site Type */}
             <Grid item xs={4}>
-              <Typography variant="subtitle2" gutterBottom sx={{ textDecoration: 'underline' }}>
+              <Typography
+                variant="subtitle2"
+                gutterBottom
+                sx={{ textDecoration: "underline" }}
+              >
                 Site Type
               </Typography>
               <CustomTextField
                 select
                 fullWidth
                 value={form.siteType}
-                onChange={(e) => handleChange("siteType", e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleChange("siteType", e.target.value)
+                }
               >
                 <MenuItem value="Inpatient">Inpatient</MenuItem>
                 <MenuItem value="Outpatient">Outpatient</MenuItem>
@@ -539,21 +534,31 @@ export default function ProfileForm() {
 
             {/* CPT Visit Code */}
             <Grid item xs={4}>
-              <Typography variant="subtitle2"sx={{ textDecoration: 'underline' }}  gutterBottom>
+              <Typography
+                variant="subtitle2"
+                sx={{ textDecoration: "underline" }}
+                gutterBottom
+              >
                 CPT Visit Code
               </Typography>
               <CustomTextField
                 fullWidth
                 placeholder="e.g. 99214"
                 value={form.cptCode}
-                onChange={(e) => handleChange("cptCode", e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleChange("cptCode", e.target.value)
+                }
               />
             </Grid>
           </Grid>
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="subtitle1" gutterBottom sx={{ textDecoration: 'underline' }}>
+          <Typography
+            variant="subtitle1"
+            gutterBottom
+            sx={{ textDecoration: "underline" }}
+          >
             Student Level of Function (%)
           </Typography>
           <Typography variant="body2" color="text.secondary" mb={1}>
@@ -570,7 +575,7 @@ export default function ProfileForm() {
                   <CustomTextField
                     type="number"
                     value={entry.weight}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const updated = [...form.studentFunctionWeights];
                       updated[index].weight = parseInt(e.target.value) || 0;
                       setFunctionLevels(updated);
@@ -589,7 +594,12 @@ export default function ProfileForm() {
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="h6" mt={4} mb={2} sx={{ textDecoration: 'underline' }}>
+          <Typography
+            variant="h6"
+            mt={4}
+            mb={2}
+            sx={{ textDecoration: "underline" }}
+          >
             Select Diagnoses to Include
           </Typography>
           {diagnosisOptions.length === 0 ? (
@@ -725,31 +735,30 @@ export default function ProfileForm() {
           </Box>
         </Grid>
         <Box mt={6}>
-        <Typography variant="h5" gutterBottom>
-          📂 Your Saved Profiles
-        </Typography>
-
-        {profiles.length === 0 ? (
-          <Typography color="text.secondary">
-            No profiles yet. Go make one!
+          <Typography variant="h5" gutterBottom>
+            📂 Your Saved Profiles
           </Typography>
-        ) : (
-          <Box
-            display="grid"
-            gridTemplateColumns={{
-              xs: "1fr",
-              md: "1fr 1fr",
-              lg: "1fr 1fr 1fr",
-            }}
-            gap={3}
-          >
-            {profiles.map((profile: AutomationProfile) => (
-              <ProfileCard key={profile.id} profile={profile} />
-            ))}
-          </Box>
-        )}
-      </Box>
-    
+
+          {profiles.length === 0 ? (
+            <Typography color="text.secondary">
+              No profiles yet. Go make one!
+            </Typography>
+          ) : (
+            <Box
+              display="grid"
+              gridTemplateColumns={{
+                xs: "1fr",
+                md: "1fr 1fr",
+                lg: "1fr 1fr 1fr",
+              }}
+              gap={3}
+            >
+              {profiles.map((profile: AutomationProfile) => (
+                <ProfileCard key={profile.id} profile={profile} />
+              ))}
+            </Box>
+          )}
+        </Box>
       </Grid>
     </Box>
   );

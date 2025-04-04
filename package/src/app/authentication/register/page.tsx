@@ -8,7 +8,7 @@ import AuthRegister from "../auth/AuthRegister";
 import { useAuthStore } from "@/store/authStore";
 
 const Register2 = () => {
-  const { token, logout } = useAuthStore();
+  const { token, clearAuth } = useAuthStore();
 
   return (
     <PageContainer title="Register" description="this is Register page">
@@ -78,7 +78,7 @@ const Register2 = () => {
                     {token ? (
                       <Typography
                         component="button"
-                        onClick={logout}
+                        onClick={clearAuth}
                         fontWeight="500"
                         sx={{
                           textDecoration: "none",

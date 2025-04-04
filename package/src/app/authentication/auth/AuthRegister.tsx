@@ -45,7 +45,9 @@ const AuthRegister = ({ subtext, subtitle }: AuthRegisterProps) => {
         label="Email"
         fullWidth
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setEmail(e.target.value)
+        }
         sx={{ mb: 2 }}
       />
       <TextField
@@ -53,7 +55,9 @@ const AuthRegister = ({ subtext, subtitle }: AuthRegisterProps) => {
         type="password"
         fullWidth
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPassword(e.target.value)
+        }
         sx={{ mb: 2 }}
       />
       {error && (

@@ -3,3 +3,6 @@ uvicorn
 tortoise-orm
 asyncpg
 python-dotenv
+fastapi-users-tortoise
+playwright
+celery

@@ -8,10 +8,7 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import {
-  fetchUserProfileInfo,
-  updateUserProfileInfo,
-} from "@/lib/api";
+import { fetchUserProfileInfo, updateUserProfileInfo } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
 
@@ -28,11 +25,17 @@ const UserProfileForm = () => {
     scheduledRotation: "",
     faculty: "",
   });
-
+  let data: any;
   useEffect(() => {
     const loadProfileInfo = async () => {
       try {
-        const data = await fetchUserProfileInfo(userId, token);
+        if (userId && token) {
+          data = await fetchUserProfileInfo(userId, token);
+          setFormData((prev) => ({
+            ...prev,
+            ...data,
+          }));
+        }
         const info = data?.profile_info || {};
         setFormData((prev) => ({
           ...prev,
@@ -55,13 +58,17 @@ const UserProfileForm = () => {
   };
 
   const handleSubmit = async () => {
+    if (!userId || !token) {
+      toast.error("Missing user ID or token.");
+      return;
+    }
+
     try {
       await updateUserProfileInfo(formData, userId, token);
       toast.success("Profile updated!");
       setIsEditing(false);
     } catch (err) {
-      toast.error("Failed to update profile");
-      console.error(err);
+      toast.error("Failed to update profile.");
     }
   };
 
@@ -82,9 +89,9 @@ const UserProfileForm = () => {
           ⚠️ Important:
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          The values for <strong>Preceptor</strong>, <strong>Faculty</strong>, and{" "}
-          <strong>Scheduled Rotation</strong> must exactly match the options used
-          in Medtrics.
+          The values for <strong>Preceptor</strong>, <strong>Faculty</strong>,
+          and <strong>Scheduled Rotation</strong> must exactly match the options
+          used in Medtrics.
           <br />
           To get an exact match: open the Medtrics form, right-click the correct
           option, select <em>"Inspect"</em>, and copy the text exactly as it

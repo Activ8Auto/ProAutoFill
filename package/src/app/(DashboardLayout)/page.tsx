@@ -1,24 +1,23 @@
-'use client'
+"use client";
 
-import { Grid, Box } from '@mui/material';
+import { Grid, Box } from "@mui/material";
 import { useRouter } from "next/navigation";
-import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
+import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import { useState, useEffect } from "react";
-import RaceBreakdown from '@/app/(DashboardLayout)/components/dashboard/RaceBreakdown';
+import RaceBreakdown from "@/app/(DashboardLayout)/components/dashboard/RaceBreakdown";
 import RecentRuns from "@/app/(DashboardLayout)/components/dashboard/RecentRuns";
 import AgeGroupBreakdown from "@/app/(DashboardLayout)/components/dashboard/AgeGroupBreakdown";
 import DurationBreakdown from "./components/dashboard/DurationBreakdown";
 import VisitTypeBreakdown from "./components/dashboard/VisitTypeBreakdown";
 import GenderBreakdown from "./components/dashboard/GenderBreakdown";
 import OverviewWidgets from "./components/dashboard/TotalRuns";
-import DiagnosisBreakdownChart from '@/app/(DashboardLayout)/components/dashboard/DiagnosisBreakdownChart';
+import DiagnosisBreakdownChart from "@/app/(DashboardLayout)/components/dashboard/DiagnosisBreakdownChart";
 import TimeFrameSelector from "@/app/(DashboardLayout)/components/shared/TimeFrameSelector";
-import { useAuthStore } from '@/store/authStore';
-import { getAutomationRuns } from '@/lib/api';
-
+import { useAuthStore } from "@/store/authStore";
+import { getAutomationRuns } from "@/lib/api";
 
 const Dashboard = () => {
-  const [timeframe, setTimeframe] = useState("week");
+  const [timeframe, setTimeframe] = useState<"day" | "week" | "month">("week");
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,7 +57,10 @@ const Dashboard = () => {
   if (error) return <div>Error loading automation run data.</div>;
 
   return (
-    <PageContainer title="Dashboard" description="Dashboard overview of automation runs">
+    <PageContainer
+      title="Dashboard"
+      description="Dashboard overview of automation runs"
+    >
       <Box>
         <TimeFrameSelector value={timeframe} onChange={setTimeframe} />
         <Grid container spacing={3}>

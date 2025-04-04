@@ -76,7 +76,9 @@ export default function RunAutomationPage() {
           label="Select a Profile"
           fullWidth
           value={selectedProfileId}
-          onChange={(e) => setSelectedProfileId(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSelectedProfileId(e.target.value)
+          }
           sx={{ mb: 2 }}
         >
           {profiles.map((profile) => (
@@ -91,7 +93,9 @@ export default function RunAutomationPage() {
           type="number"
           fullWidth
           value={targetHours}
-          onChange={(e) => setTargetHours(Number(e.target.value))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setTargetHours(Number(e.target.value))
+          }
           sx={{ mb: 2 }}
         />
 
@@ -124,7 +128,11 @@ export default function RunAutomationPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button onClick={handleRunAutomation} variant="contained" color="primary">
+          <Button
+            onClick={handleRunAutomation}
+            variant="contained"
+            color="primary"
+          >
             Confirm
           </Button>
         </DialogActions>

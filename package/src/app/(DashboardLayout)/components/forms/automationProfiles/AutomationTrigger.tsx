@@ -14,7 +14,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { updateProfile } from "@/lib/api"
+import { updateProfile } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import { useAutomationProfileStore } from "@/store/automationProfileStore";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
@@ -30,17 +30,14 @@ export default function RunAutomationPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  
-
-  
-const handleRunAutomation = async () => {
+  const handleRunAutomation = async () => {
     setConfirmOpen(false);
-  
+
     if (!selectedProfileId || !token) {
       toast.error("Please select a profile and ensure you're logged in");
       return;
     }
-  
+
     try {
       // 1. Update the profile with date + hours
       await updateProfile(
@@ -51,7 +48,7 @@ const handleRunAutomation = async () => {
         },
         token
       );
-  
+
       // 2. Then trigger the automation
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/automation/run/`,
@@ -66,9 +63,9 @@ const handleRunAutomation = async () => {
           }),
         }
       );
-  
+
       if (!res.ok) throw new Error("Automation failed");
-  
+
       toast.success("Automation started successfully!");
     } catch (err) {
       console.error(err);
@@ -90,7 +87,9 @@ const handleRunAutomation = async () => {
           label="Select a Profile"
           fullWidth
           value={selectedProfileId}
-          onChange={(e) => setSelectedProfileId(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSelectedProfileId(e.target.value)
+          }
           sx={{ mb: 2 }}
         >
           {profiles.map((profile) => (
@@ -105,7 +104,9 @@ const handleRunAutomation = async () => {
           type="number"
           fullWidth
           value={targetHours}
-          onChange={(e) => setTargetHours(Number(e.target.value))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setTargetHours(Number(e.target.value))
+          }
           sx={{ mb: 2 }}
         />
 
@@ -138,7 +139,11 @@ const handleRunAutomation = async () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button onClick={handleRunAutomation} variant="contained" color="primary">
+          <Button
+            onClick={handleRunAutomation}
+            variant="contained"
+            color="primary"
+          >
             Confirm
           </Button>
         </DialogActions>

@@ -10,7 +10,7 @@ import { useAuthStore } from "@/store/authStore"; // Import Zustand store
 import { useRouter } from "next/navigation";
 
 const Login2 = () => {
-  const { token, clearToken } = useAuthStore(); // Use Zustand store
+  const { token, clearAuth } = useAuthStore(); // Use Zustand store
   const router = useRouter();
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const Login2 = () => {
                     {token ? (
                       <Typography
                         component="button"
-                        onClick={clearToken}
+                        onClick={clearAuth}
                         fontWeight="500"
                         sx={{
                           textDecoration: "none",

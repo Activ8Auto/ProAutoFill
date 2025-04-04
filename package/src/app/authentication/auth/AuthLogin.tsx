@@ -26,21 +26,24 @@ const AuthLogin = ({ subtext, subtitle }: AuthLoginProps) => {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username: email, password }),
       });
-  
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(`Login failed: ${JSON.stringify(errorData)}`);
       }
-  
+
       const data = await res.json();
       console.log("Login response:", data); // Debug response
-  
+
       const decoded = jwtDecode<{ sub: string }>(data.access_token);
       console.log("Decoded token:", decoded); // Debug decoded token
-  
+
       setAuth(data.access_token, decoded.sub);
-      console.log("Token set in store, checking localStorage:", localStorage.getItem("token")); // Debug localStorage
-  
+      console.log(
+        "Token set in store, checking localStorage:",
+        localStorage.getItem("token")
+      ); // Debug localStorage
+
       router.push("/"); // Redirect to profiles page
     } catch (err) {
       setError("Invalid email or password");
@@ -54,7 +57,9 @@ const AuthLogin = ({ subtext, subtitle }: AuthLoginProps) => {
         label="Email"
         fullWidth
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setEmail(e.target.value)
+        }
         sx={{ mb: 2 }}
       />
       <TextField
@@ -62,7 +67,9 @@ const AuthLogin = ({ subtext, subtitle }: AuthLoginProps) => {
         type="password"
         fullWidth
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPassword(e.target.value)
+        }
         sx={{ mb: 2 }}
       />
       {error && (

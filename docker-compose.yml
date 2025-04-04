@@ -1,0 +1,44 @@
+services:
+  # Backend FastAPI app
+  web:
+    build:
+      context: ./backend
+    container_name: autofillpro-api
+    volumes:
+      - ./backend:/code
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - redis
+
+  celery_worker:
+    build:
+      context: ./backend
+    container_name: autofillpro-celery
+    command: celery -A app.celery.tasks worker --loglevel=info
+    volumes:
+      - ./backend:/code
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - redis
+      - web
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  frontend:
+    build:
+      context: ./package # 👈 point to the correct directory with package.json
+    container_name: autofill-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://web:8000
+    depends_on:
+      - web
