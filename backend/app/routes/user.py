@@ -67,3 +67,4 @@ async def get_user_defaults(user_id: str):
         raise HTTPException(status_code=400, detail="Invalid user ID")
     user = await User.get(id=user_id).values("default_values")
     return user
+

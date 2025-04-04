@@ -42,9 +42,9 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Run Automation",
+    title: "Errors",
     icon: IconBook2, // or any other icon you prefer from @tabler/icons-react
-    href: "/runAutomation",
+    href: "/errors",
   },
 
   {

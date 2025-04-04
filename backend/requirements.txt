@@ -6,3 +6,6 @@ python-dotenv
 fastapi-users-tortoise
 playwright
 celery
+passlib[bcrypt]
+redis
+stripe

@@ -78,16 +78,13 @@ export const createProfile = async (profileData: any, token: string) => {
 };
 
 export const deleteProfile = async (id: string, token: string) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/profiles/${id}/`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profiles/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (!res.ok) throw new Error("Failed to delete profile");
   return await res.json();
 };
@@ -131,7 +128,9 @@ export async function fetchUserDefaults(userId: string, token: string) {
   return await response.json();
 }
 
-export async function fetchDiagnosisOptions(token: string): Promise<DiagnosisEntry[]> {
+export async function fetchDiagnosisOptions(
+  token: string
+): Promise<DiagnosisEntry[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnoses/`, {
     headers: {
       "Content-Type": "application/json",
@@ -139,7 +138,7 @@ export async function fetchDiagnosisOptions(token: string): Promise<DiagnosisEnt
     },
   });
   if (!res.ok) throw new Error("Failed to fetch diagnoses");
-  
+
   const data = await res.json();
   // Transform the response to match the frontend keys:
   const transformedData: DiagnosisEntry[] = data.map((item: any) => ({
@@ -159,7 +158,6 @@ export async function fetchDiagnosisOptions(token: string): Promise<DiagnosisEnt
   }));
   return transformedData;
 }
-
 
 export async function updateUserProfileInfo(
   profileInfo: any,
@@ -195,7 +193,6 @@ export async function fetchUserProfileInfo(userId: string, token: string) {
   return await response.json();
 }
 
-
 export const getAutomationRuns = async (token: string) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/`, {
     headers: {
@@ -216,14 +213,17 @@ export const updateProfile = async (
   updates: any,
   token: string
 ) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/profiles/${profileId}/`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(updates),
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/profiles/${profileId}/`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updates),
+    }
+  );
 
   if (!res.ok) {
     const errorText = await res.text();
@@ -234,20 +234,22 @@ export const updateProfile = async (
   return await res.json();
 };
 
-
 export async function updateDiagnosis(
   diagnosisId: string,
   diagnosis: Partial<DiagnosisEntry>,
   token: string
 ): Promise<DiagnosisEntry> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/diagnoses/${diagnosisId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(diagnosis),
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/diagnoses/${diagnosisId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(diagnosis),
+    }
+  );
   if (!res.ok) {
     const errorText = await res.text();
     throw new Error(`Failed to update diagnosis: ${res.status} - ${errorText}`);
@@ -267,3 +269,51 @@ export async function updateDiagnosis(
     user_id: data.user_id,
   };
 }
+
+export const getErrorLogs = async (token: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/errors`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch error logs");
+  }
+  return res.json();
+};
+
+export const clearErrorLogs = async (token: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/errors`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Failed to clear error logs: ${res.status} - ${errorText}`);
+  }
+  return res.json();
+};
+
+export const createCheckoutSession = async (token: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/create-checkout-session`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(
+      `Failed to create checkout session: ${res.status} - ${errorText}`
+    );
+  }
+  return await res.json(); // Returns { checkout_url: "https://checkout.stripe.com/..." }
+};

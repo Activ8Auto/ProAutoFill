@@ -136,14 +136,18 @@ async def delete_profile(
     profile_id: str,
     current_user: User = Depends(current_active_user)
 ):
+    logger.info(f"Attempting to delete profile {profile_id} by user {current_user.id}")
     profile = await AutomationProfile.get_or_none(id=profile_id)
     if not profile:
+        logger.error(f"Profile {profile_id} not found")
         raise HTTPException(status_code=404, detail="Profile not found")
     if str(profile.user_id) != str(current_user.id):
+        logger.error(f"User {current_user.id} not authorized to delete profile {profile_id}")
         raise HTTPException(status_code=403, detail="Not authorized to delete this profile")
     deleted_count = await AutomationProfile.filter(id=profile_id).delete()
     if not deleted_count:
         raise HTTPException(status_code=404, detail="Profile not found")
+    logger.info(f"Profile {profile_id} deleted successfully")
     return {"detail": "Profile deleted"}
 
 class DefaultsUpdate(BaseModel):

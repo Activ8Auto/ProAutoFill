@@ -6,9 +6,10 @@ from datetime import datetime
 from tortoise import Tortoise
 from celery import shared_task
 from app.db.db import TORTOISE_ORM
+from app.automation_runner import run_automation, UserFixableError
 from app.celery.celery_worker import celery_app
 from app.models.models import AutomationProfile, User, AutomationRun
-from app.automation_runner import run_automation
+from app.automation_runner import run_automation, cancel_automation
 from fastapi import HTTPException
 
 logger = logging.getLogger(__name__)
@@ -123,18 +124,18 @@ async def run_automation_job(profile_id: str, user_id: str):
         try:
             # Actually do 1 automation run with Playwright
             final_picks = await run_automation(profile_data)
-
-            # Determine if "1 hour" or "30 minute"
+        
+            # Determine session minutes
             if "1 hour" in final_picks["random_duration"].lower():
                 session_minutes = 60
             elif "30 minute" in final_picks["random_duration"].lower():
                 session_minutes = 30
             else:
                 session_minutes = 30
-
+        
             total_minutes_run += session_minutes
             logger.info(f"\033[93m[DEBUG] Total minutes so far: {total_minutes_run}\033[0m")
-
+        
             # Mark success
             await new_run.update_from_dict({
                 "end_time": datetime.utcnow(),
@@ -153,18 +154,30 @@ async def run_automation_job(profile_id: str, user_id: str):
                 "chosen_minutes": session_minutes,
             })
             await new_run.save()
-
-        except Exception as e:
-            # Mark failure
+        
+        except UserFixableError as e:
+            # Handle user-fixable errors
             await new_run.update_from_dict({
                 "end_time": datetime.utcnow(),
                 "status": "failed",
-                "details": {"error": str(e)},
+                "details": {"error": str(e), "user_fixable": True},
             })
             await new_run.save()
-
-            # Stop the loop or continue based on your logic
-            raise e
+            raise  # Stop the loop to let the user fix the issue
+        
+        except Exception as e:
+            # Handle system errors
+            await new_run.update_from_dict({
+                "end_time": datetime.utcnow(),
+                "status": "failed",
+                "details": {"error": str(e), "user_fixable": False},
+            })
+            await new_run.save()
+            raise  # Stop the loop or implement retry logic (see step 6)
+        finally:
+            await cancel_automation()  # Clean up browser and Playwright
+            await Tortoise.close_connections()
+        
 
         # Wait a random time between 45 and 120 seconds before starting the next iteration,
         # but only if there is more work to do.

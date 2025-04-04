@@ -12,7 +12,6 @@ class User(models.Model):
     is_superuser = fields.BooleanField(default=False)
     is_verified = fields.BooleanField(default=False)
     profile_info = fields.JSONField(null=True, default=dict)
-
     diagnoses = fields.ReverseRelation["DiagnosisEntry"]
 
     class Meta:

@@ -28,7 +28,11 @@ const PageWrapper = styled("div")(() => ({
   backgroundColor: "transparent",
 }));
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   useAutoLogout();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);

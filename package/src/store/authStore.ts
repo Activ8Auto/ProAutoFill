@@ -16,7 +16,8 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => {
-  const storedToken = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const storedToken =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   let storedUserId: string | null = null;
   if (storedToken) {
     try {
