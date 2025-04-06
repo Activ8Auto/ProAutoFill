@@ -23,6 +23,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(DashboardLayout)/components/CheckoutButton.jsx", "src/app/(DashboardLayout)/components/GetMoreInfo.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(DashboardLayout)/components/CheckoutButton.jsx", "src/app/(DashboardLayout)/components/GetMoreInfo.tsx"],
   "exclude": ["node_modules"]
 }

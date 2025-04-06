@@ -118,6 +118,7 @@ export default function RunAutomationPage() {
           </Button>
           <GetMoreInfo />
         </Box>
+        
       </Paper>
 
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>

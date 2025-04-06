@@ -5,7 +5,6 @@ import {
   Pie,
   Cell,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
@@ -15,7 +14,6 @@ type Props = {
 };
 
 const DiagnosisBreakdown = ({ runs }: Props) => {
-  // Aggregate diagnosis usage across all runs.
   const aggregateDiagnosisData = (runs: any[]) => {
     const diagnosisMap: Record<string, number> = {};
     runs.forEach((run) => {
@@ -26,20 +24,18 @@ const DiagnosisBreakdown = ({ runs }: Props) => {
         });
       }
     });
-    // Convert to array for Recharts.
-    return Object.entries(diagnosisMap).map(([name, count]) => ({
+
+    return Object.entries(diagnosisMap).map(([name, value]) => ({
       name,
-      value: count,
+      value,
     }));
   };
 
   const data = aggregateDiagnosisData(runs);
-
-  // Colors for the pie slices.
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#a4de6c", "#d0ed57", "#8dd1e1"];
 
   return (
-    <DashboardCard title="Diagnosis Breakdown" subtitle="Overall Diagnosis Usage">
+    <DashboardCard title="Diagnosis Breakdown">
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -47,18 +43,17 @@ const DiagnosisBreakdown = ({ runs }: Props) => {
             cx="50%"
             cy="50%"
             outerRadius={90}
-            fill="#8884d8"
             dataKey="value"
             label={({ name, percent }) =>
-              `${name}: ${(percent * 100).toFixed(0)}%`
-            }
+              `${name} ${(percent * 100).toFixed(0)}%`
+            } // ✅ Labels on the pie
           >
             {data.map((_, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
           <Tooltip />
-          <Legend verticalAlign="bottom" />
+          {/* ❌ Legend intentionally excluded */}
         </PieChart>
       </ResponsiveContainer>
     </DashboardCard>

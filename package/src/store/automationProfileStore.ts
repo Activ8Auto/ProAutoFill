@@ -69,7 +69,7 @@ export const useAutomationProfileStore = create<AutomationProfileStore>(
         const { token } = useAuthStore.getState(); // Get token from auth store
         if (!token) {
           console.error("No token available, redirecting to login");
-          window.location.href = "/login";
+          window.location.href = "/authentication/login";
           return;
         }
         console.log("Fetching profiles with token:", token);

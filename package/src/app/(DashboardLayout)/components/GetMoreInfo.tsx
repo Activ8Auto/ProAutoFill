@@ -1,6 +1,8 @@
+"use client"
+
 import { Button } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function LearnMoreButton() {
   const router = useRouter();

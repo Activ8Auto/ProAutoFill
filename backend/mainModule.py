@@ -59,7 +59,11 @@ app.include_router(
     tags=["auth"],
 )
 logger.info("All routers included")
-
+@app.post("/debug-register")
+async def debug_register(request: Request):
+    body = await request.json()
+    print("DEBUG REGISTER BODY:", body)
+    return {"received": body}
 @app.on_event("startup")
 async def startup_event():
     logger.info("Startup event triggered")
