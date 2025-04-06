@@ -16,6 +16,7 @@ router = APIRouter()
 class ProfileUpdateRequest(BaseModel):
     selected_date: Optional[date]
     chosen_minutes: Optional[int]
+    target_hours: Optional[int] = None
 
 @router.get("/", response_model=List[AutomationProfileSchema])
 async def get_all_profiles(current_user: User = Depends(current_active_user)):

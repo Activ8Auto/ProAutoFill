@@ -44,7 +44,8 @@ export default function RunAutomationPage() {
         selectedProfileId,
         {
           selected_date: format(selectedDate, "yyyy-MM-dd"),
-          chosen_minutes: targetHours * 60, // Convert hours to minutes
+          target_hours: targetHours ,
+          chosen_minutes: targetHours * 60,
         },
         token
       );

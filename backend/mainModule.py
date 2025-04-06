@@ -16,7 +16,7 @@ load_dotenv()
 from fastapi.middleware.cors import CORSMiddleware
 from app.auth import fastapi_users, auth_backend, UserRead, UserCreate
 
-app = FastAPI(title="Automation Profiles API")
+app = FastAPI(title="Automation Profiles API", root_path="/api")
 
 # Log startup
 logger.info("Starting application...")
@@ -90,4 +90,4 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
     logger.info("Starting Uvicorn server...")
-    uvicorn.run("mainModule:app", host="0.0.0.0", port=port, reload=True)
+    uvicorn.run("mainModule:app", host="0.0.0.0", port=port, reload=True,proxy_headers=True)

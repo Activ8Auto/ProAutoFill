@@ -139,6 +139,10 @@ async def run_automation(profile_data, run_id=None):
     }
 
     diagnoses = profile_data.get("diagnoses", {})
+    logger.info(f"Diagnoses input: {diagnoses}")
+
+    if not diagnoses:
+        logger.warning("⚠️ No diagnoses found in profile data. Skipping selection.")
 
     for attempt in range(MAX_RETRIES):
         try:
@@ -481,27 +485,25 @@ async def run_automation(profile_data, run_id=None):
             await page.click("body")
             logger.info(f"Complexity selected: {complexity}")
 
-
-            page.click("//button[contains(@class, 'btn-primary') and contains(text(), 'Save')]")
+           
+            await page.click("//button[contains(@class, 'btn-primary') and contains(text(), 'Save')]")
+            await page.wait_for_timeout(3000)
            
             logger.info("✅ Automation run completed successfully!")
             return final_picks
 
-        except UserFixableError as e:
-            logger.error(f"❌ User-fixable error during attempt {attempt + 1}: {e}")
-            if browser_context:
-                await browser_context.close()
-                browser_context = None
-            raise  # Raise immediately to stop retries and notify the user
         except Exception as e:
-            logger.error(f"❌ Error during attempt {attempt + 1}: {e}")
+            logger.error(f"❌ Error during run automation: {e}")
             if browser_context:
                 await browser_context.close()
                 browser_context = None
-            if attempt == MAX_RETRIES - 1:
-                logger.error("🚨 Max retries reached. Exiting...")
-                raise
-            logger.info("🔄 Restarting full script...")
+            # Update the run status in your database, but do NOT raise the exception.
+            await new_run.update_from_dict({
+                "end_time": datetime.utcnow(),
+                "status": "failed",
+                "details": {"error": str(e), "user_fixable": False},
+            })
+            await new_run.save()
 
 async def cancel_automation():
     """

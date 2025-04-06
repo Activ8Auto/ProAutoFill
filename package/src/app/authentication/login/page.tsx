@@ -83,7 +83,7 @@ const Login2 = () => {
                       variant="h6"
                       fontWeight="500"
                     >
-                      {token ? "Ready to go?" : "New to Modernize?"}
+                      {token ? "Ready to go?" : "New to AutoFill-Pro??"}
                     </Typography>
                     {token ? (
                       <Typography

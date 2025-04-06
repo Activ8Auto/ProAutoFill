@@ -14,6 +14,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import GetMoreInfo from "@/app/(DashboardLayout)/components/GetMoreInfo"
 import { useAuthStore } from "@/store/authStore";
 import { useAutomationProfileStore } from "@/store/automationProfileStore";
 import CustomTextField from "@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField";
@@ -115,6 +116,7 @@ export default function RunAutomationPage() {
           >
             Run Automation
           </Button>
+          <GetMoreInfo />
         </Box>
       </Paper>
 

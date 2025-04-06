@@ -19,7 +19,7 @@ class AutomationRunErrorResponse(BaseModel):
     status: str
     details: dict = None
 
-@router.get("/runs")
+@router.get("/runs/")
 async def get_runs(current_user: User = Depends(current_active_user)):
     logger.info(f"Fetching automation runs for user id: {current_user.id}")
     try:

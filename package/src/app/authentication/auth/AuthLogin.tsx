@@ -21,35 +21,38 @@ const AuthLogin = ({ subtext, subtitle }: AuthLoginProps) => {
   const handleLogin = async () => {
     console.log("Login clicked");
     try {
-      const res = await fetch("http://127.0.0.1:8000/auth/jwt/login", {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "/api";
+      const res = await fetch(`${apiBase}/auth/jwt/login`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username: email, password }),
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(`Login failed: ${JSON.stringify(errorData)}`);
+        const errorData = await res.text();  // Use text() first to debug raw response
+        console.error("Raw error response:", errorData);
+        throw new Error(`Login failed: ${errorData}`);
       }
 
       const data = await res.json();
-      console.log("Login response:", data); // Debug response
+      console.log("Login response:", data);
 
       const decoded = jwtDecode<{ sub: string }>(data.access_token);
-      console.log("Decoded token:", decoded); // Debug decoded token
+      console.log("Decoded token:", decoded);
 
       setAuth(data.access_token, decoded.sub);
       console.log(
         "Token set in store, checking localStorage:",
         localStorage.getItem("token")
-      ); // Debug localStorage
+      );
 
-      router.push("/"); // Redirect to profiles page
+      router.push("/"); // Redirect to home page
     } catch (err) {
       setError("Invalid email or password");
-      console.error(err);
+      console.error("Login error:", err);
     }
   };
+
   return (
     <Box>
       {subtext}
@@ -73,7 +76,7 @@ const AuthLogin = ({ subtext, subtitle }: AuthLoginProps) => {
         sx={{ mb: 2 }}
       />
       {error && (
-        <Typography color="error" mb={2}>
+        <Typography color="error" sx={{ mb: 2 }}>
           {error}
         </Typography>
       )}

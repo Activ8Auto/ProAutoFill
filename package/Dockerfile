@@ -1,4 +1,4 @@
-# Use official Node.js LTS image
+# /app/ProAutoFill/packages/Dockerfile
 FROM node:18-alpine
 
 # Set working directory
@@ -10,6 +10,13 @@ RUN npm install
 
 # Copy the rest of your app
 COPY . .
+
+# Accept build-time environment variable
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=/api
+
+ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
 # Build the Next.js app
 RUN npm run build

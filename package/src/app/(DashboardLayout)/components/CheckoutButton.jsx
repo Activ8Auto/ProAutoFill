@@ -7,13 +7,14 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
+
 export default function CheckoutButton() {
   const [loading, setLoading] = useState(false);
   const { token } = useAuthStore();
 
   const handleCheckout = async () => {
     setLoading(true);
-
+    console.log(stripePromise)
     // Prepare headers including the authorization token from authStore
     const headers = {
       "Content-Type": "application/json",

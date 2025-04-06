@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Updated GET endpoint
-@router.get("/diagnoses", response_model=list[DiagnosisSchema])
+@router.get("/diagnoses/", response_model=list[DiagnosisSchema])
 async def get_diagnoses(current_user: User = Depends(current_active_user)):
     logger.debug("Fetching diagnoses for user: {current_user.id}")
     try:
@@ -53,7 +53,7 @@ async def get_diagnoses(current_user: User = Depends(current_active_user)):
         raise e
 
 # Updated DELETE endpoint
-@router.delete("/diagnoses/{diagnosis_id}", status_code=200)
+@router.delete("/diagnoses/{diagnosis_id}/", status_code=200)
 async def delete_diagnosis(
     diagnosis_id: str,
     current_user: User = Depends(current_active_user),
@@ -78,7 +78,7 @@ async def delete_diagnosis(
             detail="Internal server error while deleting diagnosis"
         )
     
-@router.post("/diagnoses", response_model=DiagnosisSchema)
+@router.post("/diagnoses/", response_model=DiagnosisSchema)
 async def create_diagnosis(
     diagnosis: DiagnosisCreate,
     current_user: User = Depends(current_active_user),

@@ -111,6 +111,24 @@ const FAQ = () => {
             </Typography>
           </Box>
           <Typography variant="h6">
+            Does it just rapidly fill out each one and make it look like a computer is doing it? Wont my teacher get mad?
+          </Typography>
+          <Typography>
+            No! It fills out the page, waits for 45 seconds to 2 minutes, then does the next one. Our team has determined this is the average time it takes for people to fill out a form.
+          </Typography>
+          <Typography variant="h6">
+            What is "Target Hours"
+          </Typography>
+          <Typography>
+           How many hours you want it to chart for the day. By default: Follow Ups (30 minutes) are choosen 80% of the time versus 20% for New Admits (1 hour). It will run (with delays between runs) until the target hours is reached.
+          </Typography>
+          <Typography variant="h6">
+            How do you handle 2 factor authentication??
+          </Typography>
+          <Typography>
+           Every time you trigger the form filler, it will ask you to do the 2 factor authentication. If you do not do this it can't run. To be clear, if you schedulded the filler for a 10 hours run, you'd only have to 2 factor one time. 
+          </Typography>
+          <Typography variant="h6">
             Can I adjust what gets filled in each run?
           </Typography>
           <Typography>
@@ -131,12 +149,7 @@ const FAQ = () => {
             repeatedly.
           </Typography>
 
-          <Typography variant="h6"> Still have questions?</Typography>
-          <Typography>
-            We’re here to help. Email us at{" "}
-            <strong>support@autofillpro.app</strong> or use the “Contact Us”
-            button inside the app.
-          </Typography>
+          
           <Typography variant="h6">
             How will I know if it's completed?
           </Typography>
@@ -150,6 +163,13 @@ const FAQ = () => {
           <Typography>
             You can either check the bell icon at the top or click on errors on
             the sidebar to see all errors from previous runs.
+          </Typography>
+
+          <Typography variant="h6"> Still have questions?</Typography>
+          <Typography>
+            We’re here to help. Email us at{" "}
+            <strong>support@auto-fill-pro.pro</strong> We are extremely responsive.
+            
           </Typography>
         </Box>
       </DashboardCard>

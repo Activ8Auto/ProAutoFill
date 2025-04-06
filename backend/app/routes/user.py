@@ -15,7 +15,7 @@ class UserDefaultsUpdate(BaseModel):
     default_values: Optional[Dict[str, Any]]
 
 
-@router.patch("/{user_id}/defaults")
+@router.patch("/{user_id}/defaults/")
 async def update_user_defaults(
     user_id: str, 
     defaults: UserDefaultsUpdate,
@@ -33,7 +33,7 @@ async def update_user_defaults(
     return {"message": "User defaults updated successfully", "default_values": user.default_values}
 
 
-@router.patch("/{user_id}/profile-info")
+@router.patch("/{user_id}/profile-info/")
 async def update_profile_info(
     user_id: str, 
     payload: ProfileInfoUpdate,
@@ -61,7 +61,7 @@ async def get_profile_info(user_id: str, current_user: User = Depends(current_ac
 
     return {"profile_info": user.profile_info or {}}
 
-@router.get("/{user_id}/defaults")
+@router.get("/{user_id}/defaults/")
 async def get_user_defaults(user_id: str):
     if user_id in (None, "", "null"):
         raise HTTPException(status_code=400, detail="Invalid user ID")
