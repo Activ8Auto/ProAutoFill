@@ -9,3 +9,4 @@ celery
 passlib[bcrypt]
 redis
 stripe
+python-json-logger==2.0.7
