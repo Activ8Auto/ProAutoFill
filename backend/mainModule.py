@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from app.routes import profiles, diagnosis_routes, user, automation, runs, stripe_routes
 from tortoise.contrib.fastapi import register_tortoise
 from dotenv import load_dotenv
+from app.logging_middleware import LoggingMiddleware
 import logging
 
 # Setup logging
@@ -16,8 +17,10 @@ load_dotenv()
 from fastapi.middleware.cors import CORSMiddleware
 from app.auth import fastapi_users, auth_backend, UserRead, UserCreate
 
-app = FastAPI(title="Automation Profiles API", root_path="/api")
 
+
+app = FastAPI(title="Automation Profiles API", root_path="/api")
+app.add_middleware(LoggingMiddleware)
 # Log startup
 logger.info("Starting application...")
 

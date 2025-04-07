@@ -29,7 +29,7 @@ const AuthRegister = ({ subtext, subtitle }: AuthRegisterProps) => {
       setError("Passwords do not match");
       return;
     }
-
+    toast.success("Generating Profile Please Wait...");
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
