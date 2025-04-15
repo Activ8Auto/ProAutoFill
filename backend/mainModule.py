@@ -7,8 +7,8 @@ from tortoise.contrib.fastapi import register_tortoise
 from dotenv import load_dotenv
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
-from fastapi.middleware.ratelimit import RateLimitMiddleware
-from app.core.logging_config import logger
+
+from logging_config import logger
 import logging
 
 # Setup logging
@@ -19,12 +19,11 @@ load_dotenv()
 
 
 from fastapi.middleware.cors import CORSMiddleware
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["auto-fill-pro.pro"])
-app.add_middleware(HTTPSRedirectMiddleware)
+
 from app.auth import fastapi_users, auth_backend, UserRead, UserCreate
 
 app = FastAPI(title="Automation Profiles API", root_path="/api")
-app.add_middleware(RateLimitMiddleware, limit=100, window=60)
+
 
 # Log startup
 logger.info("Starting application...")
@@ -37,13 +36,13 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://auto-fill-pro.pro"],
     allow_credentials=True,
-    allow_methods=[""GET", "POST", "PUT", "DELETE""],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Authorization", "Content-Type"],
 )
 logger.info("CORS middleware added")
 logger.info("Registering Tortoise ORM")
 # Register Tortoise ORM
-logger.info(f"Registering Tortoise ORM with DB_URL: {os.getenv('DATABASE_URL')}")
+logger.info(f"Registering Tortoise ORM With DB")
 register_tortoise(
     app,
     db_url=os.getenv("DATABASE_URL"),

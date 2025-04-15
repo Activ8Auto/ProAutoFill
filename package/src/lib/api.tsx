@@ -168,7 +168,7 @@ export async function updateUserProfileInfo(
   token: string
 ) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-info/`,
+    `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-info`,
     {
       method: "PATCH",
       headers: {
