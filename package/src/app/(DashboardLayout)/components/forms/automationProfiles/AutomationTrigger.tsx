@@ -14,6 +14,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import GetMoreInfo from "@/app/(DashboardLayout)/components/GetMoreInfo"
 import { updateProfile } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import { useAutomationProfileStore } from "@/store/automationProfileStore";
@@ -67,10 +68,13 @@ export default function RunAutomationPage() {
 
       if (!res.ok) throw new Error("Automation failed");
 
-      toast.success("Automation started successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to start automation");
+      toast.success("Automation Launched, Check For 2 Factor Request!", {
+        duration: 4000, // 4 seconds
+      });
+    } catch (err: any) {
+      console.error("Automation error:", err);
+      // Use the error message from the response or a fallback
+      toast.error(err.message || "Failed, check inputs");
     }
   };
 
@@ -127,6 +131,9 @@ export default function RunAutomationPage() {
           >
             Run Automation
           </Button>
+          <Box ml={2}>
+          <GetMoreInfo />
+          </Box>
         </Box>
       </Paper>
 

@@ -8,7 +8,6 @@ import RaceBreakdown from "@/app/(DashboardLayout)/components/dashboard/RaceBrea
 import RecentRuns from "@/app/(DashboardLayout)/components/dashboard/RecentRuns";
 import AgeGroupBreakdown from "@/app/(DashboardLayout)/components/dashboard/AgeGroupBreakdown";
 import DurationBreakdown from "./components/dashboard/DurationBreakdown";
-import VisitTypeBreakdown from "./components/dashboard/VisitTypeBreakdown";
 import GenderBreakdown from "./components/dashboard/GenderBreakdown";
 import OverviewWidgets from "./components/dashboard/TotalRuns";
 import DiagnosisBreakdownChart from "@/app/(DashboardLayout)/components/dashboard/DiagnosisBreakdownChart";
@@ -27,10 +26,9 @@ const Dashboard = () => {
   const { token } = useAuthStore();
 
   useEffect(() => {
-    if (!token) {
-      router.push("/authentication/login");
-    }
+    if (!token) router.push("/authentication/login");
   }, [token, router]);
+
   useEffect(() => {
     if (token) {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/remaining`, {
@@ -54,10 +52,8 @@ const Dashboard = () => {
           setLoading(false);
         })
         .catch((err) => {
-          if (err.status === 401) {
-            // Token expired or invalid
-            router.push("/authentication/login");
-          } else {
+          if (err.status === 401) router.push("/authentication/login");
+          else {
             console.error("Error fetching automation runs:", err);
             setError(err);
             setLoading(false);
@@ -83,25 +79,31 @@ const Dashboard = () => {
           <RemainingRunsBanner remainingRuns={remainingRuns} />
         )}
         <Grid container spacing={3}>
+          {/* Top Row */}
           <Grid item xs={12} lg={8}>
             <OverviewWidgets timeframe={timeframe} runs={runs} />
-            <GenderBreakdown runs={runs} />
           </Grid>
           <Grid item xs={12} lg={4}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <DurationBreakdown runs={runs} />
-                {/* <VisitTypeBreakdown runs={runs} /> */}
-              </Grid>
-            </Grid>
+            <DurationBreakdown runs={runs} />
           </Grid>
+
+          {/* Middle Row */}
           <Grid item xs={12} lg={4}>
             <RecentRuns runs={runs} />
           </Grid>
           <Grid item xs={12} lg={8}>
+            <GenderBreakdown runs={runs} />
+          </Grid>
+
+          {/* Next Row */}
+          <Grid item xs={12} lg={6}>
             <AgeGroupBreakdown runs={runs} />
+          </Grid>
+          <Grid item xs={12} lg={6}>
             <RaceBreakdown runs={runs} />
           </Grid>
+
+          {/* Bottom Row Full Width */}
           <Grid item xs={12}>
             <DiagnosisBreakdownChart runs={runs} />
           </Grid>

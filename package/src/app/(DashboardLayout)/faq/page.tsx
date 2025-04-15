@@ -3,6 +3,7 @@ import { Typography, Box } from "@mui/material";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
+
 const FAQ = () => {
   return (
     <PageContainer
@@ -58,7 +59,7 @@ const FAQ = () => {
             exams, medications, teaching points, and exclusions. When running
             the program, 1–3 diagnoses will be picked at random. Filling out a
             Diagnosis Entry ensures that the auto-filled fields match the
-            selected options logically and accurately.
+            selected options logically and accurately. <br /> <br /> <b><u>BY DEFAULT EVERY USER HAS A FULL PSYCHIATRIC DICTIONARY. IF YOU WANT A DIFFERENT TYPE PLEASE REACH OUT TO THE EMAIL BELOW</u></b>
           </Typography>
 
           <Typography variant="h6">What is "Exclusion Criteria"?</Typography>

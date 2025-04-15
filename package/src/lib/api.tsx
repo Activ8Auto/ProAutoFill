@@ -2,7 +2,7 @@
 
 import { DiagnosisEntry } from "@/types/diagnosis";
 
-console.log("NEXT_PUBLIC_API_URL AT RUNTIME:", process.env.NEXT_PUBLIC_API_URL);
+
 
 
 export const getProfiles = async (token: string) => {

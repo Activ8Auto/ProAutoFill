@@ -5,10 +5,7 @@ from fastapi import FastAPI, Request
 from app.routes import profiles, diagnosis_routes, user, automation, runs, stripe_routes
 from tortoise.contrib.fastapi import register_tortoise
 from dotenv import load_dotenv
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
-
-from logging_config import logger
+from app.logging_middleware import LoggingMiddleware
 import logging
 
 # Setup logging
@@ -22,9 +19,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.auth import fastapi_users, auth_backend, UserRead, UserCreate
 
+
+
 app = FastAPI(title="Automation Profiles API", root_path="/api")
-
-
+app.add_middleware(LoggingMiddleware)
 # Log startup
 logger.info("Starting application...")
 
@@ -66,7 +64,11 @@ app.include_router(
     tags=["auth"],
 )
 logger.info("All routers included")
-
+@app.post("/debug-register")
+async def debug_register(request: Request):
+    body = await request.json()
+    print("DEBUG REGISTER BODY:", body)
+    return {"received": body}
 @app.on_event("startup")
 async def startup_event():
     logger.info("Startup event triggered")

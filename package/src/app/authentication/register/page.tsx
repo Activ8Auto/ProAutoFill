@@ -6,12 +6,20 @@ import PageContainer from "@/app/(DashboardLayout)/components/container/PageCont
 import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 import AuthRegister from "../auth/AuthRegister";
 import { useAuthStore } from "@/store/authStore";
+import { useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
 
 const Register2 = () => {
   const { token, clearAuth } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
+  if (!mounted) return null;
   return (
     <PageContainer title="Register" description="this is Register page">
+      <Toaster />
       <Box
         sx={{
           position: "relative",

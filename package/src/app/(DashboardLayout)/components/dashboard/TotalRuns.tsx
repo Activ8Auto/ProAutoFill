@@ -21,11 +21,12 @@ const TotalRuns = ({ timeframe, runs }: Props) => {
     cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Roughly last 30 days (1 month)
   }
 
-  // Filter runs that have a start_time within the selected timeframe
-  const filteredRuns = runs.filter((run) => {
-    if (!run.start_time) return false;
-    return new Date(run.start_time) >= cutoff;
-  });
+  // Filter runs that have a start_time within the selected timeframe and status is "success"
+  const filteredRuns = runs.filter((run) => 
+    run.start_time && 
+    run.status === "success" && 
+    new Date(run.start_time) >= cutoff
+  );
 
   const totalRunsCount = filteredRuns.length;
 

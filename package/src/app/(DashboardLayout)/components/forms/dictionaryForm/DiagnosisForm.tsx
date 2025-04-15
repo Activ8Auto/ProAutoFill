@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import EditIcon from "@mui/icons-material/Edit";
+import GetMoreInfo from "@/app/(DashboardLayout)/components/GetMoreInfo"
 import {
   Box,
   Button,
@@ -587,6 +588,9 @@ export default function DiagnosisForm({
               Cancel
             </Button>
           )}
+          <Box ml={2}>
+          <GetMoreInfo />
+          </Box>
         </Grid>
       </Grid>
 
