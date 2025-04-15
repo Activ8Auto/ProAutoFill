@@ -12,7 +12,8 @@ docker-compose.override.yml
 # next.js
 /.next/
 /out/
-
+# Ignore logs
+/backend/logs/
 # production
 /build
 

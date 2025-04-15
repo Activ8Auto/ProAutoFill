@@ -1729,3 +1729,13 @@
 {"asctime": "2025-04-15 17:38:58,323", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41266 - \"GET /profiles/ HTTP/1.0\" 200"}
 {"asctime": "2025-04-15 17:39:12,421", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54224 - \"PATCH /profiles/45635a89-0f1f-4b95-a71f-2943846b0ec6/ HTTP/1.0\" 200"}
 {"asctime": "2025-04-15 17:39:12,614", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54238 - \"POST /automation/run/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 17:43:33,469", "name": "uvicorn.error", "levelname": "WARNING", "message": "Invalid HTTP request received."}
+{"asctime": "2025-04-15 17:43:43,852", "name": "mainModule", "levelname": "INFO", "message": "Root endpoint hit"}
+{"asctime": "2025-04-15 17:43:43,871", "name": "uvicorn.access", "levelname": "INFO", "message": "152.32.206.246:43352 - \"GET / HTTP/1.1\" 200"}
+{"asctime": "2025-04-15 17:43:49,072", "name": "uvicorn.access", "levelname": "INFO", "message": "152.32.206.246:55040 - \"GET /favicon.ico HTTP/1.1\" 404"}
+{"asctime": "2025-04-15 17:43:49,330", "name": "uvicorn.access", "levelname": "INFO", "message": "152.32.206.246:55048 - \"GET /robots.txt HTTP/1.1\" 404"}
+{"asctime": "2025-04-15 17:43:49,564", "name": "uvicorn.access", "levelname": "INFO", "message": "152.32.206.246:55062 - \"GET /sitemap.xml HTTP/1.1\" 404"}
+{"asctime": "2025-04-15 17:43:49,808", "name": "uvicorn.access", "levelname": "INFO", "message": "152.32.206.246:55066 - \"GET /config.json HTTP/1.1\" 404"}
+{"asctime": "2025-04-15 17:43:49,990", "name": "uvicorn.access", "levelname": "INFO", "message": "152.32.206.246:55078 - \"GET /sse HTTP/1.1\" 404"}
+{"asctime": "2025-04-15 17:43:50,174", "name": "uvicorn.access", "levelname": "INFO", "message": "152.32.206.246:55094 - \"GET /mcp HTTP/1.1\" 404"}
+{"asctime": "2025-04-15 17:43:50,358", "name": "uvicorn.access", "levelname": "INFO", "message": "152.32.206.246:55110 - \"GET /mcp-sse HTTP/1.1\" 404"}
