@@ -54,15 +54,9 @@ export default function RootLayout({
         {/* Header */}
         <Header toggleMobileSidebar={toggleMobileSidebar} />
         {/* Page Content */}
-        <Container
-          sx={{
-            paddingTop: "20px",
-            maxWidth: "1200px",
-            flexGrow: 1,
-          }}
-        >
+        <Box sx={{ width: '80%', mx: 'auto', px: 3, pt: 3 }}>
           <Box sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
-        </Container>
+        </Box>
       </PageWrapper>
     </MainWrapper>
   );

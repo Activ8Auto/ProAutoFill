@@ -12,10 +12,12 @@ import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCa
 
 type Run = {
   id: string | number;
+  start_time?: string;
   selected_race?: string;
 };
 
 type Props = {
+  timeframe: "day" | "week" | "month";
   runs: Run[];
 };
 
@@ -38,15 +40,37 @@ const aggregateRaceData = (runs: Run[]) => {
       counts[race] = (counts[race] || 0) + 1;
     }
   });
-  // Convert the counts object into an array of objects for Recharts.
+
   return Object.entries(counts).map(([name, value]) => ({ name, value }));
 };
 
-const RaceBreakdown = ({ runs }: Props) => {
-  const data = aggregateRaceData(runs);
+const RaceBreakdown = ({ timeframe, runs }: Props) => {
+  // 1. Determine cutoff date based on timeframe
+  const now = new Date();
+  let cutoff: Date;
+
+  if (timeframe === "day") {
+    cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  } else if (timeframe === "week") {
+    cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  } else {
+    cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  }
+
+  // 2. Filter runs by start_time
+  const filteredRuns = runs.filter((run) => {
+    if (!run.start_time) return false;
+    return new Date(run.start_time) >= cutoff;
+  });
+
+  // 3. Aggregate filtered data
+  const data = aggregateRaceData(filteredRuns);
 
   return (
-    <DashboardCard title="Race Breakdown" subtitle="Percentage of Races Selected">
+    <DashboardCard
+      title="Race Breakdown"
+      subtitle={`Showing data for ${timeframe}`}
+    >
       <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Pie
@@ -62,7 +86,10 @@ const RaceBreakdown = ({ runs }: Props) => {
             }
           >
             {data.map((_, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
             ))}
           </Pie>
           <Tooltip />

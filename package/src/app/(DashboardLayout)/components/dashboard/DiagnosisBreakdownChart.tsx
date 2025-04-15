@@ -11,11 +11,40 @@ import {
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
 type Props = {
+  timeframe: "day" | "week" | "month";
   runs: any[];
 };
 
-const DiagnosisBreakdown = ({ runs }: Props) => {
-  // Aggregate diagnosis usage across all runs.
+const COLORS = [
+  "#8884d8",
+  "#82ca9d",
+  "#ffc658",
+  "#ff8042",
+  "#a4de6c",
+  "#d0ed57",
+  "#8dd1e1",
+];
+
+const DiagnosisBreakdown = ({ timeframe, runs }: Props) => {
+  // 1. Calculate timeframe cutoff
+  const now = new Date();
+  let cutoff: Date;
+
+  if (timeframe === "day") {
+    cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  } else if (timeframe === "week") {
+    cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  } else {
+    cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  }
+
+  // 2. Filter runs based on start_time
+  const filteredRuns = runs.filter((run) => {
+    if (!run.start_time) return false;
+    return new Date(run.start_time) >= cutoff;
+  });
+
+  // 3. Aggregate diagnosis usage across filtered runs
   const aggregateDiagnosisData = (runs: any[]) => {
     const diagnosisMap: Record<string, number> = {};
     runs.forEach((run) => {
@@ -26,20 +55,19 @@ const DiagnosisBreakdown = ({ runs }: Props) => {
         });
       }
     });
-    // Convert to array for Recharts.
-    return Object.entries(diagnosisMap).map(([name, count]) => ({
+    return Object.entries(diagnosisMap).map(([name, value]) => ({
       name,
-      value: count,
+      value,
     }));
   };
 
-  const data = aggregateDiagnosisData(runs);
-
-  // Colors for the pie slices.
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#a4de6c", "#d0ed57", "#8dd1e1"];
+  const data = aggregateDiagnosisData(filteredRuns);
 
   return (
-    <DashboardCard title="Diagnosis Breakdown" subtitle="Overall Diagnosis Usage">
+    <DashboardCard
+      title="Diagnosis Breakdown"
+      subtitle={`Showing data for ${timeframe}`}
+    >
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -58,7 +86,6 @@ const DiagnosisBreakdown = ({ runs }: Props) => {
             ))}
           </Pie>
           <Tooltip />
-          <Legend verticalAlign="bottom" />
         </PieChart>
       </ResponsiveContainer>
     </DashboardCard>

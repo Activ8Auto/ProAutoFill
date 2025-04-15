@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import {
   Box,
   Button,
@@ -67,7 +68,7 @@ export default function RunAutomationPage() {
 
       if (!res.ok) throw new Error("Automation failed");
 
-      toast.success("Automation started successfully!");
+      toast.success("Automation started successfully! Check 2 Step!");
     } catch (err) {
       console.error(err);
       toast.error("Failed to start automation");
@@ -149,6 +150,16 @@ export default function RunAutomationPage() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Toaster
+     
+       toastOptions={{
+        position: "bottom-center",
+         style: {
+           fontSize: "20px", // Set desired font size
+           // You can also set other styles, e.g., padding, background, etc.
+         },
+       }}
+      />
     </Box>
   );
 }
