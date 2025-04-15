@@ -6,13 +6,6 @@ import { useRouter } from "next/navigation";
 import PageHeader from "@/app/(DashboardLayout)/components/shared/PageHeader";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import { useState, useEffect } from "react";
-import RaceBreakdown from "@/app/(DashboardLayout)/components/dashboard/RaceBreakdown";
-import RecentRuns from "@/app/(DashboardLayout)/components/dashboard/RecentRuns";
-import AgeGroupBreakdown from "@/app/(DashboardLayout)/components/dashboard/AgeGroupBreakdown";
-import DurationBreakdown from "./components/dashboard/DurationBreakdown";
-import GenderBreakdown from "./components/dashboard/GenderBreakdown";
-import OverviewWidgets from "./components/dashboard/TotalRuns";
-import DiagnosisBreakdownChart from "@/app/(DashboardLayout)/components/dashboard/DiagnosisBreakdownChart";
 import TimeFrameSelector from "@/app/(DashboardLayout)/components/shared/TimeFrameSelector";
 import RemainingRunsBanner from "@/app/(DashboardLayout)/components/dashboard/RemainingRunsBanner";
 import SectionCard from "@/app/(DashboardLayout)/components/shared/SectionCard";
@@ -35,13 +28,14 @@ const Dashboard = () => {
   const [runs, setRuns] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
-  
   const router = useRouter();
   const { token } = useAuthStore();
   
   useEffect(() => {
-    if (!token) router.push("/authentication/login");
+    // Redirect if no token
+    if (!token) {
+      router.push("/authentication/login");
+    }
   }, [token, router]);
 
   useEffect(() => {
@@ -69,8 +63,10 @@ const Dashboard = () => {
           setLoading(false);
         })
         .catch((err) => {
-          if (err.status === 401) router.push("/authentication/login");
-          else {
+          if (err.status === 401) {
+            // Token expired or invalid
+            router.push("/authentication/login");
+          } else {
             console.error("Error fetching automation runs:", err);
             setError(err);
             setLoading(false);
@@ -82,7 +78,7 @@ const Dashboard = () => {
   }, [token, router]);
 
   if (!token) return null;
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingSpinner />
   if (error) return <div>Error loading automation run data.</div>;
 
   return (
@@ -101,36 +97,60 @@ const Dashboard = () => {
         {remainingRuns !== null && (
           <RemainingRunsBanner remainingRuns={remainingRuns} />
         )}
-        <Grid container spacing={3}>
-          {/* Top Row */}
-          <Grid item xs={12} lg={8}>
-            <OverviewWidgets timeframe={timeframe} runs={runs} />
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <DurationBreakdown runs={runs} />
-          </Grid>
 
-          {/* Middle Row */}
-          <Grid item xs={12} lg={4}>
-            <RecentRuns runs={runs} />
+        {/* Overview Section */}
+        <SectionCard title="Overview">
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <TotalRuns timeframe={timeframe} runs={runs} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TotalTime timeframe={timeframe} runs={runs} />
+            </Grid>
           </Grid>
-          <Grid item xs={12} lg={8}>
-            <GenderBreakdown runs={runs} />
-          </Grid>
+        </SectionCard>
 
-          {/* Next Row */}
-          <Grid item xs={12} lg={6}>
-            <AgeGroupBreakdown runs={runs} />
+        {/* Breakdowns Section */}
+        <SectionCard title="Key Metrics">
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} lg={6}>
+              <GenderBreakdown runs={runs} timeframe={timeframe} />
+            </Grid>
+            <Grid item xs={12} md={6} lg={6}>
+              <DurationBreakdown runs={runs} timeframe={timeframe} />
+            </Grid>
+            
+            {/* <Grid item xs={12} md={6} lg={4}>
+              <VisitTypeBreakdown runs={runs} timeframe={timeframe} />
+            </Grid>
+            */}
+            
           </Grid>
-          <Grid item xs={12} lg={6}>
-            <RaceBreakdown runs={runs} />
-          </Grid>
+          </SectionCard>
+          <SectionCard title="Key Charts">
+          <Grid container spacing={6}>
+          <Grid item xs={12} md={12} lg={6}>
+              <AgeGroupBreakdown runs={runs} timeframe={timeframe} />
+            </Grid>
+            <Grid item xs={12} md={12} lg={6}>
+              <RaceBreakdown runs={runs} timeframe={timeframe} />
+            </Grid>
+            <Grid item xs={12} md={12} lg={12}>
+            <DiagnosisBreakdownChart runs={runs} timeframe={timeframe} />
+            </Grid>
+            </Grid>
+          </SectionCard>
 
-          {/* Bottom Row Full Width */}
-          <Grid item xs={12}>
-            <DiagnosisBreakdownChart runs={runs} />
+        {/* Recent Runs Section */}
+        <SectionCard title="Recent Runs">
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={12}>
+              <RecentRuns runs={runs} />
+            </Grid>
           </Grid>
-        </Grid>
+          </SectionCard>
+
+        
       </Box>
     </PageContainer>
   );
