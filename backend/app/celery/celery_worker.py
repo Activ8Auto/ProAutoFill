@@ -1,5 +1,3 @@
-# app/celery/celery_worker.py
-
 import os
 from celery import Celery
 from dotenv import load_dotenv
@@ -7,19 +5,22 @@ from dotenv import load_dotenv
 # Load .env file
 load_dotenv()
 
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+# Get Redis URLs from environment variables, with fallbacks
+BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://redis-dev:6379/0")
+BACKEND_URL = os.getenv("CELERY_RESULT_BACKEND", "redis://redis-dev:6379/1")
 
 celery_app = Celery(
     "automation_tasks",
-    broker=f"redis://{REDIS_HOST}:{REDIS_PORT}/0",
-    backend=f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+    broker=BROKER_URL,
+    backend=BACKEND_URL,
 )
 
 celery_app.conf.update(
-    task_serializer='json',
-    result_serializer='json',
-    accept_content=['json'],
+    task_serializer="json",
+    result_serializer="json",
+    accept_content=["json"],
+    timezone="UTC",
+    enable_utc=True,
 )
 
 celery_app.autodiscover_tasks(["app.celery"])

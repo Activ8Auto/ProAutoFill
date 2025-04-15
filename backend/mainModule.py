@@ -34,9 +34,9 @@ ssl_context = ssl.create_default_context()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://auto-fill-pro.pro"],
+    allow_origins=["https://auto-fill-pro.pro", "https://dev.auto-fill-pro.pro"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
     allow_headers=["Authorization", "Content-Type"],
 )
 logger.info("CORS middleware added")
