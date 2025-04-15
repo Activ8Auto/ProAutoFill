@@ -66,3 +66,235 @@
 {"asctime": "2025-04-15 02:25:02,070", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35584 - \"GET /runs/ HTTP/1.0\" 200"}
 {"asctime": "2025-04-15 02:25:02,094", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35594 - \"GET /runs/remaining HTTP/1.0\" 200"}
 {"asctime": "2025-04-15 02:25:02,167", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35596 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:37:15,699", "name": "mainModule", "levelname": "INFO", "message": "Root endpoint hit"}
+{"asctime": "2025-04-15 02:37:15,740", "name": "uvicorn.access", "levelname": "INFO", "message": "198.235.24.23:58182 - \"GET / HTTP/1.1\" 200"}
+{"asctime": "2025-04-15 02:49:17,771", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42876 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:49:17,860", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42882 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:49:17,987", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42898 - \"GET /diagnoses/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:49:18,021", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42896 - \"GET /profiles/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:49:18,563", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42918 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:49:18,680", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42926 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:49:18,721", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42954 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:49:18,753", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42944 - \"GET /diagnoses/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:49:18,780", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.5:42928 - \"GET /profiles/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:55:42,225", "name": "mainModule", "levelname": "INFO", "message": "Root endpoint hit"}
+{"asctime": "2025-04-15 02:55:42,226", "name": "uvicorn.access", "levelname": "INFO", "message": "73.192.184.224:62847 - \"GET / HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 02:55:53,943", "name": "uvicorn.error", "levelname": "INFO", "message": "Shutting down"}
+{"asctime": "2025-04-15 02:55:54,047", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application shutdown."}
+{"asctime": "2025-04-15 02:55:54,056", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM shutdown"}
+{"asctime": "2025-04-15 02:55:54,058", "name": "uvicorn.error", "levelname": "INFO", "message": "Application shutdown complete."}
+{"asctime": "2025-04-15 02:55:54,061", "name": "uvicorn.error", "levelname": "INFO", "message": "Finished server process [1]", "color_message": "Finished server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 02:56:03,409", "name": "mainModule", "levelname": "INFO", "message": "Starting application..."}
+{"asctime": "2025-04-15 02:56:03,433", "name": "mainModule", "levelname": "INFO", "message": "CORS middleware added"}
+{"asctime": "2025-04-15 02:56:03,434", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM"}
+{"asctime": "2025-04-15 02:56:03,434", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM With DB"}
+{"asctime": "2025-04-15 02:56:03,434", "name": "mainModule", "levelname": "INFO", "message": "Tortoise ORM registered"}
+{"asctime": "2025-04-15 02:56:03,459", "name": "mainModule", "levelname": "INFO", "message": "All routers included"}
+{"asctime": "2025-04-15 02:56:03,459", "name": "uvicorn.error", "levelname": "INFO", "message": "Started server process [1]", "color_message": "Started server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 02:56:03,460", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application startup."}
+{"asctime": "2025-04-15 02:56:03,498", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM started, {'default': <tortoise.backends.asyncpg.client.AsyncpgDBClient object at 0x7ee6c505c1d0>}, {'models': {'AutomationProfile': <class 'app.models.models.AutomationProfile'>, 'AutomationRun': <class 'app.models.models.AutomationRun'>, 'DiagnosisCurrentMedication': <class 'app.models.models.DiagnosisCurrentMedication'>, 'DiagnosisEntry': <class 'app.models.models.DiagnosisEntry'>, 'DiagnosisLaboratoryTest': <class 'app.models.models.DiagnosisLaboratoryTest'>, 'DiagnosisPhysicalExam': <class 'app.models.models.DiagnosisPhysicalExam'>, 'DiagnosisPrescribedMedication': <class 'app.models.models.DiagnosisPrescribedMedication'>, 'DiagnosisTeaching': <class 'app.models.models.DiagnosisTeaching'>, 'ProfileDiagnoses': <class 'app.models.models.ProfileDiagnoses'>, 'User': <class 'app.models.models.User'>}}"}
+{"asctime": "2025-04-15 02:56:03,498", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM generating schema"}
+{"asctime": "2025-04-15 02:56:04,182", "name": "mainModule", "levelname": "INFO", "message": "Startup event triggered"}
+{"asctime": "2025-04-15 02:56:04,224", "name": "mainModule", "levelname": "INFO", "message": "Database connection test: 2 users found"}
+{"asctime": "2025-04-15 02:56:04,225", "name": "uvicorn.error", "levelname": "INFO", "message": "Application startup complete."}
+{"asctime": "2025-04-15 02:56:04,226", "name": "uvicorn.error", "levelname": "INFO", "message": "Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)", "color_message": "Uvicorn running on \u001b[1m%s://%s:%d\u001b[0m (Press CTRL+C to quit)"}
+{"asctime": "2025-04-15 02:56:22,885", "name": "uvicorn.error", "levelname": "INFO", "message": "Shutting down"}
+{"asctime": "2025-04-15 02:56:22,986", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application shutdown."}
+{"asctime": "2025-04-15 02:56:22,993", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM shutdown"}
+{"asctime": "2025-04-15 02:56:22,994", "name": "uvicorn.error", "levelname": "INFO", "message": "Application shutdown complete."}
+{"asctime": "2025-04-15 02:56:22,994", "name": "uvicorn.error", "levelname": "INFO", "message": "Finished server process [1]", "color_message": "Finished server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 02:56:38,541", "name": "mainModule", "levelname": "INFO", "message": "Starting application..."}
+{"asctime": "2025-04-15 02:56:38,564", "name": "mainModule", "levelname": "INFO", "message": "CORS middleware added"}
+{"asctime": "2025-04-15 02:56:38,564", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM"}
+{"asctime": "2025-04-15 02:56:38,564", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM With DB"}
+{"asctime": "2025-04-15 02:56:38,565", "name": "mainModule", "levelname": "INFO", "message": "Tortoise ORM registered"}
+{"asctime": "2025-04-15 02:56:38,590", "name": "mainModule", "levelname": "INFO", "message": "All routers included"}
+{"asctime": "2025-04-15 02:56:38,591", "name": "uvicorn.error", "levelname": "INFO", "message": "Started server process [1]", "color_message": "Started server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 02:56:38,591", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application startup."}
+{"asctime": "2025-04-15 02:56:38,618", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM started, {'default': <tortoise.backends.asyncpg.client.AsyncpgDBClient object at 0x7cfd5619b510>}, {'models': {'AutomationProfile': <class 'app.models.models.AutomationProfile'>, 'AutomationRun': <class 'app.models.models.AutomationRun'>, 'DiagnosisCurrentMedication': <class 'app.models.models.DiagnosisCurrentMedication'>, 'DiagnosisEntry': <class 'app.models.models.DiagnosisEntry'>, 'DiagnosisLaboratoryTest': <class 'app.models.models.DiagnosisLaboratoryTest'>, 'DiagnosisPhysicalExam': <class 'app.models.models.DiagnosisPhysicalExam'>, 'DiagnosisPrescribedMedication': <class 'app.models.models.DiagnosisPrescribedMedication'>, 'DiagnosisTeaching': <class 'app.models.models.DiagnosisTeaching'>, 'ProfileDiagnoses': <class 'app.models.models.ProfileDiagnoses'>, 'User': <class 'app.models.models.User'>}}"}
+{"asctime": "2025-04-15 02:56:38,618", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM generating schema"}
+{"asctime": "2025-04-15 02:56:38,726", "name": "mainModule", "levelname": "INFO", "message": "Startup event triggered"}
+{"asctime": "2025-04-15 02:56:38,743", "name": "mainModule", "levelname": "INFO", "message": "Database connection test: 2 users found"}
+{"asctime": "2025-04-15 02:56:38,743", "name": "uvicorn.error", "levelname": "INFO", "message": "Application startup complete."}
+{"asctime": "2025-04-15 02:56:38,744", "name": "uvicorn.error", "levelname": "INFO", "message": "Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)", "color_message": "Uvicorn running on \u001b[1m%s://%s:%d\u001b[0m (Press CTRL+C to quit)"}
+{"asctime": "2025-04-15 03:01:01,758", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:48880 - \"POST /auth/jwt/login HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:01,869", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:48886 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:01,941", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:02,072", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 91 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:02,089", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:48900 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:02,115", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:48904 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:02,193", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:48910 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:04,963", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36424 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:01:04,972", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36422 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:11,785", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36432 - \"POST /auth/jwt/login HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:11,947", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36434 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:12,020", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:12,063", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 91 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:12,075", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36438 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:12,167", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36446 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:12,244", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36456 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:13,588", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36468 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:13,623", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:13,657", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 91 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:13,670", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36474 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:13,677", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36482 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:13,744", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:37266 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:14,943", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:37280 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:14,960", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:37294 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:14,978", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:14,980", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:37310 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:15,007", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 91 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:15,020", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:37302 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:25,475", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60136 - \"POST /auth/jwt/login HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:25,556", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60142 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:25,562", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:25,599", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 91 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:25,613", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60154 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:25,632", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60168 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:25,711", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60174 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:47,060", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:54728 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:47,137", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:47,138", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:54744 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:47,170", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 91 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:01:47,183", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:54742 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:01:47,215", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:54754 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:02:01,126", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60148 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:02:01,143", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60152 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:02:07,984", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:51208 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:02:08,040", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:51220 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:02:08,071", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:51232 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:03:07,877", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:43284 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:03:07,880", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:43294 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:03:07,953", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:43296 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:05:27,705", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:40878 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:05:27,932", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:40870 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:05:28,006", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:40894 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:05:56,449", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:34048 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:05:56,466", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:34056 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:05:56,531", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:34064 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:09:33,118", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60546 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:09:33,195", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60532 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:09:33,268", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:60560 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:11:49,189", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:33936 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:11:49,310", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:33940 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:11:49,333", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:33948 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:15:35,024", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:55494 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:15:35,138", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:55500 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:15:35,159", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:55502 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:22:22,656", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:36844 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:23:18,500", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:57262 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:24:41,364", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52172 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:24:42,074", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52164 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:42,148", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52178 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:42,315", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52190 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:42,370", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52192 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:24:42,389", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52208 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:43,264", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52210 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:43,320", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52220 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:24:43,349", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:52228 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:44,431", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35508 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:44,489", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35512 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:24:44,514", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35514 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:47,393", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:24:47,492", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 91 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 03:24:47,521", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35520 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:47,538", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35532 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:24:47,608", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.6:35548 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:27:58,098", "name": "uvicorn.error", "levelname": "INFO", "message": "Shutting down"}
+{"asctime": "2025-04-15 03:27:58,202", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application shutdown."}
+{"asctime": "2025-04-15 03:27:58,223", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM shutdown"}
+{"asctime": "2025-04-15 03:27:58,226", "name": "uvicorn.error", "levelname": "INFO", "message": "Application shutdown complete."}
+{"asctime": "2025-04-15 03:27:58,229", "name": "uvicorn.error", "levelname": "INFO", "message": "Finished server process [1]", "color_message": "Finished server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 03:54:31,807", "name": "mainModule", "levelname": "INFO", "message": "Starting application..."}
+{"asctime": "2025-04-15 03:54:31,807", "name": "mainModule", "levelname": "INFO", "message": "Starting application..."}
+{"asctime": "2025-04-15 03:54:31,830", "name": "mainModule", "levelname": "INFO", "message": "CORS middleware added"}
+{"asctime": "2025-04-15 03:54:31,831", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM"}
+{"asctime": "2025-04-15 03:54:31,831", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM With DB"}
+{"asctime": "2025-04-15 03:54:31,831", "name": "mainModule", "levelname": "INFO", "message": "Tortoise ORM registered"}
+{"asctime": "2025-04-15 03:54:31,831", "name": "mainModule", "levelname": "INFO", "message": "CORS middleware added"}
+{"asctime": "2025-04-15 03:54:31,831", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM"}
+{"asctime": "2025-04-15 03:54:31,832", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM With DB"}
+{"asctime": "2025-04-15 03:54:31,832", "name": "mainModule", "levelname": "INFO", "message": "Tortoise ORM registered"}
+{"asctime": "2025-04-15 03:54:31,853", "name": "mainModule", "levelname": "INFO", "message": "All routers included"}
+{"asctime": "2025-04-15 03:54:31,854", "name": "mainModule", "levelname": "INFO", "message": "All routers included"}
+{"asctime": "2025-04-15 03:54:31,854", "name": "uvicorn.error", "levelname": "INFO", "message": "Started server process [1]", "color_message": "Started server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 03:54:31,854", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application startup."}
+{"asctime": "2025-04-15 03:54:31,855", "name": "uvicorn.error", "levelname": "INFO", "message": "Started server process [1]", "color_message": "Started server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 03:54:31,855", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application startup."}
+{"asctime": "2025-04-15 03:54:31,894", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM started, {'default': <tortoise.backends.asyncpg.client.AsyncpgDBClient object at 0x7b112c678110>}, {'models': {'AutomationProfile': <class 'app.models.models.AutomationProfile'>, 'AutomationRun': <class 'app.models.models.AutomationRun'>, 'DiagnosisCurrentMedication': <class 'app.models.models.DiagnosisCurrentMedication'>, 'DiagnosisEntry': <class 'app.models.models.DiagnosisEntry'>, 'DiagnosisLaboratoryTest': <class 'app.models.models.DiagnosisLaboratoryTest'>, 'DiagnosisPhysicalExam': <class 'app.models.models.DiagnosisPhysicalExam'>, 'DiagnosisPrescribedMedication': <class 'app.models.models.DiagnosisPrescribedMedication'>, 'DiagnosisTeaching': <class 'app.models.models.DiagnosisTeaching'>, 'ProfileDiagnoses': <class 'app.models.models.ProfileDiagnoses'>, 'User': <class 'app.models.models.User'>}}"}
+{"asctime": "2025-04-15 03:54:31,894", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM generating schema"}
+{"asctime": "2025-04-15 03:54:31,894", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM started, {'default': <tortoise.backends.asyncpg.client.AsyncpgDBClient object at 0x78f81ab36a50>}, {'models': {'AutomationProfile': <class 'app.models.models.AutomationProfile'>, 'AutomationRun': <class 'app.models.models.AutomationRun'>, 'DiagnosisCurrentMedication': <class 'app.models.models.DiagnosisCurrentMedication'>, 'DiagnosisEntry': <class 'app.models.models.DiagnosisEntry'>, 'DiagnosisLaboratoryTest': <class 'app.models.models.DiagnosisLaboratoryTest'>, 'DiagnosisPhysicalExam': <class 'app.models.models.DiagnosisPhysicalExam'>, 'DiagnosisPrescribedMedication': <class 'app.models.models.DiagnosisPrescribedMedication'>, 'DiagnosisTeaching': <class 'app.models.models.DiagnosisTeaching'>, 'ProfileDiagnoses': <class 'app.models.models.ProfileDiagnoses'>, 'User': <class 'app.models.models.User'>}}"}
+{"asctime": "2025-04-15 03:54:31,895", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM generating schema"}
+{"asctime": "2025-04-15 03:54:32,569", "name": "mainModule", "levelname": "INFO", "message": "Startup event triggered"}
+{"asctime": "2025-04-15 03:54:32,570", "name": "mainModule", "levelname": "INFO", "message": "Startup event triggered"}
+{"asctime": "2025-04-15 03:54:32,611", "name": "mainModule", "levelname": "INFO", "message": "Database connection test: 2 users found"}
+{"asctime": "2025-04-15 03:54:32,612", "name": "uvicorn.error", "levelname": "INFO", "message": "Application startup complete."}
+{"asctime": "2025-04-15 03:54:32,612", "name": "uvicorn.error", "levelname": "INFO", "message": "Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)", "color_message": "Uvicorn running on \u001b[1m%s://%s:%d\u001b[0m (Press CTRL+C to quit)"}
+{"asctime": "2025-04-15 03:54:32,613", "name": "mainModule", "levelname": "INFO", "message": "Database connection test: 2 users found"}
+{"asctime": "2025-04-15 03:54:32,614", "name": "uvicorn.error", "levelname": "INFO", "message": "Application startup complete."}
+{"asctime": "2025-04-15 03:54:32,614", "name": "uvicorn.error", "levelname": "INFO", "message": "Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)", "color_message": "Uvicorn running on \u001b[1m%s://%s:%d\u001b[0m (Press CTRL+C to quit)"}
+{"asctime": "2025-04-15 03:54:36,674", "name": "uvicorn.access", "levelname": "INFO", "message": "172.19.0.10:59352 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 03:54:36,982", "name": "uvicorn.access", "levelname": "INFO", "message": "172.19.0.10:59378 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 405"}
+{"asctime": "2025-04-15 03:54:37,001", "name": "uvicorn.access", "levelname": "INFO", "message": "172.19.0.10:59366 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 04:08:06,697", "name": "uvicorn.error", "levelname": "INFO", "message": "Shutting down"}
+{"asctime": "2025-04-15 04:08:06,697", "name": "uvicorn.error", "levelname": "INFO", "message": "Shutting down"}
+{"asctime": "2025-04-15 04:08:06,891", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application shutdown."}
+{"asctime": "2025-04-15 04:08:06,896", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application shutdown."}
+{"asctime": "2025-04-15 04:08:06,949", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM shutdown"}
+{"asctime": "2025-04-15 04:08:06,952", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM shutdown"}
+{"asctime": "2025-04-15 04:08:06,959", "name": "uvicorn.error", "levelname": "INFO", "message": "Application shutdown complete."}
+{"asctime": "2025-04-15 04:08:06,963", "name": "uvicorn.error", "levelname": "INFO", "message": "Application shutdown complete."}
+{"asctime": "2025-04-15 04:08:06,967", "name": "uvicorn.error", "levelname": "INFO", "message": "Finished server process [1]", "color_message": "Finished server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 04:08:06,969", "name": "uvicorn.error", "levelname": "INFO", "message": "Finished server process [1]", "color_message": "Finished server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 04:10:19,672", "name": "mainModule", "levelname": "INFO", "message": "Starting application..."}
+{"asctime": "2025-04-15 04:10:19,735", "name": "mainModule", "levelname": "INFO", "message": "CORS middleware added"}
+{"asctime": "2025-04-15 04:10:19,735", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM"}
+{"asctime": "2025-04-15 04:10:19,735", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM With DB"}
+{"asctime": "2025-04-15 04:10:19,735", "name": "mainModule", "levelname": "INFO", "message": "Tortoise ORM registered"}
+{"asctime": "2025-04-15 04:10:19,786", "name": "mainModule", "levelname": "INFO", "message": "All routers included"}
+{"asctime": "2025-04-15 04:10:19,788", "name": "uvicorn.error", "levelname": "INFO", "message": "Started server process [1]", "color_message": "Started server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 04:10:19,790", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application startup."}
+{"asctime": "2025-04-15 04:10:19,870", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM started, {'default': <tortoise.backends.asyncpg.client.AsyncpgDBClient object at 0x7cb808718110>}, {'models': {'AutomationProfile': <class 'app.models.models.AutomationProfile'>, 'AutomationRun': <class 'app.models.models.AutomationRun'>, 'DiagnosisCurrentMedication': <class 'app.models.models.DiagnosisCurrentMedication'>, 'DiagnosisEntry': <class 'app.models.models.DiagnosisEntry'>, 'DiagnosisLaboratoryTest': <class 'app.models.models.DiagnosisLaboratoryTest'>, 'DiagnosisPhysicalExam': <class 'app.models.models.DiagnosisPhysicalExam'>, 'DiagnosisPrescribedMedication': <class 'app.models.models.DiagnosisPrescribedMedication'>, 'DiagnosisTeaching': <class 'app.models.models.DiagnosisTeaching'>, 'ProfileDiagnoses': <class 'app.models.models.ProfileDiagnoses'>, 'User': <class 'app.models.models.User'>}}"}
+{"asctime": "2025-04-15 04:10:19,871", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM generating schema"}
+{"asctime": "2025-04-15 04:10:20,579", "name": "mainModule", "levelname": "INFO", "message": "Startup event triggered"}
+{"asctime": "2025-04-15 04:10:20,625", "name": "mainModule", "levelname": "INFO", "message": "Database connection test: 2 users found"}
+{"asctime": "2025-04-15 04:10:20,625", "name": "uvicorn.error", "levelname": "INFO", "message": "Application startup complete."}
+{"asctime": "2025-04-15 04:10:20,627", "name": "uvicorn.error", "levelname": "INFO", "message": "Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)", "color_message": "Uvicorn running on \u001b[1m%s://%s:%d\u001b[0m (Press CTRL+C to quit)"}
+{"asctime": "2025-04-15 04:17:58,238", "name": "uvicorn.error", "levelname": "INFO", "message": "Shutting down"}
+{"asctime": "2025-04-15 04:17:58,392", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application shutdown."}
+{"asctime": "2025-04-15 04:17:58,452", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM shutdown"}
+{"asctime": "2025-04-15 04:17:58,464", "name": "uvicorn.error", "levelname": "INFO", "message": "Application shutdown complete."}
+{"asctime": "2025-04-15 04:17:58,471", "name": "uvicorn.error", "levelname": "INFO", "message": "Finished server process [1]", "color_message": "Finished server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 04:18:49,363", "name": "mainModule", "levelname": "INFO", "message": "Starting application..."}
+{"asctime": "2025-04-15 04:18:49,396", "name": "mainModule", "levelname": "INFO", "message": "CORS middleware added"}
+{"asctime": "2025-04-15 04:18:49,397", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM"}
+{"asctime": "2025-04-15 04:18:49,398", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM With DB"}
+{"asctime": "2025-04-15 04:18:49,398", "name": "mainModule", "levelname": "INFO", "message": "Tortoise ORM registered"}
+{"asctime": "2025-04-15 04:18:49,434", "name": "mainModule", "levelname": "INFO", "message": "All routers included"}
+{"asctime": "2025-04-15 04:18:49,436", "name": "uvicorn.error", "levelname": "INFO", "message": "Started server process [1]", "color_message": "Started server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 04:18:49,437", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application startup."}
+{"asctime": "2025-04-15 04:18:49,510", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM started, {'default': <tortoise.backends.asyncpg.client.AsyncpgDBClient object at 0x79090cfa0110>}, {'models': {'AutomationProfile': <class 'app.models.models.AutomationProfile'>, 'AutomationRun': <class 'app.models.models.AutomationRun'>, 'DiagnosisCurrentMedication': <class 'app.models.models.DiagnosisCurrentMedication'>, 'DiagnosisEntry': <class 'app.models.models.DiagnosisEntry'>, 'DiagnosisLaboratoryTest': <class 'app.models.models.DiagnosisLaboratoryTest'>, 'DiagnosisPhysicalExam': <class 'app.models.models.DiagnosisPhysicalExam'>, 'DiagnosisPrescribedMedication': <class 'app.models.models.DiagnosisPrescribedMedication'>, 'DiagnosisTeaching': <class 'app.models.models.DiagnosisTeaching'>, 'ProfileDiagnoses': <class 'app.models.models.ProfileDiagnoses'>, 'User': <class 'app.models.models.User'>}}"}
+{"asctime": "2025-04-15 04:18:49,514", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM generating schema"}
+{"asctime": "2025-04-15 04:18:50,199", "name": "mainModule", "levelname": "INFO", "message": "Startup event triggered"}
+{"asctime": "2025-04-15 04:18:50,250", "name": "mainModule", "levelname": "INFO", "message": "Database connection test: 2 users found"}
+{"asctime": "2025-04-15 04:18:50,251", "name": "uvicorn.error", "levelname": "INFO", "message": "Application startup complete."}
+{"asctime": "2025-04-15 04:18:50,251", "name": "uvicorn.error", "levelname": "INFO", "message": "Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)", "color_message": "Uvicorn running on \u001b[1m%s://%s:%d\u001b[0m (Press CTRL+C to quit)"}
+{"asctime": "2025-04-15 04:23:28,883", "name": "uvicorn.error", "levelname": "INFO", "message": "Shutting down"}
+{"asctime": "2025-04-15 04:23:28,985", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application shutdown."}
+{"asctime": "2025-04-15 04:23:28,992", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM shutdown"}
+{"asctime": "2025-04-15 04:23:28,993", "name": "uvicorn.error", "levelname": "INFO", "message": "Application shutdown complete."}
+{"asctime": "2025-04-15 04:23:28,993", "name": "uvicorn.error", "levelname": "INFO", "message": "Finished server process [1]", "color_message": "Finished server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 04:31:58,414", "name": "mainModule", "levelname": "INFO", "message": "Starting application..."}
+{"asctime": "2025-04-15 04:31:58,453", "name": "mainModule", "levelname": "INFO", "message": "CORS middleware added"}
+{"asctime": "2025-04-15 04:31:58,453", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM"}
+{"asctime": "2025-04-15 04:31:58,454", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM With DB"}
+{"asctime": "2025-04-15 04:31:58,455", "name": "mainModule", "levelname": "INFO", "message": "Tortoise ORM registered"}
+{"asctime": "2025-04-15 04:31:58,495", "name": "mainModule", "levelname": "INFO", "message": "All routers included"}
+{"asctime": "2025-04-15 04:31:58,498", "name": "uvicorn.error", "levelname": "INFO", "message": "Started server process [1]", "color_message": "Started server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 04:31:58,498", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application startup."}
+{"asctime": "2025-04-15 04:31:58,541", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM started, {'default': <tortoise.backends.asyncpg.client.AsyncpgDBClient object at 0x7c984b3825d0>}, {'models': {'AutomationProfile': <class 'app.models.models.AutomationProfile'>, 'AutomationRun': <class 'app.models.models.AutomationRun'>, 'DiagnosisCurrentMedication': <class 'app.models.models.DiagnosisCurrentMedication'>, 'DiagnosisEntry': <class 'app.models.models.DiagnosisEntry'>, 'DiagnosisLaboratoryTest': <class 'app.models.models.DiagnosisLaboratoryTest'>, 'DiagnosisPhysicalExam': <class 'app.models.models.DiagnosisPhysicalExam'>, 'DiagnosisPrescribedMedication': <class 'app.models.models.DiagnosisPrescribedMedication'>, 'DiagnosisTeaching': <class 'app.models.models.DiagnosisTeaching'>, 'ProfileDiagnoses': <class 'app.models.models.ProfileDiagnoses'>, 'User': <class 'app.models.models.User'>}}"}
+{"asctime": "2025-04-15 04:31:58,542", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM generating schema"}
+{"asctime": "2025-04-15 04:31:59,233", "name": "mainModule", "levelname": "INFO", "message": "Startup event triggered"}
+{"asctime": "2025-04-15 04:31:59,260", "name": "mainModule", "levelname": "INFO", "message": "Database connection test: 2 users found"}
+{"asctime": "2025-04-15 04:31:59,261", "name": "uvicorn.error", "levelname": "INFO", "message": "Application startup complete."}
+{"asctime": "2025-04-15 04:31:59,263", "name": "uvicorn.error", "levelname": "INFO", "message": "Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)", "color_message": "Uvicorn running on \u001b[1m%s://%s:%d\u001b[0m (Press CTRL+C to quit)"}
