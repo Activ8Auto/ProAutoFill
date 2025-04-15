@@ -43,7 +43,6 @@ export default function RootLayout({
   };
 
   return (
-<<<<<<< HEAD
     <ThemeProvider theme={baselightTheme}>
       <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -94,24 +93,5 @@ export default function RootLayout({
         </AuthProvider>
       </LocalizationProvider>
     </ThemeProvider>
-=======
-    <MainWrapper className="mainwrapper">
-      {/* Sidebar */}
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        isMobileSidebarOpen={isMobileSidebarOpen}
-        onSidebarClose={() => setMobileSidebarOpen(false)}
-      />
-      {/* Main Content */}
-      <PageWrapper className="page-wrapper">
-        {/* Header */}
-        <Header toggleMobileSidebar={toggleMobileSidebar} />
-        {/* Page Content */}
-        <Box sx={{ width: '80%', mx: 'auto', px: 3, pt: 3 }}>
-          <Box sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
-        </Box>
-      </PageWrapper>
-    </MainWrapper>
->>>>>>> dev
   );
 }

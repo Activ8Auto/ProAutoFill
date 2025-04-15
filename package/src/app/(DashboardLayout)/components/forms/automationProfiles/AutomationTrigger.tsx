@@ -69,7 +69,6 @@ export default function RunAutomationPage() {
 
       if (!res.ok) throw new Error("Automation failed");
 
-<<<<<<< HEAD
       toast.success("Automation Launched, Check For 2 Factor Request!", {
         duration: 4000, // 4 seconds
       });
@@ -77,12 +76,6 @@ export default function RunAutomationPage() {
       console.error("Automation error:", err);
       // Use the error message from the response or a fallback
       toast.error(err.message || "Failed, check inputs");
-=======
-      toast.success("Automation started successfully! Check 2 Step!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to start automation");
->>>>>>> dev
     }
   };
 

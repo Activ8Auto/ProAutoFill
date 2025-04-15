@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import PageHeader from "@/app/(DashboardLayout)/components/shared/PageHeader";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
 import RaceBreakdown from "@/app/(DashboardLayout)/components/dashboard/RaceBreakdown";
 import RecentRuns from "@/app/(DashboardLayout)/components/dashboard/RecentRuns";
 import AgeGroupBreakdown from "@/app/(DashboardLayout)/components/dashboard/AgeGroupBreakdown";
@@ -14,8 +13,6 @@ import DurationBreakdown from "./components/dashboard/DurationBreakdown";
 import GenderBreakdown from "./components/dashboard/GenderBreakdown";
 import OverviewWidgets from "./components/dashboard/TotalRuns";
 import DiagnosisBreakdownChart from "@/app/(DashboardLayout)/components/dashboard/DiagnosisBreakdownChart";
-=======
->>>>>>> dev
 import TimeFrameSelector from "@/app/(DashboardLayout)/components/shared/TimeFrameSelector";
 import RemainingRunsBanner from "@/app/(DashboardLayout)/components/dashboard/RemainingRunsBanner";
 import SectionCard from "@/app/(DashboardLayout)/components/shared/SectionCard";
@@ -44,15 +41,7 @@ const Dashboard = () => {
   const { token } = useAuthStore();
   
   useEffect(() => {
-<<<<<<< HEAD
     if (!token) router.push("/authentication/login");
-=======
-    // Redirect if no token
-    
-    if (!token) {
-      router.push("/authentication/login");
-    }
->>>>>>> dev
   }, [token, router]);
 
   useEffect(() => {
@@ -112,7 +101,6 @@ const Dashboard = () => {
         {remainingRuns !== null && (
           <RemainingRunsBanner remainingRuns={remainingRuns} />
         )}
-<<<<<<< HEAD
         <Grid container spacing={3}>
           {/* Top Row */}
           <Grid item xs={12} lg={8}>
@@ -143,62 +131,6 @@ const Dashboard = () => {
             <DiagnosisBreakdownChart runs={runs} />
           </Grid>
         </Grid>
-=======
-
-        {/* Overview Section */}
-        <SectionCard title="Overview">
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <TotalRuns timeframe={timeframe} runs={runs} />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TotalTime timeframe={timeframe} runs={runs} />
-            </Grid>
-          </Grid>
-        </SectionCard>
-
-        {/* Breakdowns Section */}
-        <SectionCard title="Key Metrics">
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={6}>
-              <GenderBreakdown runs={runs} timeframe={timeframe} />
-            </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-              <DurationBreakdown runs={runs} timeframe={timeframe} />
-            </Grid>
-            
-            {/* <Grid item xs={12} md={6} lg={4}>
-              <VisitTypeBreakdown runs={runs} timeframe={timeframe} />
-            </Grid>
-            */}
-            
-          </Grid>
-          </SectionCard>
-          <SectionCard title="Key Charts">
-          <Grid container spacing={6}>
-          <Grid item xs={12} md={12} lg={6}>
-              <AgeGroupBreakdown runs={runs} timeframe={timeframe} />
-            </Grid>
-            <Grid item xs={12} md={12} lg={6}>
-              <RaceBreakdown runs={runs} timeframe={timeframe} />
-            </Grid>
-            <Grid item xs={12} md={12} lg={12}>
-            <DiagnosisBreakdownChart runs={runs} timeframe={timeframe} />
-            </Grid>
-            </Grid>
-          </SectionCard>
-
-        {/* Recent Runs Section */}
-        <SectionCard title="Recent Runs">
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={12}>
-              <RecentRuns runs={runs} />
-            </Grid>
-          </Grid>
-          </SectionCard>
-
-        
->>>>>>> dev
       </Box>
     </PageContainer>
   );
