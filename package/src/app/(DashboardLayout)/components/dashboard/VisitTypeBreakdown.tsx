@@ -4,30 +4,28 @@ import { Box, Typography, LinearProgress, Stack } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
 type Props = {
+  timeframe: "day" | "week" | "month";
   runs: any[];
 };
 
 const aggregateVisitTypeStats = (runs: any[]) => {
-  // Initialize counts for both visit types
   const counts: Record<string, number> = {
     "Telepsychiatry": 0,
     "Face to Face": 0,
   };
 
-  // Count occurrences for each visit type
   runs.forEach((run) => {
     const vt = run.selected_visit_type;
     if (vt === "Telepsychiatry" || vt === "Face to Face") {
-      counts[vt] = (counts[vt] || 0) + 1;
+      counts[vt]++;
     }
   });
 
   const total = counts["Telepsychiatry"] + counts["Face to Face"];
-  console.log("Aggregate Visit Type Stats:", { counts, total });
 
   return {
     telehealth: {
-      label: "Telehealth", // mapping Telepsychiatry to Telehealth display
+      label: "Telehealth",
       total: counts["Telepsychiatry"],
       percent: total > 0 ? (counts["Telepsychiatry"] / total) * 100 : 0,
     },
@@ -39,11 +37,33 @@ const aggregateVisitTypeStats = (runs: any[]) => {
   };
 };
 
-const VisitTypeBreakdown = ({ runs }: Props) => {
-  const { telehealth, faceToFace } = aggregateVisitTypeStats(runs);
+const VisitTypeBreakdown = ({ timeframe, runs }: Props) => {
+  // 1. Calculate timeframe cutoff
+  const now = new Date();
+  let cutoff: Date;
+
+  if (timeframe === "day") {
+    cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  } else if (timeframe === "week") {
+    cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  } else {
+    cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  }
+
+  // 2. Filter runs based on start_time
+  const filteredRuns = runs.filter((run) => {
+    if (!run.start_time) return false;
+    return new Date(run.start_time) >= cutoff;
+  });
+
+  // 3. Aggregate stats
+  const { telehealth, faceToFace } = aggregateVisitTypeStats(filteredRuns);
 
   return (
-    <DashboardCard title="Visit Type Breakdown" subtitle="Distribution of visit methods">
+    <DashboardCard
+      title="Visit Type Breakdown"
+      subtitle={`Showing data for ${timeframe}`}
+    >
       <Stack spacing={3}>
         <Box>
           <Typography variant="subtitle2" fontWeight={600}>

@@ -4,6 +4,7 @@ import { Box, Typography, LinearProgress, Stack } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
 type Props = {
+  timeframe: "day" | "week" | "month";
   runs: any[];
 };
 
@@ -14,7 +15,6 @@ const aggregateDurationStats = (runs: any[]) => {
   };
 
   runs.forEach((run) => {
-    // Check the chosen_minutes property (assumed to be a number: 30 or 60)
     if (run.chosen_minutes === 30) {
       counts["30 Minutes"] += 1;
     } else if (run.chosen_minutes === 60) {
@@ -37,11 +37,30 @@ const aggregateDurationStats = (runs: any[]) => {
   ];
 };
 
-const DurationBreakdown = ({ runs }: Props) => {
-  const durationStats = aggregateDurationStats(runs);
+const DurationBreakdown = ({ timeframe, runs }: Props) => {
+  // 1. Calculate the cutoff date
+  const now = new Date();
+  let cutoff: Date;
+
+  if (timeframe === "day") {
+    cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  } else if (timeframe === "week") {
+    cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  } else {
+    cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  }
+
+  // 2. Filter the runs based on timeframe
+  const filteredRuns = runs.filter((run) => {
+    if (!run.start_time) return false;
+    return new Date(run.start_time) >= cutoff;
+  });
+
+  // 3. Aggregate duration statistics
+  const durationStats = aggregateDurationStats(filteredRuns);
 
   return (
-    <DashboardCard title="Duration Breakdown" subtitle="Selected Timeframes">
+    <DashboardCard title="Duration Breakdown" subtitle={`Showing data for ${timeframe}`}>
       <Stack spacing={2}>
         {durationStats.map((stat) => (
           <Box key={stat.label}>

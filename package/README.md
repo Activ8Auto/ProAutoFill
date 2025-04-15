@@ -1,34 +1,143 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ProAutoFill
+
+ProAutoFill is a modern web application that provides automation capabilities for various tasks. The project consists of a FastAPI backend and a Next.js frontend, with a focus on user profiles, automation, and secure authentication.
+
+## Project Structure
+
+```
+ProAutoFill/
+├── backend/              # FastAPI backend application
+│   ├── app/             # Main application code
+│   ├── migrations/      # Database migrations
+│   ├── mainModule.py    # Application entry point
+│   └── Dockerfile       # Backend container configuration
+├── landingpage/         # Next.js frontend application
+├── nginx/               # Nginx configuration
+├── package/             # Additional packages
+└── docker-compose.yml   # Docker Compose configuration
+```
+
+## Features
+
+- **User Authentication**: Secure JWT-based authentication system
+- **Profile Management**: Create and manage user profiles
+- **Automation**: Run automated tasks and processes
+- **Diagnosis**: System diagnosis and monitoring capabilities
+- **Payment Integration**: Stripe integration for payment processing
+- **API Documentation**: Auto-generated API documentation
+
+## Technology Stack
+
+### Backend
+- FastAPI (Python web framework)
+- Tortoise ORM (Database ORM)
+- PostgreSQL (Database)
+- JWT Authentication
+- Stripe API Integration
+
+### Frontend
+- Next.js 14
+- Material UI
+- TypeScript
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Docker and Docker Compose
+- Node.js (for local frontend development)
+- Python 3.8+ (for local backend development)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+git clone https://github.com/yourusername/ProAutoFill.git
+cd ProAutoFill
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Set up environment variables:
+```bash
+cp backend/.env.example backend/.env
+# Edit the .env file with your configuration
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Start the application using Docker Compose:
+```bash
+docker-compose up -d
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Local Development
 
-## Learn More
+#### Backend
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn mainModule:app --reload
+```
 
-To learn more about Next.js, take a look at the following resources:
+#### Frontend
+```bash
+cd landingpage
+npm install
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Once the application is running, you can access the API documentation at:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## License
+
+This project is licensed under the terms specified in the LICENSE.md file.
+
+## Support
+
+For support, please open an issue in the GitHub repository or contact the maintainers.
+
+# <a href="https://modernize-nextjs-free.vercel.app/?ref=5">Modernize-nextjs-free</a>
+Modernize Free Next.js 14 Admin Template with Material Ui + Typescript 
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/adminmart/Modernize-Nextjs-Free" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" aria-label="Star adminmart/Modernize-Nextjs-Free on GitHub">Give a Star</a>
+<!-- Main image of Template -->
+
+  <img src="https://adminmart.com/wp-content/uploads/2023/03/modernize-free-next-js-admin-template.png" />
+
+
+
+# Installation 👨🏻‍💻
+
+> We recommend you use npm
+
+1. Install all packages
+
+```
+npm i
+```
+
+2. Run Development Server
+
+```
+npm run dev
+```
+
+3. Build your project
+
+```
+npm run build
+```
+
+
+

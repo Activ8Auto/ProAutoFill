@@ -30,17 +30,13 @@ const UserProfileForm = () => {
     const loadProfileInfo = async () => {
       try {
         if (userId && token) {
-          data = await fetchUserProfileInfo(userId, token);
+          const data = await fetchUserProfileInfo(userId, token);
+          const info = data?.profile_info || {};
           setFormData((prev) => ({
             ...prev,
-            ...data,
+            ...info,
           }));
         }
-        const info = data?.profile_info || {};
-        setFormData((prev) => ({
-          ...prev,
-          ...info,
-        }));
       } catch (err) {
         console.error("Failed to load profile info", err);
       } finally {

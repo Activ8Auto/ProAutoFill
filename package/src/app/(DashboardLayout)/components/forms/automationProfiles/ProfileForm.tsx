@@ -2,14 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/app/(DashboardLayout)/loading"
+import SectionCard from "@/app/(DashboardLayout)/components/shared/SectionCard";
 import { parse } from "date-fns";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import ProfileCard from "@/app/(DashboardLayout)/components/forms/automationProfiles/ProfileCard";
 import {
   Box,
   Button,
   Grid,
   Typography,
+  Snackbar,
+  Alert,
   Switch,
   IconButton,
   Paper,
@@ -38,17 +44,20 @@ import { DiagnosisEntry } from "@/types/diagnosis";
 import DiagnosisSelector from "@/app/(DashboardLayout)/components/forms/dictionaryForm/DiagnosisSelector";
 import { fetchDiagnosisOptions } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
+import Loading from "@/app/loading";
 
 export default function ProfileForm() {
   const { token, userId } = useAuthStore();
   const profiles = useAutomationProfileStore(
     (state: AutomationProfileStore) => state.profiles
   );
+  const [loadingProfileInfo, setLoadingProfileInfo] = useState(true);
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
+        setLoadingProfileInfo(true); // Start loading
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-info`,
+          `${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/profile-info/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -68,6 +77,8 @@ export default function ProfileForm() {
         }
       } catch (err) {
         console.error("Failed to load user profile_info", err);
+      } finally {
+        setLoadingProfileInfo(false); // Stop loading
       }
     };
 
@@ -103,7 +114,10 @@ export default function ProfileForm() {
   const [visitMode, setVisitMode] = useState("");
   const [siteType, setSiteType] = useState("");
   const [cptCode, setCptCode] = useState("");
-
+  const [loadingDiagnoses, setLoadingDiagnoses] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
   const [diagnosisOptions, setDiagnosisOptions] = useState<DiagnosisEntry[]>(
     []
   );
@@ -133,17 +147,21 @@ export default function ProfileForm() {
   useEffect(() => {
     const loadDiagnoses = async () => {
       try {
-        if (!token) {
-          throw new Error("No token available");
-        }
+        setLoadingDiagnoses(true); // ✅ start loading
+        if (!token) throw new Error("No token available");
+  
         const data = await fetchDiagnosisOptions(token);
         setDiagnosisOptions(data);
       } catch (err) {
         console.error("Failed to fetch diagnosis options:", err);
+      } finally {
+        setLoadingDiagnoses(false); // ✅ stop loading
       }
     };
-
-    loadDiagnoses();
+  
+    if (token) {
+      loadDiagnoses();
+    }
   }, [token]);
 
   const handleSaveDefaults = async () => {
@@ -204,7 +222,7 @@ export default function ProfileForm() {
     const newProfileData = {
       name: form.name,
       targetHours: Number(form.targetHours),
-      selectedDate: form.selectedDate,
+      selectedDate: form.selectedDate || format(new Date(), "yyyy-MM-dd"),
       minWait: Number(form.minWait),
       maxWait: Number(form.maxWait),
       runHeadless: form.runHeadless,
@@ -260,485 +278,449 @@ export default function ProfileForm() {
       const savedProfile = await createProfile(newProfileData, token!);
       console.log("Server response:", savedProfile);
       // addProfile(savedProfile);
-      alert("Profile saved!");
+      toast.success("Profile saved!");
       await fetchProfiles();
     } catch (err) {
       console.error("Failed to save profile:", err);
+      toast.error("Failed to save profile.");
     }
   };
-
+  const handleSnackbarClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
   return (
     <Box p={3}>
-      <Typography variant="h6" gutterBottom>
-        Create Automation Profile
-      </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <CustomTextField
-            label="Profile Name"
-            fullWidth
-            value={form.name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleChange("name", e.target.value)
-            }
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ textDecoration: "underline" }}
-          >
-            Visit Info
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <DatePicker
-            label="Select Form Date"
-            value={
-              form.selectedDate
-                ? parse(form.selectedDate, "yyyy-MM-dd", new Date())
-                : null
-            }
-            onChange={(date: Date | null) => {
-              handleChange(
-                "selectedDate",
-                date ? format(date, "yyyy-MM-dd") : ""
-              );
-            }}
-            slotProps={{ textField: { fullWidth: true } }}
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <Typography
-            variant="subtitle1"
-            gutterBottom
-            sx={{ textDecoration: "underline" }}
-          >
-            Visit Duration + Weight (%)
-          </Typography>
-          <Typography variant="body2" gutterBottom>
-            -Assigns weights to each option by percent- these control how often
-            each is selected
-          </Typography>
-          <Box display="flex" flexDirection="column" gap={1}>
-            {form.durationOptions.map((duration, index) => (
-              <Box key={duration} display="flex" alignItems="center" gap={2}>
-                <Typography sx={{ minWidth: "150px" }} variant="body2">
-                  {duration}
-                </Typography>
-                <CustomTextField
-                  type="number"
-                  size="small"
-                  value={form.durationWeights[index]}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const updated = [...form.durationWeights];
-                    updated[index] = parseInt(e.target.value);
-                    setForm((prev) => ({
-                      ...prev,
-                      durationWeights: updated,
-                    }));
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">%</InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-            ))}
-          </Box>
-        </Grid>
-
-        {(["rotation", "faculty", "preceptor"] as const).map((field) => {
-          const router = useRouter();
-          // Define the static label text based on the field
-          const label =
-            field === "rotation"
-              ? "Scheduled Rotation "
-              : field === "faculty"
-              ? "Faculty "
-              : "Preceptor ";
-
-          return (
-            <Grid item xs={12} key={field}>
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                mb={1}
-              >
-                <Typography sx={{ textDecoration: "underline" }}>
-                  {label}
-                  <Button
-                    variant="text"
-                    onClick={() => router.push("/account")}
-                    sx={{
-                      textDecoration: "underline",
-                      color: "primary.main",
-                      padding: 0,
-                      minWidth: 0,
-                      textTransform: "none",
-                      display: "inline", // keep it inline with the text
-                    }}
-                  >
-                    (Change in Profile)
-                  </Button>
-                </Typography>
-              </Box>
-              {form[field] ? (
-                <Typography
-                  fontWeight={500}
-                  fontSize="0.9rem"
-                  sx={{ opacity: 0.6 }}
-                >
-                  {form[field]}
-                </Typography>
-              ) : (
-                <Box textAlign="center" mt={2}>
-                  <Typography
-                    color="error"
-                    fontSize="1.2rem"
-                    fontWeight="bold"
-                    textAlign="center"
-                  >
-                    No{" "}
-                    {field === "rotation"
-                      ? "Scheduled Rotation"
-                      : field === "faculty"
-                      ? "Faculty"
-                      : "Preceptor"}{" "}
-                    set.
-                    <br />
-                    Please update this in your{" "}
-                    <Button
-                      variant="text"
-                      onClick={() => router.push("/account")}
-                      sx={{
-                        textDecoration: "underline",
-                        color: "#d32f2f",
-                        fontWeight: "bold",
-                        textTransform: "none",
-                        padding: 0,
-                        minWidth: 0,
-                      }}
-                    >
-                      My Profile
-                    </Button>{" "}
-                    page.
-                  </Typography>
-                </Box>
-              )}
-            </Grid>
-          );
-        })}
-
-        <Grid item xs={12}>
-          <Typography
-            variant="subtitle1"
-            gutterBottom
-            sx={{ textDecoration: "underline" }}
-          >
-            Age Range Weighting
-          </Typography>
-          <Typography variant="body2" color="text.secondary" mb={1}>
-            Assign weights to each age group by percent — these control how
-            often each is selected.
-          </Typography>
-          <Typography sx={{ fontSize: "0.7rem" }}>
-            Example: 5-12 years = 100 then 100 percent of patients outputed will
-            be in this age range.
-          </Typography>
-          <Grid container spacing={1}>
-            {ageRanges.map((item, index) => (
-              <Grid
-                item
-                xs={6}
-                sm={4}
-                key={index}
-                display="flex"
-                alignItems="center"
-                gap={1}
-              >
-                <Typography variant="body2" sx={{ minWidth: "100px" }}>
-                  {item.range}
-                </Typography>
-                <CustomTextField
-                  type="number"
-                  size="small"
-                  sx={{ maxWidth: 80 }}
-                  value={item.weight}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const updated = [...ageRanges];
-                    updated[index].weight = parseInt(e.target.value);
-                    setAgeRanges(updated);
-                  }}
-                  InputProps={{
-                    style: { fontSize: "0.7rem" },
-                    endAdornment: (
-                      <InputAdornment position="end">%</InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-            ))}
+      
+      {/* Section 1: Create Automation Profile - Profile Name */}
+      <SectionCard title="Create Automation Profile">
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <CustomTextField
+              label="Profile Name"
+              fullWidth
+              value={form.name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleChange("name", e.target.value)
+              }
+            />
           </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            {/* Visit Mode */}
-            <Grid item xs={4}>
-              <Typography
-                variant="subtitle2"
-                gutterBottom
-                sx={{ textDecoration: "underline" }}
-              >
-                Visit Mode
-              </Typography>
-              <CustomTextField
-                select
-                fullWidth
-                value={form.visitType}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleChange("visitType", e.target.value)
-                }
-              >
-                <MenuItem value="Face to Face">Face to Face</MenuItem>
-                <MenuItem value="Telepsychiatry">Telepsychiatry</MenuItem>
-              </CustomTextField>
-            </Grid>
-
-            {/* Site Type */}
-            <Grid item xs={4}>
-              <Typography
-                variant="subtitle2"
-                gutterBottom
-                sx={{ textDecoration: "underline" }}
-              >
-                Site Type
-              </Typography>
-              <CustomTextField
-                select
-                fullWidth
-                value={form.siteType}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleChange("siteType", e.target.value)
-                }
-              >
-                <MenuItem value="Inpatient">Inpatient</MenuItem>
-                <MenuItem value="Outpatient">Outpatient</MenuItem>
-              </CustomTextField>
-            </Grid>
-
-            {/* CPT Visit Code */}
-            <Grid item xs={4}>
-              <Typography
-                variant="subtitle2"
-                sx={{ textDecoration: "underline" }}
-                gutterBottom
-              >
-                CPT Visit Code
-              </Typography>
-              <CustomTextField
-                fullWidth
-                placeholder="e.g. 99214"
-                value={form.cptCode}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleChange("cptCode", e.target.value)
-                }
-              />
-            </Grid>
+      </SectionCard>
+  
+      {/* Section 2: Visit Info - Form Date and Visit Duration/Weight */}
+      <SectionCard title="Visit Info">
+        <Grid container spacing={2}>
+          {/* <Grid item xs={12}>
+            <DatePicker
+              label="Select Form Date"
+              value={
+                form.selectedDate
+                  ? parse(form.selectedDate, "yyyy-MM-dd", new Date())
+                  : null
+              }
+              onChange={(date: Date | null) => {
+                handleChange("selectedDate", date ? format(date, "yyyy-MM-dd") : "");
+              }}
+              slotProps={{ textField: { fullWidth: true } }}
+            />
+          </Grid> */}
+          <Grid item xs={12}>
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{ textDecoration: "underline" }}
+            >
+              Visit Duration + Weight (%)
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              -Assigns weights to each option by percent- these control how often each is selected
+            </Typography>
           </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Typography
-            variant="subtitle1"
-            gutterBottom
-            sx={{ textDecoration: "underline" }}
-          >
-            Student Level of Function (%)
-          </Typography>
-          <Typography variant="body2" color="text.secondary" mb={1}>
-            Assign how often the student is functioning at each level.
-          </Typography>
-
-          <Grid container spacing={2}>
-            {form.studentFunctionWeights.map((entry, index) => (
-              <Grid item xs={12} sm={6} md={3} key={entry.level}>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Typography variant="body2" minWidth="120px">
-                    {entry.level}
+          <Grid item xs={12}>
+            <Box display="flex" flexDirection="column" gap={1}>
+              {form.durationOptions.map((duration, index) => (
+                <Box key={duration} display="flex" alignItems="center" gap={2}>
+                  <Typography sx={{ minWidth: "150px" }} variant="body2">
+                    {duration}
                   </Typography>
                   <CustomTextField
                     type="number"
-                    value={entry.weight}
+                    size="small"
+                    value={form.durationWeights[index]}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      const updated = [...form.studentFunctionWeights];
-                      updated[index].weight = parseInt(e.target.value) || 0;
-                      setFunctionLevels(updated);
+                      const updated = [...form.durationWeights];
+                      updated[index] = parseInt(e.target.value);
+                      setForm((prev) => ({
+                        ...prev,
+                        durationWeights: updated,
+                      }));
                     }}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">%</InputAdornment>
                       ),
                     }}
-                    size="small"
                   />
                 </Box>
-              </Grid>
-            ))}
+              ))}
+            </Box>
           </Grid>
         </Grid>
-
-        <Grid item xs={12}>
-          <Typography
-            variant="h6"
-            mt={4}
-            mb={2}
-            sx={{ textDecoration: "underline" }}
-          >
-            Select Diagnoses to Include
-          </Typography>
-          {diagnosisOptions.length === 0 ? (
-            <Typography>No diagnoses available.</Typography>
+      </SectionCard>
+  
+      {/* Section 3: Profile Defaults - Rotation, Faculty, Preceptor */}
+      <SectionCard title="Profile Defaults">
+        <Grid container spacing={2}>
+          {loadingProfileInfo ? (
+            <Grid item xs={12}>
+              <LoadingSpinner />
+            </Grid>
           ) : (
-            <TableContainer
-              component={Paper}
-              sx={{
-                maxHeight: 400, // Adjust height as needed
-                overflowY: "auto",
-                border: "1px solid #e0e0e0",
-              }}
-            >
-              <Box display="flex" justifyContent="flex-end" p={1}>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={() => setSelectedDiagnoses(diagnosisOptions)}
-                >
-                  Select All Diagnoses
-                </Button>
-              </Box>
-              <Table stickyHeader size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Select</strong>
-                    </TableCell>
-                    <TableCell>
-                      <strong>Name</strong>
-                    </TableCell>
-                    <TableCell>
-                      <strong>ICD Code</strong>
-                    </TableCell>
-                    <TableCell>
-                      <strong>Physical Exams</strong>
-                    </TableCell>
-                    <TableCell>
-                      <strong>Current Meds</strong>
-                    </TableCell>
-                    <TableCell>
-                      <strong>Lab Tests</strong>
-                    </TableCell>
-                    <TableCell>
-                      <strong>Teaching</strong>
-                    </TableCell>
-                    <TableCell>
-                      <strong>Prescribed Meds</strong>
-                    </TableCell>
-                    <TableCell>
-                      <strong>Exclusion Group</strong>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {diagnosisOptions.map((diagnosis) => {
-                    const isSelected = selectedDiagnoses.some(
-                      (d) =>
-                        d.name === diagnosis.name &&
-                        d.icd_code === diagnosis.icd_code
-                    );
-
-                    const handleToggle = () => {
-                      if (isSelected) {
-                        setSelectedDiagnoses((prev) =>
-                          prev.filter(
-                            (d) =>
-                              !(
-                                d.name === diagnosis.name &&
-                                d.icd_code === diagnosis.icd_code
-                              )
-                          )
-                        );
-                      } else {
-                        setSelectedDiagnoses((prev) => [...prev, diagnosis]);
-                      }
-                    };
-
-                    return (
-                      <TableRow key={diagnosis.name + diagnosis.icd_code}>
-                        <TableCell>
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={handleToggle}
-                          />
-                        </TableCell>
-                        <TableCell>{diagnosis.name}</TableCell>
-                        <TableCell>{diagnosis.icd_code}</TableCell>
-                        <TableCell>
-                          {diagnosis.physical_exam?.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.current_medications?.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.laboratory_tests?.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.teaching_provided?.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.medications?.join(", ") || "None"}
-                        </TableCell>
-                        <TableCell>
-                          {diagnosis.exclusion_group || "None"}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            (["rotation", "faculty", "preceptor"] as const).map((field) => {
+              // Note: it's better to move useRouter() call outside the map.
+              const router = useRouter();
+              const label =
+                field === "rotation"
+                  ? "Scheduled Rotation "
+                  : field === "faculty"
+                  ? "Faculty "
+                  : "Preceptor ";
+  
+              return (
+                <Grid item xs={12} key={field}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    mb={1}
+                  >
+                    <Typography sx={{ textDecoration: "underline" }}>
+                      {label}
+                      <Button
+                        variant="text"
+                        onClick={() => router.push("/account")}
+                        sx={{
+                          textDecoration: "underline",
+                          color: "primary.main",
+                          padding: 0,
+                          minWidth: 0,
+                          textTransform: "none",
+                          display: "inline",
+                        }}
+                      >
+                        (Change in Profile)
+                      </Button>
+                    </Typography>
+                  </Box>
+                  {form[field] ? (
+                    <Typography fontWeight={500} fontSize="0.9rem" sx={{ opacity: 0.6 }}>
+                      {form[field]}
+                    </Typography>
+                  ) : (
+                    <Box textAlign="center" mt={2}>
+                      <Typography
+                        color="error"
+                        fontSize="1.2rem"
+                        fontWeight="bold"
+                        textAlign="center"
+                      >
+                        No {field === "rotation" ? "Scheduled Rotation" : field === "faculty" ? "Faculty" : "Preceptor"} set.
+                        <br />
+                        Please update this in your{" "}
+                        <Button
+                          variant="text"
+                          onClick={() => router.push("/account")}
+                          sx={{
+                            textDecoration: "underline",
+                            color: "#d32f2f",
+                            fontWeight: "bold",
+                            textTransform: "none",
+                            padding: 0,
+                            minWidth: 0,
+                          }}
+                        >
+                          My Profile
+                        </Button>{" "}
+                        page.
+                      </Typography>
+                    </Box>
+                  )}
+                </Grid>
+              );
+            })
           )}
         </Grid>
-
-        <Grid item xs={12}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => (window.location.href = "/automation-dictionary")}
-            sx={{ mt: 2 }}
-          >
-            Manage Diagnosis Profiles
-          </Button>
+      </SectionCard>
+  
+      {/* Section 4: Age Range Weighting */}
+      <SectionCard title="Age Range Weighting">
+        <Grid container spacing={1}>
+          {ageRanges.map((item, index) => (
+            <Grid item xs={6} sm={4} key={index} display="flex" alignItems="center" gap={1}>
+              <Typography variant="body2" sx={{ minWidth: "100px" }}>
+                {item.range}
+              </Typography>
+              <CustomTextField
+                type="number"
+                size="small"
+                sx={{ maxWidth: 80 }}
+                value={item.weight}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const updated = [...ageRanges];
+                  updated[index].weight = parseInt(e.target.value);
+                  setAgeRanges(updated);
+                }}
+                InputProps={{
+                  style: { fontSize: "0.7rem" },
+                  endAdornment: (
+                    <InputAdornment position="end">%</InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+          ))}
         </Grid>
-
-        <Grid item xs={12} mt={4}>
-          <Box display="flex" justifyContent="flex-start">
-            <Button variant="contained" onClick={handleSubmit}>
-              Save Profile
+      </SectionCard>
+  
+      {/* Section 5: Visit & Site Info */}
+      <SectionCard title="Visit & Site Info">
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Typography variant="subtitle2" gutterBottom sx={{ textDecoration: "underline" }}>
+              Visit Mode
+            </Typography>
+            <CustomTextField
+              select
+              fullWidth
+              value={form.visitType}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleChange("visitType", e.target.value)
+              }
+            >
+              <MenuItem value="Face to Face">Face to Face</MenuItem>
+              <MenuItem value="Telepsychiatry">Telepsychiatry</MenuItem>
+            </CustomTextField>
+          </Grid>
+          <Grid item xs={4}>
+            <Typography variant="subtitle2" gutterBottom sx={{ textDecoration: "underline" }}>
+              Site Type
+            </Typography>
+            <CustomTextField
+              select
+              fullWidth
+              value={form.siteType}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleChange("siteType", e.target.value)
+              }
+            >
+              <MenuItem value="Inpatient">Inpatient</MenuItem>
+              <MenuItem value="Outpatient">Outpatient</MenuItem>
+            </CustomTextField>
+          </Grid>
+          <Grid item xs={4}>
+            <Typography variant="subtitle2" gutterBottom sx={{ textDecoration: "underline" }}>
+              CPT Visit Code
+            </Typography>
+            <CustomTextField
+              fullWidth
+              placeholder="e.g. 99214"
+              value={form.cptCode}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleChange("cptCode", e.target.value)
+              }
+            />
+          </Grid>
+        </Grid>
+      </SectionCard>
+  
+      {/* Section 6: Student Level of Function */}
+      <SectionCard title="Student Level of Function (%)">
+        <Grid container spacing={2}>
+          {form.studentFunctionWeights.map((entry, index) => (
+            <Grid item xs={12} sm={6} md={3} key={entry.level}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <Typography variant="body2" minWidth="120px">
+                  {entry.level}
+                </Typography>
+                <CustomTextField
+                  type="number"
+                  value={entry.weight}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const updated = [...form.studentFunctionWeights];
+                    updated[index].weight = parseInt(e.target.value) || 0;
+                    setFunctionLevels(updated);
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">%</InputAdornment>
+                    ),
+                  }}
+                  size="small"
+                />
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </SectionCard>
+  
+      {/* Section 7: Diagnoses Selection */}
+      <SectionCard title="Select Diagnoses to Include">
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Typography variant="h6" gutterBottom>
+              Select Diagnoses to Include
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            {loadingDiagnoses ? (
+              <LoadingSpinner />
+            ) : diagnosisOptions.length === 0 ? (
+              <Typography>No diagnoses available.</Typography>
+            ) : (
+              <TableContainer
+                component={Paper}
+                sx={{
+                  maxHeight: 400,
+                  overflowY: "auto",
+                  border: "1px solid #e0e0e0",
+                }}
+              >
+                <Box display="flex" justifyContent="flex-end" p={1}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => setSelectedDiagnoses(diagnosisOptions)}
+                  >
+                    Select All Diagnoses
+                  </Button>
+                </Box>
+                <Table stickyHeader size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Select</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Name</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>ICD Code</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Physical Exams</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Current Meds</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Lab Tests</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Teaching</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Prescribed Meds</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>Exclusion Group</strong>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {diagnosisOptions.map((diagnosis) => {
+                      const isSelected = selectedDiagnoses.some(
+                        (d) =>
+                          d.name === diagnosis.name &&
+                          d.icd_code === diagnosis.icd_code
+                      );
+  
+                      const handleToggle = () => {
+                        if (isSelected) {
+                          setSelectedDiagnoses((prev) =>
+                            prev.filter(
+                              (d) =>
+                                !(
+                                  d.name === diagnosis.name &&
+                                  d.icd_code === diagnosis.icd_code
+                                )
+                            )
+                          );
+                        } else {
+                          setSelectedDiagnoses((prev) => [...prev, diagnosis]);
+                        }
+                      };
+  
+                      return (
+                        <TableRow key={diagnosis.name + diagnosis.icd_code}>
+                          <TableCell>
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={handleToggle}
+                            />
+                          </TableCell>
+                          <TableCell>{diagnosis.name}</TableCell>
+                          <TableCell>{diagnosis.icd_code}</TableCell>
+                          <TableCell>
+                            {diagnosis.physical_exam?.join(", ") || "None"}
+                          </TableCell>
+                          <TableCell>
+                            {diagnosis.current_medications?.join(", ") || "None"}
+                          </TableCell>
+                          <TableCell>
+                            {diagnosis.laboratory_tests?.join(", ") || "None"}
+                          </TableCell>
+                          <TableCell>
+                            {diagnosis.teaching_provided?.join(", ") || "None"}
+                          </TableCell>
+                          <TableCell>
+                            {diagnosis.medications?.join(", ") || "None"}
+                          </TableCell>
+                          <TableCell>
+                            {diagnosis.exclusion_group || "None"}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => (window.location.href = "/automation-dictionary")}
+              sx={{ mt: 2 }}
+            >
+              Manage Diagnosis Profiles
             </Button>
-          </Box>
+          </Grid>
         </Grid>
-        <Box mt={6}>
+      </SectionCard>
+      
+  <Box display="flex" justifyContent="center" p={4}>
+  
+    <Button variant="contained" sx={{ fontSize: '1.2rem', padding: '12px 24px' }} onClick={handleSubmit}>
+      Save Profile
+    </Button>
+   
+  </Box>
+
+  
+      {/* Section 8: Your Saved Profiles */}
+      <SectionCard title="Your Saved Profiles">
+        <Box mt={2}>
           <Typography variant="h5" gutterBottom>
             📂 Your Saved Profiles
           </Typography>
-
           {profiles.length === 0 ? (
             <Typography color="text.secondary">
               No profiles yet. Go make one!
@@ -759,7 +741,18 @@ export default function ProfileForm() {
             </Box>
           )}
         </Box>
-      </Grid>
+      </SectionCard>
+      <Toaster
+     
+       toastOptions={{
+        position: "bottom-center",
+         style: {
+           fontSize: "40px", // Set desired font size
+           // You can also set other styles, e.g., padding, background, etc.
+         },
+       }}
+      />
     </Box>
+    
   );
-}
+}  

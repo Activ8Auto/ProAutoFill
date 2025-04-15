@@ -17,14 +17,14 @@ class UserDefaultsUpdate(BaseModel):
 
 @router.patch("/{user_id}/defaults/")
 async def update_user_defaults(
-    user_id: str, 
+    user_id: str,
     defaults: UserDefaultsUpdate,
     current_user: User = Depends(current_active_user)  # Ensure user is authenticated
 ):
     # Optionally, you can verify that current_user.id matches user_id
     if str(current_user.id) != str(user_id):
         raise HTTPException(status_code=403, detail="You can only update your own defaults")
-        
+
     user = await User.get_or_none(id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -35,13 +35,13 @@ async def update_user_defaults(
 
 @router.patch("/{user_id}/profile-info/")
 async def update_profile_info(
-    user_id: str, 
+    user_id: str,
     payload: ProfileInfoUpdate,
     current_user: User = Depends(current_active_user),
 ):
     if str(current_user.id) != str(user_id):
         raise HTTPException(status_code=403, detail="Unauthorized")
-    
+
     user = await User.get_or_none(id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -50,7 +50,7 @@ async def update_profile_info(
     await user.save()
     return {"message": "Profile info updated", "profile_info": user.profile_info}
 
-@router.get("/{user_id}/profile-info")
+@router.get("/{user_id}/profile-info/")
 async def get_profile_info(user_id: str, current_user: User = Depends(current_active_user)):
     if str(current_user.id) != str(user_id):
         raise HTTPException(status_code=403, detail="Unauthorized")
