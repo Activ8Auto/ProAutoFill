@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
+
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.auth import fastapi_users, auth_backend, UserRead, UserCreate
 
 
@@ -30,15 +32,15 @@ ssl_context = ssl.create_default_context()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://auto-fill-pro.pro", "https://dev.auto-fill-pro.pro"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 logger.info("CORS middleware added")
-
+logger.info("Registering Tortoise ORM")
 # Register Tortoise ORM
-logger.info(f"Registering Tortoise ORM with DB_URL: {os.getenv('DATABASE_URL')}")
+logger.info(f"Registering Tortoise ORM With DB")
 register_tortoise(
     app,
     db_url=os.getenv("DATABASE_URL"),
@@ -75,7 +77,7 @@ async def startup_event():
         count = await User.all().count()
         logger.info(f"Database connection test: {count} users found")
     except Exception as e:
-        logger.error(f"Database connection failed: {e}")
+        logger.error(f"Database connection failed: {str(e)}", exc_info=True)
 
 @app.get("/")
 async def root():
@@ -87,11 +89,11 @@ async def test_route():
     logger.info("Test endpoint hit")
     return {"message": "Test successful"}
 
-@app.post("/debug-login")
-async def debug_login(request: Request):
-    data = await request.body()
-    logger.info(f"Debug login received: {data}")
-    return {"status": "received"}
+# @app.post("/debug-login")
+# async def debug_login(request: Request):
+#     data = await request.body()
+#     logger.info(f"Debug login received: {data}")
+#     return {"status": "received"}
 
 if __name__ == "__main__":
     import uvicorn

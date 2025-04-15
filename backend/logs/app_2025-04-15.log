@@ -1,0 +1,125 @@
+{"asctime": "2025-04-15 18:16:31,646", "name": "mainModule", "levelname": "INFO", "message": "Starting application..."}
+{"asctime": "2025-04-15 18:16:31,690", "name": "mainModule", "levelname": "INFO", "message": "CORS middleware added"}
+{"asctime": "2025-04-15 18:16:31,690", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM"}
+{"asctime": "2025-04-15 18:16:31,691", "name": "mainModule", "levelname": "INFO", "message": "Registering Tortoise ORM With DB"}
+{"asctime": "2025-04-15 18:16:31,691", "name": "mainModule", "levelname": "INFO", "message": "Tortoise ORM registered"}
+{"asctime": "2025-04-15 18:16:31,716", "name": "mainModule", "levelname": "INFO", "message": "All routers included"}
+{"asctime": "2025-04-15 18:16:31,718", "name": "uvicorn.error", "levelname": "INFO", "message": "Started server process [8]", "color_message": "Started server process [\u001b[36m%d\u001b[0m]"}
+{"asctime": "2025-04-15 18:16:31,718", "name": "uvicorn.error", "levelname": "INFO", "message": "Waiting for application startup."}
+{"asctime": "2025-04-15 18:16:31,767", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM started, {'default': <tortoise.backends.asyncpg.client.AsyncpgDBClient object at 0x754befb35650>}, {'models': {'AutomationProfile': <class 'app.models.models.AutomationProfile'>, 'AutomationRun': <class 'app.models.models.AutomationRun'>, 'DiagnosisCurrentMedication': <class 'app.models.models.DiagnosisCurrentMedication'>, 'DiagnosisEntry': <class 'app.models.models.DiagnosisEntry'>, 'DiagnosisLaboratoryTest': <class 'app.models.models.DiagnosisLaboratoryTest'>, 'DiagnosisPhysicalExam': <class 'app.models.models.DiagnosisPhysicalExam'>, 'DiagnosisPrescribedMedication': <class 'app.models.models.DiagnosisPrescribedMedication'>, 'DiagnosisTeaching': <class 'app.models.models.DiagnosisTeaching'>, 'ProfileDiagnoses': <class 'app.models.models.ProfileDiagnoses'>, 'User': <class 'app.models.models.User'>}}"}
+{"asctime": "2025-04-15 18:16:31,770", "name": "tortoise", "levelname": "INFO", "message": "Tortoise-ORM generating schema"}
+{"asctime": "2025-04-15 18:16:31,912", "name": "mainModule", "levelname": "INFO", "message": "Startup event triggered"}
+{"asctime": "2025-04-15 18:16:31,937", "name": "mainModule", "levelname": "INFO", "message": "Database connection test: 2 users found"}
+{"asctime": "2025-04-15 18:16:31,939", "name": "uvicorn.error", "levelname": "INFO", "message": "Application startup complete."}
+{"asctime": "2025-04-15 18:16:53,126", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54408 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,246", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54446 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,280", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54438 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,370", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54450 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,417", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54452 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,441", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54462 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,451", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54442 - \"GET /diagnoses/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,479", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54422 - \"GET /profiles/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,573", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54468 - \"GET /diagnoses/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:16:53,640", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:54472 - \"GET /profiles/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:18:13,692", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:44274 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:18:13,726", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:18:13,830", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:18:13,867", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:44282 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:18:13,891", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:43724 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:18:13,988", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:18:13,992", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:43756 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:18:14,020", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:18:14,044", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:43740 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:18:14,066", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:43770 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:18:14,201", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:43786 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:18:14,275", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:43792 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:22:48,746", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:40158 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:22:48,812", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:22:48,884", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:22:48,911", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:40162 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:22:49,181", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:40168 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:22:49,272", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:22:49,298", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:22:49,329", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:40182 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:22:49,471", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:40184 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:22:49,553", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:40186 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:22:49,621", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:40196 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:22:49,820", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:40206 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:18,559", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39876 - \"POST /auth/jwt/login HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:20,505", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39892 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:20,582", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39912 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:20,599", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:28:20,647", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39928 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:20,661", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:28:20,682", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39896 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:20,713", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39944 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:20,778", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39948 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:20,794", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:28:20,822", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:28:20,839", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39952 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:20,856", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39956 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:49,805", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:58070 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:49,870", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:58072 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:49,940", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:58076 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:28:50,007", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:58092 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:03,104", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38222 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:03,170", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38226 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:03,237", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38232 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:03,305", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38248 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:27,214", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:45986 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:27,285", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:45988 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:27,350", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:45996 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:27,412", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:46000 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:33,101", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:46024 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:33,245", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:46044 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:33,303", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:46012 - \"GET /profiles/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:33,574", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:46058 - \"GET /profiles/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:33,589", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:46032 - \"GET /diagnoses/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:29:33,778", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:46072 - \"GET /diagnoses/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:36,376", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39634 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:36,448", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39648 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:36,516", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39650 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:36,587", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:39660 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:55,106", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:59076 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:55,113", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:30:55,210", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:30:55,256", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:59078 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:55,329", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:59094 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:55,453", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:30:55,490", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:30:55,507", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:59102 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:55,519", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:59118 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:55,650", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:59132 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:55,784", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:59136 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:30:55,853", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:59150 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:21,464", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38012 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:21,542", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38022 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:21,553", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:32:21,614", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:32:21,661", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38038 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:21,786", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38040 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:21,876", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:32:21,918", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:32:21,939", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38050 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:22,185", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38060 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:22,252", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38064 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:22,813", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:38080 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:28,195", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41070 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:28,289", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41068 - \"GET /diagnoses/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:28,297", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41088 - \"GET /users/c12b3994-dfaf-4b3b-8906-5bb812c4a87b/profile-info/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:28,337", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41078 - \"GET /profiles/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:28,409", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41100 - \"GET /diagnoses/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:28,473", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41102 - \"GET /profiles/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:47,475", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41580 - \"POST /auth/jwt/login HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:48,134", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41584 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:48,199", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41590 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:48,304", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41592 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:48,402", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41594 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:48,702", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41602 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:48,711", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:32:48,756", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:32:48,776", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41606 - \"GET /runs/ HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:48,785", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41616 - \"GET /runs/remaining HTTP/1.0\" 200"}
+{"asctime": "2025-04-15 18:32:48,896", "name": "app.routes.runs", "levelname": "INFO", "message": "Fetching automation runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:32:48,947", "name": "app.routes.runs", "levelname": "INFO", "message": "Found 115 runs for user id: c12b3994-dfaf-4b3b-8906-5bb812c4a87b"}
+{"asctime": "2025-04-15 18:32:48,972", "name": "uvicorn.access", "levelname": "INFO", "message": "172.18.0.10:41628 - \"GET /runs/ HTTP/1.0\" 200"}

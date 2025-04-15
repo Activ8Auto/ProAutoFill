@@ -68,7 +68,7 @@ const Login2 = () => {
                     color="textSecondary"
                     mb={1}
                   >
-                    Your Social Campaigns
+                    Your Medtrics Solution
                   </Typography>
                 }
                 subtitle={

@@ -10,6 +10,7 @@ import {
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
 type Props = {
+  timeframe: "day" | "week" | "month";
   runs: any[];
 };
 
@@ -24,7 +25,6 @@ const DiagnosisBreakdown = ({ runs }: Props) => {
         });
       }
     });
-
     return Object.entries(diagnosisMap).map(([name, value]) => ({
       name,
       value,
