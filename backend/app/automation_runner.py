@@ -498,12 +498,12 @@ async def run_automation(profile_data, run_id=None):
                 await browser_context.close()
                 browser_context = None
             # Update the run status in your database, but do NOT raise the exception.
-            await new_run.update_from_dict({
-                "end_time": datetime.utcnow(),
-                "status": "failed",
-                "details": {"error": str(e), "user_fixable": False},
-            })
-            await new_run.save()
+            # await new_run.update_from_dict({
+            #     "end_time": datetime.utcnow(),
+            #     "status": "failed",
+            #     "details": {"error": str(e), "user_fixable": False},
+            # })
+            # await new_run.save()
 
 async def cancel_automation():
     """
