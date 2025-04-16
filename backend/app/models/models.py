@@ -154,19 +154,13 @@ class AutomationRun(models.Model):
         null=True,
         on_delete=fields.SET_NULL
     )
-
-    # Timing
     start_time = fields.DatetimeField(null=True)
     end_time = fields.DatetimeField(null=True)
-
-    # Copied fields from the profile_data (for reference)
     selected_date = fields.DateField(null=True)
     rotation = fields.CharField(max_length=255, null=True)
     faculty = fields.CharField(max_length=255, null=True)
     preceptor = fields.CharField(max_length=255, null=True)
     run_headless = fields.BooleanField(default=False)
-
-    # Randomly chosen or final “picks” from the automation process
     selected_duration = fields.CharField(max_length=50, null=True)
     selected_visit_type = fields.CharField(max_length=100, null=True)
     selected_age_range = fields.CharField(max_length=50, null=True)
@@ -175,22 +169,17 @@ class AutomationRun(models.Model):
     selected_student_function_level = fields.CharField(max_length=255, null=True)
     selected_complexity = fields.CharField(max_length=255, null=True)
     chosen_minutes = fields.IntField(default=0)
-
-    # Site info
     site_type = fields.CharField(max_length=255, null=True)
     site_location = fields.CharField(max_length=255, null=True)
     cpt_code = fields.CharField(max_length=50, null=True)
-
-    # Diagnoses & meds from random selections (store as JSON)
     selected_diagnoses = fields.JSONField(null=True)               # e.g. [{"name": "...", "icd_code": "..."}]
     selected_current_medications = fields.JSONField(null=True)     # e.g. ["Sertraline", "Lorazepam"]
     selected_prescribed_medications = fields.JSONField(null=True)  # e.g. ["N/A"] or some list
     selected_teaching = fields.JSONField(null=True)                # e.g. ["Medication Education and Management"]
-
-    # Attempt info & success/failure
     attempt_count = fields.IntField(default=1)
     status = fields.CharField(max_length=50, null=True)  # e.g. "success", "failed"
-    details = fields.JSONField(null=True)                # Extra logs, errors, or debugging info
+    details = fields.JSONField(null=True)     
+    job_id = fields.CharField(max_length=255, null=True)  # Stores Celery task ID           # Extra logs, errors, or debugging info
 
     class Meta:
         table = "automation_runs"

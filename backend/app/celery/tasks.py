@@ -18,6 +18,7 @@ CELERY_TORTOISE_ORM = {
         "models": {
             "models": ["app.models.models"],
             "default_connection": "default",
+            
         },
     },
 }
@@ -28,23 +29,22 @@ def run_automation_task(self, profile_id, user_id):
     """
     Celery entry point. Creates an event loop and runs the automation job.
     """
+    job_id = self.request.id
+    logger.info(f"Starting Celery task with job_id: {job_id}")
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        asyncio.run(run_automation_job(profile_id, user_id))
+        asyncio.run(run_automation_job(profile_id, user_id, job_id=job_id))
     finally:
         loop.close()
 
-async def run_automation_job(profile_id: str, user_id: str):
+async def run_automation_job(profile_id: str, user_id: str, job_id: str):
     """
     Runs the automation job, looping until target_minutes is reached.
-    Each run is retried up to 3 times. Total minutes are preserved from successful runs,
-    and the loop continues even if some runs fail.
+    Each run is retried up to 3 times. Total minutes are preserved from successful runs.
     """
-    # Initialize Tortoise ORM
     await Tortoise.init(config=CELERY_TORTOISE_ORM)
     
-    # Fetch user and profile
     try:
         user = await User.get(id=user_id)
         profile = await AutomationProfile.get(id=profile_id).prefetch_related("diagnoses")
@@ -55,8 +55,8 @@ async def run_automation_job(profile_id: str, user_id: str):
     if str(profile.user_id) != str(user.id):
         raise HTTPException(status_code=403, detail="Not authorized")
 
-    # Convert hours to minutes
     target_minutes = profile.target_hours * 60
+    
 
     # Build profile_data
     profile_data = {
@@ -113,10 +113,14 @@ async def run_automation_job(profile_id: str, user_id: str):
 
     while total_minutes_run < target_minutes:
         run_count += 1
-        # Create an in-progress record
+        if not job_id:
+            logger.error("No job_id provided for AutomationRun creation")
+            raise ValueError("Celery task ID is missing")
+
         new_run = await AutomationRun.create(
             user=user,
             profile=profile,
+            job_id=job_id,
             start_time=datetime.utcnow(),
             status="in-progress",
             selected_date=profile.selected_date,
@@ -128,11 +132,11 @@ async def run_automation_job(profile_id: str, user_id: str):
             site_location=profile.site_location,
             cpt_code=profile.cpt_code,
         )
+        logger.info(f"Created AutomationRun with id: {new_run.id}, job_id: {job_id}")
 
         success = False
         attempt_count = 0
 
-        # Retry this run up to 3 times
         for attempt in range(3):
             attempt_count = attempt + 1
             try:
@@ -191,18 +195,15 @@ async def run_automation_job(profile_id: str, user_id: str):
                 else:
                     logger.info(f"Retrying run {run_count}...")
 
-        # Clean up after each run attempt (successful or not)
         await cancel_automation()
 
         if not success:
             logger.warning(f"Run {run_count} failed after 3 attempts, continuing to next run.")
 
-        # Ensure at least 3 runs, even if target_minutes is reached early
         if run_count < 3 and total_minutes_run >= target_minutes:
             logger.info(f"Target minutes reached ({total_minutes_run}/{target_minutes}), but enforcing minimum 3 runs.")
             continue
 
-        # Wait before next run if more time is needed
         if total_minutes_run < target_minutes:
             wait_seconds = random.randint(45, 120)
             logger.info(f"Waiting {wait_seconds} seconds before next run.")

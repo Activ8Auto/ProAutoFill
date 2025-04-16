@@ -334,3 +334,19 @@ export async function fetchRemainingRuns(token: string) {
 
   return res.json();
 }
+
+
+export const getAutomationJobs = async (token: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/automation/jobs/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) {
+    const error = new Error(`HTTP error! status: ${res.status}`);
+    (error as any).status = res.status;
+    throw error;
+  }
+  return res.json();
+};

@@ -1,11 +1,12 @@
 "use client";
 
-import { Grid, Box, Typography } from "@mui/material";
-import LoadingSpinner from "@/app/(DashboardLayout)/loading"
+import { Grid, Box } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+
+import LoadingSpinner from "@/app/(DashboardLayout)/loading";
 import PageHeader from "@/app/(DashboardLayout)/components/shared/PageHeader";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
-import { useState, useEffect } from "react";
 import TimeFrameSelector from "@/app/(DashboardLayout)/components/shared/TimeFrameSelector";
 import RemainingRunsBanner from "@/app/(DashboardLayout)/components/dashboard/RemainingRunsBanner";
 import SectionCard from "@/app/(DashboardLayout)/components/shared/SectionCard";
@@ -18,31 +19,48 @@ import DurationBreakdown from "@/app/(DashboardLayout)/components/dashboard/Dura
 // import VisitTypeBreakdown from "@/app/(DashboardLayout)/components/dashboard/VisitTypeBreakdown";
 import RecentRuns from "@/app/(DashboardLayout)/components/dashboard/RecentRuns";
 import DiagnosisBreakdownChart from "@/app/(DashboardLayout)/components/dashboard/DiagnosisBreakdownChart";
+import AutomationJobs from "@/app/(DashboardLayout)/components/dashboard/AutomationJobs";
 
 import { useAuthStore } from "@/store/authStore";
-import { getAutomationRuns } from "@/lib/api";
+import { getAutomationRuns, getAutomationJobs } from "@/lib/api";
+
+interface Run {
+  id: string;
+  start_time: string | null;
+  end_time: string | null;
+  status: string;
+  chosen_minutes: number;
+  selected_duration: string | null;
+  selected_visit_type: string | null;
+  details: any;
+}
+
+interface Job {
+  job_id: string;
+  profile_name: string;
+  target_minutes: number;
+  total_minutes: number;
+  status: string;
+  runs: Run[];
+}
 
 const Dashboard = () => {
   const [timeframe, setTimeframe] = useState<"day" | "week" | "month">("week");
   const [remainingRuns, setRemainingRuns] = useState<number | null>(null);
-  const [runs, setRuns] = useState<any[]>([]);
+  const [runs, setRuns] = useState<Run[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  
+  const [error, setError] = useState<Error | string | null>(null);
   const router = useRouter();
   const { token } = useAuthStore();
-  
+
   useEffect(() => {
-    // Redirect if no token
-    
     if (!token) {
       router.push("/authentication/login");
     }
   }, [token, router]);
 
   useEffect(() => {
-    // Fetch remaining runs if user is not paid
     if (token) {
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/runs/remaining`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -58,7 +76,6 @@ const Dashboard = () => {
   }, [token]);
 
   useEffect(() => {
-    // Fetch automation runs
     if (token) {
       getAutomationRuns(token)
         .then((data) => {
@@ -67,7 +84,6 @@ const Dashboard = () => {
         })
         .catch((err) => {
           if (err.status === 401) {
-            // Token expired or invalid
             router.push("/authentication/login");
           } else {
             console.error("Error fetching automation runs:", err);
@@ -80,22 +96,38 @@ const Dashboard = () => {
     }
   }, [token, router]);
 
+  const fetchJobs = async () => {
+    try {
+      const data = await getAutomationJobs(token);
+      setJobs(data);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching automation jobs:", err);
+      setError("Failed to load automation jobs");
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchJobs();
+      const interval = setInterval(fetchJobs, 10000); // Poll every 10s
+      return () => clearInterval(interval);
+    }
+  }, [token]);
+
   if (!token) return null;
   if (loading) return <LoadingSpinner />;
   if (error) return <div>Error loading automation run data.</div>;
 
   return (
-    <PageContainer
-      title="Dashboard"
-      description="Dashboard overview of automation runs"
-    >
+    <PageContainer title="Dashboard" description="Dashboard overview of automation runs">
       <PageHeader
-  title="Dashboard"
-  subtitle="Overview of your automation performance"
-  backgroundImage="https://source.unsplash.com/random/1600x900?abstract" // Optional
-/>
+        title="Dashboard"
+        subtitle="Overview of your automation performance"
+        backgroundImage="https://source.unsplash.com/random/1600x900?abstract"
+      />
+
       <Box>
-        {/* Timeframe & Banner */}
         <TimeFrameSelector value={timeframe} onChange={setTimeframe} />
         {remainingRuns !== null && (
           <RemainingRunsBanner remainingRuns={remainingRuns} />
@@ -113,47 +145,53 @@ const Dashboard = () => {
           </Grid>
         </SectionCard>
 
-        {/* Breakdowns Section */}
+        {/* Automation Jobs Section */}
+        <SectionCard title="Current Automation Jobs">
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <AutomationJobs jobs={jobs} />
+            </Grid>
+          </Grid>
+        </SectionCard>
+
+        {/* Key Metrics */}
         <SectionCard title="Key Metrics">
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={6}>
+            <Grid item xs={12} md={6}>
               <GenderBreakdown runs={runs} timeframe={timeframe} />
             </Grid>
-            <Grid item xs={12} md={6} lg={6}>
+            <Grid item xs={12} md={6}>
               <DurationBreakdown runs={runs} timeframe={timeframe} />
             </Grid>
-            
-            {/* <Grid item xs={12} md={6} lg={4}>
+            {/* <Grid item xs={12} md={6}>
               <VisitTypeBreakdown runs={runs} timeframe={timeframe} />
-            </Grid>
-            */}
-            
+            </Grid> */}
           </Grid>
-          </SectionCard>
-          <SectionCard title="Key Charts">
+        </SectionCard>
+
+        {/* Charts */}
+        <SectionCard title="Key Charts">
           <Grid container spacing={6}>
-          <Grid item xs={12} md={12} lg={6}>
+            <Grid item xs={12} md={6}>
               <AgeGroupBreakdown runs={runs} timeframe={timeframe} />
             </Grid>
-            <Grid item xs={12} md={12} lg={6}>
+            <Grid item xs={12} md={6}>
               <RaceBreakdown runs={runs} timeframe={timeframe} />
             </Grid>
-            <Grid item xs={12} md={12} lg={12}>
-            <DiagnosisBreakdownChart runs={runs} timeframe={timeframe} />
+            <Grid item xs={12}>
+              <DiagnosisBreakdownChart runs={runs} timeframe={timeframe} />
             </Grid>
-            </Grid>
-          </SectionCard>
+          </Grid>
+        </SectionCard>
 
-        {/* Recent Runs Section */}
+        {/* Recent Runs */}
         <SectionCard title="Recent Runs">
           <Grid container spacing={3}>
-            <Grid item xs={12} lg={12}>
+            <Grid item xs={12}>
               <RecentRuns runs={runs} />
             </Grid>
           </Grid>
-          </SectionCard>
-
-        
+        </SectionCard>
       </Box>
     </PageContainer>
   );

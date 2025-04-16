@@ -1,1 +1,117 @@
-`
+name: autofillpro
+
+services:
+  # Production Backend
+  web-prod:
+    build:
+      context: ./backend
+    container_name: autofillpro-api-prod
+    volumes:
+      - ./backend:/code
+    restart: always
+    env_file:
+      - ./backend/.env.prod
+    depends_on:
+      - redis-prod
+
+  celery_worker-prod:
+    build:
+      context: ./backend
+    container_name: autofillpro-celery-prod
+    command: celery -A app.celery.tasks worker --loglevel=info
+    volumes:
+      - ./backend:/code
+    env_file:
+      - ./backend/.env.prod
+    restart: always
+    depends_on:
+      - redis-prod
+      - web-prod
+
+  redis-prod:
+    image: redis:latest
+    container_name: autofillpro-redis-prod
+    restart: always
+
+  frontend-prod:
+    build:
+      context: ./package
+      args:
+        NEXT_PUBLIC_API_URL: /api
+    container_name: autofillpro-frontend-prod
+    volumes:
+      - /app/node_modules
+    restart: always
+    env_file:
+      - ./package/.env.production
+    depends_on:
+      - web-prod
+
+  # Development Backend
+  web-dev:
+    build:
+      context: /app/ProAutoFill_Dev/backend
+    container_name: autofillpro-api-dev
+    command: uvicorn mainModule:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - /app/ProAutoFill_Dev/backend:/code
+    ports:
+      - "8001:8000"
+    restart: always
+    env_file:
+      - /app/ProAutoFill_Dev/backend/.env.dev
+    depends_on:
+      - redis-dev
+
+  celery_worker-dev:
+    build:
+      context: /app/ProAutoFill_Dev/backend
+    container_name: autofillpro-celery-dev
+    command: celery -A app.celery.tasks worker --loglevel=info
+    volumes:
+      - /app/ProAutoFill_Dev/backend:/code
+    env_file:
+      - /app/ProAutoFill_Dev/backend/.env.dev
+    restart: always
+    depends_on:
+      - redis-dev
+      - web-dev
+
+  redis-dev:
+    image: redis:latest
+    container_name: autofillpro-redis-dev
+    restart: always
+
+  frontend-dev:
+    build:
+      context: /app/ProAutoFill_Dev/package
+    command: npm run dev
+    container_name: autofillpro-frontend-dev
+    volumes:
+      - /app/ProAutoFill_Dev/package:/app
+      - /app/node_modules
+    ports:
+      - "3001:3000"
+    restart: always
+    env_file:
+      - /app/ProAutoFill_Dev/package/.env.dev
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - web-dev
+
+  nginx:
+    image: nginx:latest
+    container_name: autofillpro-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - frontend-prod
+      - frontend-dev
+      - web-prod
+      - web-dev
