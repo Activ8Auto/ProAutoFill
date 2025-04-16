@@ -27,13 +27,13 @@ type Props = {
 };
 
 const AutomationJobsList: React.FC<Props> = ({ jobs }) => {
-  // Filter out jobs that don’t have a valid job_id.
+  // 1) Filter out invalid job IDs
   const validJobs = jobs.filter((job) => {
     const id = job.job_id ? job.job_id.toLowerCase() : "";
-    return id && id !== "unknown" && id !== "old" ;
+    return id && id !== "unknown" && id !== "old";
   });
 
-  // Sort jobs so that the newest ones (by the first run's start_time) are first.
+  // 2) Sort newest first by runs[0].start_time
   const sortedJobs = validJobs.sort((a, b) => {
     const aStart =
       a.runs && a.runs[0] && a.runs[0].start_time
@@ -46,16 +46,35 @@ const AutomationJobsList: React.FC<Props> = ({ jobs }) => {
     return bStart.getTime() - aStart.getTime();
   });
 
-  // Track which job_id(s) are expanded.
+  // 3) Local state to track expanded job(s)
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set());
   const handleToggle = (jobId: string) => {
     const newExpanded = new Set(expandedJobs);
-    if (newExpanded.has(jobId)) {
-      newExpanded.delete(jobId);
-    } else {
-      newExpanded.add(jobId);
-    }
+    newExpanded.has(jobId) ? newExpanded.delete(jobId) : newExpanded.add(jobId);
     setExpandedJobs(newExpanded);
+  };
+
+  // 4) Pagination
+  const ITEMS_PER_PAGE = 4;
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const totalPages = Math.ceil(sortedJobs.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const jobsOnThisPage = sortedJobs.slice(startIndex, endIndex);
+
+  // Move to the previous page
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  // Move to the next page
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
   };
 
   return (
@@ -63,14 +82,16 @@ const AutomationJobsList: React.FC<Props> = ({ jobs }) => {
       title="Automation Jobs"
       subtitle="Overview of automation job history and status"
     >
+      {/* Main Container */}
       <div style={{ maxHeight: "600px", overflowY: "auto" }}>
-        {sortedJobs.length === 0 ? (
+        {jobsOnThisPage.length === 0 ? (
           <p>No automation jobs found.</p>
         ) : (
-          sortedJobs.map((job, idx) => {
-            // Determine if this is the most recent (active) job.
-            const isActiveJob = idx === 0;
-            // Use the first run's start_time as the job's initiation time.
+          jobsOnThisPage.map((job, idx) => {
+            // Is this the "first" job on this page? (Used to check "active" job, if you want.)
+            const isActiveJob = idx === 0 && currentPage === 1;
+
+            // Determine start time & format
             const initiatedTime =
               job.runs && job.runs.length > 0 && job.runs[0].start_time
                 ? new Date(job.runs[0].start_time)
@@ -79,27 +100,27 @@ const AutomationJobsList: React.FC<Props> = ({ jobs }) => {
               ? initiatedTime.toLocaleString()
               : "Unknown initiation time";
 
-            // For an active job, use the job's target_minutes value.
-            // For previous (finished) jobs, we assume they are done and sum up their run times.
+            // For an active job, use the job's target_minutes.
+            // For previous (finished) jobs, sum up all chosen_minutes.
             let effectiveTargetMinutes: number;
             let progressDisplay: string;
             if (isActiveJob) {
               effectiveTargetMinutes = job.target_minutes;
               progressDisplay = `${job.total_minutes} / ${job.target_minutes}`;
             } else {
-              // Sum up all chosen_minutes from runs for finished jobs.
               const computedTotal = job.runs.reduce(
                 (acc, run) => acc + run.chosen_minutes,
                 0
               );
               effectiveTargetMinutes = computedTotal;
-              // Finished jobs show full progress.
               progressDisplay = `${computedTotal} / ${computedTotal}`;
             }
-            // Compute hours for display.
+            // Convert to hours for display
             const targetHours = (effectiveTargetMinutes / 60).toFixed(1);
 
+            // Is this job expanded?
             const isExpanded = expandedJobs.has(job.job_id);
+
             return (
               <div
                 key={job.job_id}
@@ -223,7 +244,9 @@ const AutomationJobsList: React.FC<Props> = ({ jobs }) => {
                                 borderBottom: "1px solid #ddd",
                               }}
                             >
-                              {run.details ? JSON.stringify(run.details) : "N/A"}
+                              {run.details
+                                ? JSON.stringify(run.details)
+                                : "N/A"}
                             </td>
                           </tr>
                         ))}
@@ -236,6 +259,29 @@ const AutomationJobsList: React.FC<Props> = ({ jobs }) => {
           })
         )}
       </div>
+
+      {/* 5) Pagination Controls (Next / Prev) */}
+      {totalPages > 1 && (
+        <div style={{ marginTop: "10px", textAlign: "center" }}>
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            style={{ marginRight: "8px" }}
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            style={{ marginLeft: "8px" }}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </DashboardCard>
   );
 };
