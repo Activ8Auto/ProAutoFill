@@ -703,3 +703,5 @@
 2025-04-15 23:23:20,211 | INFO | ⬅️ GET /.git/config | Status: 404 | Time: 0.067s
 2025-04-15 23:23:22,339 | INFO | ➡️ GET /.env | User: Anonymous | IP: 172.18.0.10
 2025-04-15 23:23:22,340 | INFO | ⬅️ GET /.env | Status: 404 | Time: 0.001s
+2025-04-16 01:37:46,290 | INFO | ➡️ POST /auth/jwt/login | User: Anonymous | IP: 172.18.0.10
+2025-04-16 01:37:47,758 | INFO | ⬅️ POST /auth/jwt/login | Status: 400 | Time: 1.481s
